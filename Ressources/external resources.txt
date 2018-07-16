@@ -1,0 +1,3 @@
+rcc -binary cards.qrc -o cards.rcc
+
+QResource::registerResource("/path/to/myresource.rcc");

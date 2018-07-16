@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="main.qml">qml/main.qml</file>
+        <file alias="SelectingCardsQML.qml">qml/SelectingCardsQML.qml</file>
+        <file alias="SelectPlayers.qml">qml/SelectPlayers.qml</file>
+        <file alias="ButtonStyleGold.qml">qml/BasicComponents/ButtonStyleGold.qml</file>
+        <file alias="HiddenCard.qml">qml/BasicComponents/HiddenCard.qml</file>
+        <file alias="BoardFightingArea.qml">qml/Board/BoardFightingArea.qml</file>
+        <file alias="BoardFightingInformation.qml">qml/Board/BoardFightingInformation.qml</file>
+        <file alias="BoardPLayerAreaQML.qml">qml/Board/BoardPLayerAreaQML.qml</file>
+        <file alias="BoardQML.qml">qml/Board/BoardQML.qml</file>
+        <file alias="PopupCardDetailsBasic.qml">qml/Popups/PopupCardDetailsBasic.qml</file>
+        <file alias="PopupCardDetailsComplete.qml">qml/Popups/PopupCardDetailsComplete.qml</file>
+        <file alias="PopupCoinHeadOrTail.qml">qml/Popups/PopupCoinHeadOrTail.qml</file>
+        <file alias="PopupMessage.qml">qml/Popups/PopupMessage.qml</file>
+        <file alias="PopupPokemonSelectingAttack.qml">qml/Popups/PopupPokemonSelectingAttack.qml</file>
+        <file alias="PopupSelectCardsInPacket.qml">qml/Popups/PopupSelectCardsInPacket.qml</file>
+        <file alias="PopupSelectEnergiesInPokemon.qml">qml/Popups/PopupSelectEnergiesInPokemon.qml</file>
+        <file alias="PopupSelectHiddenCard.qml">qml/Popups/PopupSelectHiddenCard.qml</file>
+        <file alias="MovingCard.qml">qml/BasicComponents/MovingCard.qml</file>
+        <file alias="Login.qml">qml/Login.qml</file>
+        <file alias="Loading_P.qml">qml/BasicComponents/Loading_P.qml</file>
+    </qresource>
+</RCC>
