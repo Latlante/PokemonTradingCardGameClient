@@ -9,7 +9,7 @@ class CardPokemon;
 class CardAction : public AbstractCard
 {
 public:
-    CardAction(unsigned short id, const QString& name, const QString& description, AbstractAction* action);
+    CardAction(unsigned short id, const QString& name, const QString& description);
     CardAction(const CardAction& card);
     ~CardAction();
 
@@ -28,7 +28,6 @@ public:
 
 private:
 	QString m_description;
-    AbstractAction* m_action;
 };
 
 #endif // CARDACTION_H

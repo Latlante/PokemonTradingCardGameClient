@@ -2,7 +2,6 @@
 
 #include <QFile>
 #include <QVariant>
-#include "src_Actions/actioncreationfactory.h"
 
 const QString Database::m_PATH_DB_ENERGIES = ":/energies/db/db_energies.csv";
 const QString Database::m_PATH_DB_POKEMON = ":/pokemon/db/db_pokemon.csv";
@@ -168,9 +167,7 @@ CardPokemon* Database::newCardPokemon(const QString& infoCsv)
                 attack.costEnergies = listEnergies;
                 bool ok;
                 int idAction = arguments[offset+InfoAtt_ActionType].toInt(&ok);
-                attack.action = ActionCreationFactory::createAction(static_cast<AbstractAction::Enum_typeOfAction>(idAction),
-                                                                    QVariant::fromValue(arguments[offset+InfoAtt_ActionArgument1]),
-                                                                    QVariant::fromValue(arguments[offset+InfoAtt_ActionArgument2]));
+
                 attack.numberOfTurnAttackStillBlocks = 0;
                 listAttacks.append(attack);
             }
@@ -223,10 +220,8 @@ CardAction *Database::newCardTrainer(const QString &infoCsv)
         {
             cardTrainerToReturn = new CardAction(arguments[InfoDbTrainer_Id].toInt(),
                                                   arguments[InfoDbTrainer_Name],
-                                                  arguments[InfoDbTrainer_Description],
-                                                  ActionCreationFactory::createAction(static_cast<AbstractAction::Enum_typeOfAction>(idAction)));
-                                                                                      //QVariant::fromValue(arguments[InfoDbTrainer_Argument1]),
-                                                                                      //QVariant::fromValue(arguments[InfoDbTrainer_Argument2])));
+                                                  arguments[InfoDbTrainer_Description]);
+
         }
 
     }

@@ -4,9 +4,9 @@
 #include <QQmlEngine>
 #include <QtQml/qqml.h>
 #include <QUrl>
+#include "gamemanager.h"
+#include "player.h"
 #include "utils.h"
-#include "src_Actions/abstractaction.h"
-#include "src_Actions/actioncreationfactory.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Models/modellistenergies.h"
 #include "src_Packets/packettrash.h"
@@ -461,19 +461,8 @@ bool CardPokemon::replaceOneAttack(int index, AttackData data)
     {
         //Nettoyage de l'ancienne action
         AttackData currentData = listAttacks()[index];
-        if(currentData.action != nullptr)
-        {
-            delete currentData.action;
-            currentData.action = nullptr;
-        }
 
-        //Copie si action il y a
-        if(data.action != nullptr)
-        {
-            currentData.action = ActionCreationFactory::createAction(data.action->type(),
-                                                                     data.action->arg1(),
-                                                                     data.action->arg2());
-        }
+
         //On ne copie volontairement pas le coût en énergie
         //currentData.costEnergies = data.costEnergies;
         currentData.damage = data.damage;
@@ -650,11 +639,6 @@ CardPokemon::Enum_StatusOfAttack CardPokemon::tryToAttack(int indexAttack, CardP
                     //Sauvegarde des données actuelles
                     m_lastAttackUsed = listAttacks()[indexAttack];
 
-                    //On exécute l'action d'avant attaque s'il y a
-                    if((m_lastAttackUsed.action != nullptr) && (m_lastAttackUsed.action->checkElements()))
-                    {
-                        m_lastAttackUsed.action->executeActionBeforeAttack(this, indexAttack);
-                    }
 
                     //Calcul de la faiblesse ou résistance
                     unsigned short newDamage = calculOfNewDamageDependOfWeaknessAndResistance(enemy, m_lastAttackUsed.damage);
@@ -662,9 +646,6 @@ CardPokemon::Enum_StatusOfAttack CardPokemon::tryToAttack(int indexAttack, CardP
                     //On attaque
                     enemy->takeDamage(newDamage);    
 
-                    //On exécute l'action d'après attaque s'il y a
-                    if(m_lastAttackUsed.action != nullptr)
-                        m_lastAttackUsed.action->executeActionAfterAttack(this, indexAttack);
 
                     //On réinitialise les états valables un seul tour
                     enemy->setInvincibleForTheNextTurn(false);
