@@ -20,5 +20,6 @@
         <file alias="MovingCard.qml">qml/BasicComponents/MovingCard.qml</file>
         <file alias="Login.qml">qml/Login.qml</file>
         <file alias="Loading_P.qml">qml/BasicComponents/Loading_P.qml</file>
+        <file alias="CreateChooseGame.qml">qml/CreateChooseGame.qml</file>
     </qresource>
 </RCC>

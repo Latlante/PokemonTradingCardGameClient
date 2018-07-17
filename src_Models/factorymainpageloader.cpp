@@ -29,6 +29,11 @@ void FactoryMainPageLoader::displayLogin()
     setLink("qrc:/Login.qml");
 }
 
+void FactoryMainPageLoader::displayCreateChooseGame()
+{
+    setLink("qrc:/CreateChooseGame.qml");
+}
+
 void FactoryMainPageLoader::displaySelectPlayers()
 {
     setLink("qrc:/SelectPlayers.qml");

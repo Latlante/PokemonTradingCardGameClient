@@ -2,6 +2,22 @@ import QtQuick 2.0
 
 Item {
     height: 600
+
+    property int stepAuthentification: 0
+
+    onStepAuthentificationChanged: {
+        if(stepAuthentification == 0)
+        {
+            column1.visible = true
+            loading_P1.visible = false
+        }
+        else if(stepAuthentification == 1)
+        {
+            column1.visible = false
+            loading_P1.visible = true
+        }
+    }
+
     Rectangle {
         id: rectangleBackground
         color: "#2b95ff"
@@ -128,6 +144,15 @@ Item {
                         }
                     }
                 }
+            }
+
+            Loading_P {
+                id: loading_P1
+                width: 100
+                height: 100
+                visible: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
