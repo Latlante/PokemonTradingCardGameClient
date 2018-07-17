@@ -5,7 +5,7 @@ Item {
     height: 100
 
     Image {
-        id: image
+        id: imageToRotate
         anchors.rightMargin: 5
         anchors.leftMargin: 5
         anchors.bottomMargin: 5
@@ -15,26 +15,19 @@ Item {
         anchors.fill: parent
         source: "qrc:/Images/P_Loader.png"
 
-        Behavior on rotation {
-            id: behaviorRotation
-            NumberAnimation {
-                target: image
-                duration: 2000
+        SequentialAnimation {
+            id: rotationYAnimation
+            loops: Animation.Infinite
+            PropertyAnimation {
+                target: imageToRotate
+                properties: "rotation"
+                from: 0
+                to: 360
+                duration: 3000
             }
         }
 
-        Timer {
-            id: timerRotation
-            interval: 3000
-            repeat: true
-            running: true
-            onTriggered: {
-                behaviorRotation.enabled = false;
-                image.rotation = 0;
-                behaviorRotation.enabled = true
-                image.rotation = 360;
-            }
-        }
+        Component.onCompleted: rotationYAnimation.start()
     }
 
 }

@@ -1,6 +1,5 @@
 import QtQuick 2.0
 
-
 Item {
     height: 600
     Rectangle {
@@ -10,18 +9,17 @@ Item {
 
         Image {
             id: imageLogo
-            x: 93
+            x: 0
+            y: 0
             width: parent.width
             height: 0.3 * parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 0
             fillMode: Image.PreserveAspectFit
             source: "Images/logo.png"
         }
 
         Rectangle {
-            id: rectangle
+            id: rectangleContainerAuthentification
             x: 204
             y: 202
             width: 254
@@ -130,9 +128,57 @@ Item {
                         }
                     }
                 }
-
             }
         }
+
+        //ANIMATION OPENING
+        function initPageAnimationOpening()
+        {
+            imageLogo.y = (rectangleBackground.height / 2) - (imageLogo.height / 2)
+            rectangleContainerAuthentification.opacity = 0
+
+            animationOpening.start()
+        }
+
+        SequentialAnimation {
+            id: animationOpening
+
+            PauseAnimation {
+                duration: 1000
+            }
+            PropertyAnimation {
+                target: imageLogo
+                properties: "scale"
+                //from: 0
+                to: 1.2
+                duration: 500
+            }
+            PropertyAnimation {
+                target: imageLogo
+                properties: "scale"
+                //from: 0
+                to: 1
+                duration: 500
+            }
+            PropertyAnimation {
+                target: imageLogo
+                properties: "y"
+                //from: 0
+                to: 0
+                duration: 1000
+            }
+            PropertyAnimation {
+                target: rectangleContainerAuthentification
+                properties: "opacity"
+                //from: 0
+                to: 1
+                duration: 1000
+            }
+        }
+
+        Component.onCompleted: initPageAnimationOpening()
     }
+
+
 
 }
