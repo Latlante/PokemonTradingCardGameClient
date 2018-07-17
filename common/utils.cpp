@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <QDateTime>
+#include <QFile>
 #include "common/database.h"
 
 Utils::Utils(QObject *parent) : QObject(parent)
@@ -31,6 +32,38 @@ unsigned short Utils::selectRandomCardsPokemon()
 unsigned short Utils::selectRandomCardsEnergy()
 {
     return randomValue(INDEX_START_ENERGIES, INDEX_START_ENERGIES+13);
+}
+
+QString Utils::ipAddress()
+{
+    QString ipAddress;
+    QFile fileAccess("Files/access.txt");
+
+    if(fileAccess.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QString content = fileAccess.readAll();
+        fileAccess.close();
+
+        ipAddress = content.section("\n", 0, 0);
+    }
+
+    return ipAddress;
+}
+
+int Utils::port()
+{
+    int port = 0;
+    QFile fileAccess("Files/access.txt");
+
+    if(fileAccess.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QString content = fileAccess.readAll();
+        fileAccess.close();
+
+        port = content.section("\n", 1, 1).toInt();
+    }
+
+    return port;
 }
 
 int Utils::randomValue(int min, int max)

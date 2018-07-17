@@ -29,6 +29,9 @@ public:
     static unsigned short selectRandomCardsPokemon();
     static unsigned short selectRandomCardsEnergy();
 
+    static QString ipAddress() const;
+    static int port();
+
 //private:
     static int randomValue(int min, int max);
 };

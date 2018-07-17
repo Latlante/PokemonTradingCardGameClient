@@ -42,7 +42,8 @@ SOURCES += \
     src_Packets/packettrash.cpp \
     gamemanager.cpp \
     player.cpp \
-    utils.cpp
+    src_Communication/socketclient.cpp \
+    common/utils.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -87,4 +88,5 @@ HEADERS += \
     src_Packets/packettrash.h \
     gamemanager.h \
     player.h \
-    utils.h
+    src_Communication/socketclient.h \
+    common/utils.h
