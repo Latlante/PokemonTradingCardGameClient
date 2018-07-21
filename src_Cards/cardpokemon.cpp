@@ -6,7 +6,7 @@
 #include <QUrl>
 #include "gamemanager.h"
 #include "player.h"
-#include "utils.h"
+#include "common/utils.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Models/modellistenergies.h"
 #include "src_Packets/packettrash.h"

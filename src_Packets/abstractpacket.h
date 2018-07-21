@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QtQml/qqml.h>
-#include "utils.h"
+#include "common/utils.h"
 
 class AbstractCard;
 

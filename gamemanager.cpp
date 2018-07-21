@@ -10,7 +10,7 @@
 #include "src_Packets/packethand.h"
 #include "src_Packets/packetrewards.h"
 #include "src_Packets/packettrash.h"
-#include "utils.h"
+#include "common/utils.h"
 
 const int GameManager::m_NUMBER_FIRST_CARDS = 7;
 const int GameManager::m_NUMBER_REWARDS = 6;

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include "src_Cards/cardpokemon.h"
-#include "utils.h"
+#include "common/utils.h"
 
 FightArea::FightArea(const QString &namePacket, QList<AbstractCard*> listCards) :
     AbstractPacketStatic(namePacket, listCards)
