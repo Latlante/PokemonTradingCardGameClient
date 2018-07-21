@@ -1,17 +1,18 @@
 import QtQuick 2.0
+import model 1.0
 
 Item {
     height: 600
 
-    property int stepAuthentification: 0
+    property bool stepInProgress: ctrlGameBoard.stepInProgress
 
-    onStepAuthentificationChanged: {
-        if(stepAuthentification == 0)
+    onStepInProgressChanged: {
+        if(stepInProgress == false)
         {
             column1.visible = true
             loading_P1.visible = false
         }
-        else if(stepAuthentification == 1)
+        else if(stepInProgress == true)
         {
             column1.visible = false
             loading_P1.visible = true
@@ -140,7 +141,13 @@ Item {
                             id: mouseAreaButtonAuthentification
                             anchors.fill: parent
 
-                            onClicked: ctrlGameBoard.authentifiate(textEditName.text, textEditPassword.text)
+                            onClicked: {
+                                console.log("bouton Authentification cliqué")
+                                if((textEditName.text != "") && (textEditPassword.text != ""))
+                                    ctrlGameBoard.authentificate(textEditName.text, textEditPassword.text)
+                                else
+                                    console.log("Error: login and/or password is empty");
+                            }
                         }
                     }
                 }
