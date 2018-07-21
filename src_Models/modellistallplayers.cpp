@@ -1,4 +1,5 @@
 #include "modellistallplayers.h"
+#include <QDebug>
 #include <QtQml/qqml.h>
 
 ModelListAllPlayers::ModelListAllPlayers(QObject *parent) :
@@ -18,8 +19,10 @@ void ModelListAllPlayers::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
-void ModelListAllPlayers::addNewPlayer(const QString &name)
+void ModelListAllPlayers::addNewPlayer(int idPlayer, const QString &name)
 {
+    qDebug() << __PRETTY_FUNCTION__ << name;
+
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_listOfPlayers.append(name);
     endInsertRows();
@@ -27,8 +30,8 @@ void ModelListAllPlayers::addNewPlayer(const QString &name)
 
 void ModelListAllPlayers::addListNewPlayers(const QStringList &listPlayers)
 {
-    foreach(QString name, listPlayers)
-        addNewPlayer(name);
+    for(int i=0;i<listPlayers.count();++i)
+        addNewPlayer(i, listPlayers[i]);
 }
 
 void ModelListAllPlayers::removeOnePlayer(const QString &name)
@@ -45,6 +48,7 @@ void ModelListAllPlayers::removeOnePlayer(const QString &name)
 
 QVariant ModelListAllPlayers::data(const QModelIndex &index, int role) const
 {
+    //qDebug() << __PRETTY_FUNCTION__;
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))
     {
@@ -54,6 +58,7 @@ QVariant ModelListAllPlayers::data(const QModelIndex &index, int role) const
 
     if (Qt::DisplayRole == role)
     {
+        //qDebug() << __PRETTY_FUNCTION__ << m_listOfPlayers[iRow];
         return m_listOfPlayers[iRow];
     }
 

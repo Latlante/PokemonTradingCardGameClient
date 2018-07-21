@@ -7,7 +7,8 @@
 #include "src_Controler/ctrlgameboard.h"
 #include "src_Controler/ctrlpopups.h"
 #include "src_Controler/ctrlselectingcards.h"
-#include "src_Models/listplayers.h"
+#include "src_Models/modellistallplayers.h"
+#include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistenergies.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
@@ -40,7 +41,8 @@ int main(int argc, char *argv[])
     CtrlGameBoard::declareQML();
     CtrlPopups::declareQML();
     CtrlSelectingCards::declareQML();
-    ListPlayers::declareQML();
+    ModelListAllPlayers::declareQML();
+    ModelListOfGamesAvailable::declareQML();
     ModelListEnergies::declareQML();
     ModelPopupSelectCardInPacket::declareQML();
     ModelPopupSelectEnergyInPokemon::declareQML();

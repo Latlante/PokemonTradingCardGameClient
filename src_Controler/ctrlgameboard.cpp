@@ -1,5 +1,8 @@
 #include "ctrlgameboard.h"
 #include <QEventLoop>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QQmlEngine>
 #include <QQmlApplicationEngine>
 #include <QDebug>
@@ -13,8 +16,8 @@
 #include "src_Controler/ctrlpopups.h"
 #include "src_Controler/ctrlselectingcards.h"
 #include "src_Models/factorymainpageloader.h"
-#include "src_Models/listplayers.h"
 #include "src_Models/modellistallplayers.h"
+#include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Packets/bencharea.h"
 #include "src_Packets/packetdeck.h"
@@ -25,14 +28,14 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_socket(new SocketClient()),
     m_gameManager(GameManager::createInstance()),
     m_listAllPlayers(new ModelListAllPlayers()),
+    m_listOfGamesAvailable(new ModelListOfGamesAvailable()),
     m_factoryMainPageLoader(new FactoryMainPageLoader()),
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
-    m_ctrlSelectingCards(ctrlSelectCards)
+    m_ctrlSelectingCards(ctrlSelectCards),
+    m_stepInProgress(false)
 {
     //initGame();
-    connect(m_socket, &SocketClient::connected, this, &CtrlGameBoard::onConnected_SocketClient);
-
     connect(&m_ctrlSelectingCards, &CtrlSelectingCards::listsComplete, this, &CtrlGameBoard::onListsComplete_CtrlSelectingCards);
     connect(m_gameManager, &GameManager::indexCurrentPlayerChanged, this, &CtrlGameBoard::currentPlayerChanged);
     connect(m_gameManager, &GameManager::gameStatusChanged, this, &CtrlGameBoard::gameStatusChanged);
@@ -51,6 +54,7 @@ CtrlGameBoard::~CtrlGameBoard()
 {
     delete m_socket;
     delete m_listAllPlayers;
+    delete m_listOfGamesAvailable;
     delete m_factoryMainPageLoader;
 }
 
@@ -99,14 +103,14 @@ ConstantesQML::StepGame CtrlGameBoard::gameStatus()
     return m_gameManager->gameStatus();
 }
 
-ListPlayers* CtrlGameBoard::newListPlayers()
-{
-    return new ListPlayers();
-}
-
 ModelListAllPlayers* CtrlGameBoard::modelAllPlayers()
 {
     return m_listAllPlayers;
+}
+
+ModelListOfGamesAvailable* CtrlGameBoard::modelAllOfGamesAvailable()
+{
+    return m_listOfGamesAvailable;
 }
 
 FactoryMainPageLoader* CtrlGameBoard::factory()
@@ -131,7 +135,11 @@ bool CtrlGameBoard::stepInProgress()
 
 void CtrlGameBoard::setStepInProgress(bool inProgress)
 {
-    m_stepInProgress = inProgress;
+    if(m_stepInProgress != inProgress)
+    {
+        m_stepInProgress = inProgress;
+        emit stepInProgressChanged();
+    }
 }
 
 void CtrlGameBoard::authentificate(const QString &name, const QString &password)
@@ -139,31 +147,97 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
     qDebug() << __PRETTY_FUNCTION__;
     setStepInProgress(true);
 
-    if(m_socket->tryToConnect(10000))
+    if(m_socket->tryToConnect())
     {
-        if(m_socket->authentificate(name, password))
+        qDebug() << __PRETTY_FUNCTION__ << "Connection success";
+
+        QJsonDocument jsonResponse;
+        if(m_socket->authentificate(name, password, jsonResponse))
         {
+            qDebug() << __PRETTY_FUNCTION__ << "Authentification success";
+
+            QJsonObject obj = jsonResponse.object();
+            m_socket->setToken(obj["token"].toString());
+
+            QJsonArray arrayGames = obj["games"].toArray();
+            for(int i=0;i<arrayGames.count();++i)
+            {
+                QJsonObject objGame = arrayGames[i].toObject();
+                m_listOfGamesAvailable->addNewGame(objGame["uid"].toInt(),
+                                                   objGame["name"].toString(),
+                                                   //objGame["opponent"].toString());
+                                                   "opponent");
+            }
+
             setStepInProgress(false);
             m_factoryMainPageLoader->displayCreateChooseGame();
         }
+        else
+        {
+            setStepInProgress(false);
+            qDebug() << __PRETTY_FUNCTION__ << "Error during the authentification";
+        }
+    }
+    else
+    {
+        setStepInProgress(false);
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
     }
 }
 
 void CtrlGameBoard::listOfAllPlayers()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+    setStepInProgress(true);
+
     //Get list of all players
-    QStringList listPlayers = m_socket->listAllPlayers();
+    QJsonDocument jsonResponse;
+
+    if(m_socket->listAllPlayers(jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        QJsonArray arrayPlayers = obj["players"].toArray();
+        for(int i=0;i<arrayPlayers.count();++i)
+        {
+            //MODIF A VENIR
+            //QJsonObject objPlayer = arrayPlayers[i].toObject();
+            //m_listAllPlayers->addNewPlayer(objPlayer["id"].toInt(), objPlayer["name"].toString());
+
+            m_listAllPlayers->addNewPlayer(i, arrayPlayers[i].toString());
+        }
+
+        if(m_listAllPlayers->rowCount() > 0)
+        {
+            setStepInProgress(false);
+            m_factoryMainPageLoader->displayAllPlayers();
+        }
+    }
 }
 
 void CtrlGameBoard::createANewGame(const QString &opponent)
 {
+    qDebug() << __PRETTY_FUNCTION__ << opponent;
+    if(m_socket->createANewGame())
+    {
+        m_factoryMainPageLoader->displaySelectCards();
+    }
+}
 
+void CtrlGameBoard::listOfGamesAvailable()
+{
 
 }
 
 void CtrlGameBoard::joinAGame(int idGame)
 {
 
+}
+
+void CtrlGameBoard::returnToTheMenu()
+{
+    m_factoryMainPageLoader->displayCreateChooseGame();
 }
 
 void CtrlGameBoard::onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers)

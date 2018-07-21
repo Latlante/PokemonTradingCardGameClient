@@ -25,7 +25,6 @@ SOURCES += \
     src_Controler/ctrlpopups.cpp \
     src_Controler/ctrlselectingcards.cpp \
     src_Models/factorymainpageloader.cpp \
-    src_Models/listplayers.cpp \
     src_Models/modellistenergies.cpp \
     src_Models/modelpopupselectcardinpacket.cpp \
     src_Models/modelpopupselectenergyinpokemon.cpp \
@@ -44,7 +43,9 @@ SOURCES += \
     player.cpp \
     src_Communication/socketclient.cpp \
     common/utils.cpp \
-    src_Models/modellistallplayers.cpp
+    src_Models/modellistallplayers.cpp \
+    src_Models/modellistofgamesavailable.cpp \
+    Share/constantesshared.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -72,7 +73,6 @@ HEADERS += \
     src_Controler/ctrlpopups.h \
     src_Controler/ctrlselectingcards.h \
     src_Models/factorymainpageloader.h \
-    src_Models/listplayers.h \
     src_Models/modellistenergies.h \
     src_Models/modelpopupselectcardinpacket.h \
     src_Models/modelpopupselectenergyinpokemon.h \
@@ -91,4 +91,6 @@ HEADERS += \
     player.h \
     src_Communication/socketclient.h \
     common/utils.h \
-    src_Models/modellistallplayers.h
+    src_Models/modellistallplayers.h \
+    src_Models/modellistofgamesavailable.h \
+    Share/constantesshared.h

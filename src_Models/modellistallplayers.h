@@ -12,12 +12,12 @@ public:
 
     static void declareQML();
 
-    void addNewPlayer(const QString& name);
+    void addNewPlayer(int idPlayer, const QString& name);
     void addListNewPlayers(const QStringList& listPlayers);
     void removeOnePlayer(const QString& name);
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
-    virtual int rowCount(const QModelIndex &parent) const override;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 protected:
     QHash<int, QByteArray> roleNames() const override;

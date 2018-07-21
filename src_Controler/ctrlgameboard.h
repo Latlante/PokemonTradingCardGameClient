@@ -14,8 +14,8 @@ class Player;
 class CtrlAnimation;
 class CtrlPopups;
 class CtrlSelectingCards;
-class ListPlayers;
 class ModelListAllPlayers;
+class ModelListOfGamesAvailable;
 class ModelPopupSelectCardInPacket;
 class BenchArea;
 class PacketDeck;
@@ -40,8 +40,8 @@ public:
     Player* currentPlayer();
     ConstantesQML::StepGame gameStatus();
 
-    Q_INVOKABLE ListPlayers* newListPlayers();
     Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
+    Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
     Q_INVOKABLE FactoryMainPageLoader* factory();
     Q_INVOKABLE void initGame();
     Q_INVOKABLE Player* playerAt(int index);
@@ -49,13 +49,14 @@ public:
     bool stepInProgress();
     void setStepInProgress(bool inProgress);
 
-    //Authentification
+    //Actions
     Q_INVOKABLE void authentificate(const QString& name, const QString& password);
 
-    //Creation and choose game
     Q_INVOKABLE void listOfAllPlayers();
     Q_INVOKABLE void createANewGame(const QString& opponent);
+    Q_INVOKABLE void listOfGamesAvailable();
     Q_INVOKABLE void joinAGame(int idGame);
+    Q_INVOKABLE void returnToTheMenu();
 
     Q_INVOKABLE void onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers);
     Q_INVOKABLE void displaySelectingCardsForNextPlayers();
@@ -91,6 +92,7 @@ private:
     SocketClient* m_socket;
     GameManager* m_gameManager;
     ModelListAllPlayers* m_listAllPlayers;
+    ModelListOfGamesAvailable* m_listOfGamesAvailable;
     FactoryMainPageLoader* m_factoryMainPageLoader;
     CtrlAnimation& m_ctrlAnim;
     CtrlPopups& m_ctrlPopups;
