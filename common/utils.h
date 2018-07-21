@@ -29,7 +29,7 @@ public:
     static unsigned short selectRandomCardsPokemon();
     static unsigned short selectRandomCardsEnergy();
 
-    static QString ipAddress() const;
+    static QString ipAddress();
     static int port();
 
 //private:
