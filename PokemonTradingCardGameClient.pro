@@ -43,7 +43,8 @@ SOURCES += \
     gamemanager.cpp \
     player.cpp \
     src_Communication/socketclient.cpp \
-    common/utils.cpp
+    common/utils.cpp \
+    src_Models/modellistallplayers.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -89,4 +90,5 @@ HEADERS += \
     gamemanager.h \
     player.h \
     src_Communication/socketclient.h \
-    common/utils.h
+    common/utils.h \
+    src_Models/modellistallplayers.h

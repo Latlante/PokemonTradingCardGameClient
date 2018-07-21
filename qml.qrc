@@ -21,5 +21,6 @@
         <file alias="Login.qml">qml/Login.qml</file>
         <file alias="Loading_P.qml">qml/BasicComponents/Loading_P.qml</file>
         <file alias="CreateChooseGame.qml">qml/CreateChooseGame.qml</file>
+        <file alias="PageListPlayers.qml">qml/PageListPlayers.qml</file>
     </qresource>
 </RCC>

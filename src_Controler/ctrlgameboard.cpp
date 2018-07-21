@@ -8,11 +8,13 @@
 
 #include "player.h"
 #include "src_Cards/cardpokemon.h"
+#include "src_Communication/socketclient.h"
 #include "src_Controler/ctrlanimation.h"
 #include "src_Controler/ctrlpopups.h"
 #include "src_Controler/ctrlselectingcards.h"
 #include "src_Models/factorymainpageloader.h"
 #include "src_Models/listplayers.h"
+#include "src_Models/modellistallplayers.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Packets/bencharea.h"
 #include "src_Packets/packetdeck.h"
@@ -20,13 +22,17 @@
 
 CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ctrlPopups, CtrlAnimation &ctrlAnim, QObject *parent) :
     QObject(parent),
+    m_socket(new SocketClient()),
     m_gameManager(GameManager::createInstance()),
+    m_listAllPlayers(new ModelListAllPlayers()),
     m_factoryMainPageLoader(new FactoryMainPageLoader()),
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards)
 {
     //initGame();
+    connect(m_socket, &SocketClient::connected, this, &CtrlGameBoard::onConnected_SocketClient);
+
     connect(&m_ctrlSelectingCards, &CtrlSelectingCards::listsComplete, this, &CtrlGameBoard::onListsComplete_CtrlSelectingCards);
     connect(m_gameManager, &GameManager::indexCurrentPlayerChanged, this, &CtrlGameBoard::currentPlayerChanged);
     connect(m_gameManager, &GameManager::gameStatusChanged, this, &CtrlGameBoard::gameStatusChanged);
@@ -43,6 +49,8 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
 
 CtrlGameBoard::~CtrlGameBoard()
 {
+    delete m_socket;
+    delete m_listAllPlayers;
     delete m_factoryMainPageLoader;
 }
 
@@ -96,6 +104,11 @@ ListPlayers* CtrlGameBoard::newListPlayers()
     return new ListPlayers();
 }
 
+ModelListAllPlayers* CtrlGameBoard::modelAllPlayers()
+{
+    return m_listAllPlayers;
+}
+
 FactoryMainPageLoader* CtrlGameBoard::factory()
 {
     return m_factoryMainPageLoader;
@@ -111,7 +124,44 @@ Player* CtrlGameBoard::playerAt(int index)
     return m_gameManager->playerAt(index);
 }
 
-void CtrlGameBoard::authentifiate(const QString &name, const QString &password)
+bool CtrlGameBoard::stepInProgress()
+{
+    return m_stepInProgress;
+}
+
+void CtrlGameBoard::setStepInProgress(bool inProgress)
+{
+    m_stepInProgress = inProgress;
+}
+
+void CtrlGameBoard::authentificate(const QString &name, const QString &password)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    setStepInProgress(true);
+
+    if(m_socket->tryToConnect(10000))
+    {
+        if(m_socket->authentificate(name, password))
+        {
+            setStepInProgress(false);
+            m_factoryMainPageLoader->displayCreateChooseGame();
+        }
+    }
+}
+
+void CtrlGameBoard::listOfAllPlayers()
+{
+    //Get list of all players
+    QStringList listPlayers = m_socket->listAllPlayers();
+}
+
+void CtrlGameBoard::createANewGame(const QString &opponent)
+{
+
+
+}
+
+void CtrlGameBoard::joinAGame(int idGame)
 {
 
 }

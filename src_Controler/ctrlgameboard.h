@@ -15,35 +15,47 @@ class CtrlAnimation;
 class CtrlPopups;
 class CtrlSelectingCards;
 class ListPlayers;
+class ModelListAllPlayers;
 class ModelPopupSelectCardInPacket;
 class BenchArea;
 class PacketDeck;
 class PacketRewards;
+class SocketClient;
 
 class CtrlGameBoard : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Player* currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
     Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
+    Q_PROPERTY(bool stepInProgress READ stepInProgress WRITE setStepInProgress NOTIFY stepInProgressChanged)
+
 
 public:
     explicit CtrlGameBoard(CtrlSelectingCards& ctrlSelectCards, CtrlPopups& ctrlPopups, CtrlAnimation& ctrlAnim, QObject *parent = nullptr);
     ~CtrlGameBoard();
 
     static void declareQML();
-
     bool install(QQmlApplicationEngine *pEngine);
 
     Player* currentPlayer();
     ConstantesQML::StepGame gameStatus();
 
     Q_INVOKABLE ListPlayers* newListPlayers();
+    Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
     Q_INVOKABLE FactoryMainPageLoader* factory();
     Q_INVOKABLE void initGame();
     Q_INVOKABLE Player* playerAt(int index);
 
+    bool stepInProgress();
+    void setStepInProgress(bool inProgress);
+
     //Authentification
-    Q_INVOKABLE void authentifiate(const QString& name, const QString& password);
+    Q_INVOKABLE void authentificate(const QString& name, const QString& password);
+
+    //Creation and choose game
+    Q_INVOKABLE void listOfAllPlayers();
+    Q_INVOKABLE void createANewGame(const QString& opponent);
+    Q_INVOKABLE void joinAGame(int idGame);
 
     Q_INVOKABLE void onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers);
     Q_INVOKABLE void displaySelectingCardsForNextPlayers();
@@ -60,6 +72,7 @@ signals:
     void nextPlayer();
     void currentPlayerChanged();
     void gameStatusChanged();
+    void stepInProgressChanged();
 
 private slots:
     void onListsComplete_CtrlSelectingCards();
@@ -75,11 +88,15 @@ private slots:
     void onMovingCardAnimationStart();
 
 private:
+    SocketClient* m_socket;
     GameManager* m_gameManager;
+    ModelListAllPlayers* m_listAllPlayers;
     FactoryMainPageLoader* m_factoryMainPageLoader;
     CtrlAnimation& m_ctrlAnim;
     CtrlPopups& m_ctrlPopups;
     CtrlSelectingCards& m_ctrlSelectingCards;
+
+    bool m_stepInProgress;
 
 };
 
