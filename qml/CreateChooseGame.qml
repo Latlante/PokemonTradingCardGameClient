@@ -1,7 +1,25 @@
 import QtQuick 2.0
+import model 1.0
 
 Item {
     height: 600
+
+    property bool stepInProgress: ctrlGameBoard.stepInProgress
+    property ModelListOfGamesAvailable modelGamesAvailable: ctrlGameBoard.modelAllOfGamesAvailable()
+    property int numberOfGamesAvailable: modelGamesAvailable.count
+
+    onStepInProgressChanged: {
+        if(stepInProgress == false)
+        {
+            column1.visible = true
+            loading_P1.visible = false
+        }
+        else if(stepInProgress == true)
+        {
+            column1.visible = false
+            loading_P1.visible = true
+        }
+    }
 
     Rectangle {
         id: rectangleBackground
@@ -23,7 +41,7 @@ Item {
             id: rectangleContainerCreateChooseGame
             x: 204
             y: 202
-            width: 254
+            width: 300
             height: 244
             color: "#00000000"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -77,7 +95,8 @@ Item {
                             anchors.fill: parent
 
                             onClicked: {
-
+                                buttonCreateNewGame.enabled = false
+                                ctrlGameBoard.listOfAllPlayers()
                             }
                         }
                     }
@@ -89,6 +108,7 @@ Item {
                     height: 50
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: "#ffffff"
+                    enabled: numberOfGamesAvailable > 0
 
                     Text {
                         id: textButtonJoinGame
@@ -103,24 +123,32 @@ Item {
                             id: mouseAreaButtonJoinGame
                             anchors.fill: parent
                             onClicked: {
-
+                                ctrlGameBoard.listOfGamesAvailable()
                             }
                         }
                     }
                 }
-
 
                 Text {
                     id: textGameInProgress
                     width: parent.width
                     height: 30
                     color: "#ffffff"
-                    text: qsTr("Parties en cours: 1")
+                    text: qsTr("Parties en cours: ") + numberOfGamesAvailable
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: 16
                     font.bold: true
                 }
+            }
+
+            Loading_P {
+                id: loading_P1
+                width: 100
+                height: 100
+                visible: false
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
