@@ -12,12 +12,17 @@ public:
     explicit SocketClient(QObject *parent = nullptr);
     ~SocketClient();
 
-    bool tryToConnect();
-    void authentificate(const QString& name, const QString& password);
+    bool tryToConnect(int timeoutMs = 10000);
+    bool authentificate(const QString& name, const QString& password);
+    QStringList listAllPlayers();
+    int createANewGame();
+    void removeAGame();
 
 signals:
+    void connected();
 
 private slots:
+    void onConnected_Socket();
     void onReadyRead_Socket();
 
 private:
