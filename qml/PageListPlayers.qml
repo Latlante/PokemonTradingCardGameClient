@@ -28,6 +28,19 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 0
 
+                model: ctrlGameBoard.modelAllPlayers()
+                delegate: Rectangle {
+                    width: parent.width
+                    height: 30
+                    color: "blue"
+
+                    Text {
+                        id: textNamePlayer
+                        anchors.fill: parent
+                        color: "black"
+                        text: model.name
+                    }
+                }
             }
 
             Rectangle {
@@ -50,6 +63,7 @@ Item {
                     MouseArea {
                         id: mouseAreaBtOk
                         anchors.fill: parent
+                        onClicked: ctrlGameBoard.createANewGame(listViewAllPlayers.currentItem)
                     }
                 }
 
@@ -70,13 +84,16 @@ Item {
                     id: textBtCancel
                     text: qsTr("Annuler")
                     verticalAlignment: Text.AlignVCenter
-                    MouseArea {
-                        id: mouseAreaBtCancel
-                        anchors.fill: parent
-                    }
                     horizontalAlignment: Text.AlignHCenter
                     anchors.fill: parent
                     font.pixelSize: 20
+
+                    MouseArea {
+                        id: mouseAreaBtCancel
+                        anchors.fill: parent
+
+                        onClicked: ctrlGameBoard.returnToTheMenu()
+                    }
                 }
             }
         }

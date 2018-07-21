@@ -16,6 +16,7 @@ public:
     QString link();
 
     void displayLogin();
+    void displayAllPlayers();
     void displayCreateChooseGame();
     void displaySelectPlayers();
     void displaySelectCards();
