@@ -2,6 +2,7 @@
 #define SOCKETCLIENT_H
 
 #include <QObject>
+#include <QJsonDocument>
 
 class QTcpSocket;
 
@@ -12,11 +13,15 @@ public:
     explicit SocketClient(QObject *parent = nullptr);
     ~SocketClient();
 
-    bool tryToConnect(int timeoutMs = 10000);
-    bool authentificate(const QString& name, const QString& password);
-    QStringList listAllPlayers();
+    int timeOut();
+    void setTimeOut(int timer);
+    void setToken(const QString& token);
+
+    bool tryToConnect();
+    bool authentificate(const QString& name, const QString& password, QJsonDocument& jsonResponse);
+    bool listAllPlayers(QJsonDocument &jsonResponse);
     int createANewGame();
-    void removeAGame();
+    bool removeAGame();
 
 signals:
     void connected();
@@ -27,6 +32,10 @@ private slots:
 
 private:
     QTcpSocket* m_socket;
+    int m_timeOut;
+    QString m_token;
+
+    bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
 };
 
 #endif // SOCKETCLIENT_H
