@@ -19,7 +19,6 @@ CardAction::CardAction(const CardAction &card) :
 
 CardAction::~CardAction()
 {
-    //delete m_action;
 }
 
 /************************************************************
@@ -53,15 +52,6 @@ AbstractCard* CardAction::clone()
 const QString CardAction::description()
 {
 	return m_description;
-}
-
-AbstractAction* CardAction::action()
-{
-    return nullptr;
-}
-
-void CardAction::executeAction(CardPokemon *pokemonAttached)
-{
 }
 
 CardAction& CardAction::operator =(const CardAction& source)

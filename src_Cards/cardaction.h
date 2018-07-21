@@ -20,9 +20,6 @@ public:
     AbstractCard* clone() override;
 
     Q_INVOKABLE const QString description();
-    AbstractAction* action();
-	
-    void executeAction(CardPokemon* pokemonAttached);
 
     CardAction& operator =(const CardAction& source);
 
