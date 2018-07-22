@@ -53,7 +53,7 @@ public:
     Q_INVOKABLE void authentificate(const QString& name, const QString& password);
 
     Q_INVOKABLE void listOfAllPlayers();
-    Q_INVOKABLE void createANewGame(const QString& opponent);
+    Q_INVOKABLE void createANewGame(const QString& nameGame, int idOpponent);
     Q_INVOKABLE void listOfGamesAvailable();
     Q_INVOKABLE void joinAGame(int idGame);
     Q_INVOKABLE void returnToTheMenu();
@@ -99,6 +99,7 @@ private:
     CtrlSelectingCards& m_ctrlSelectingCards;
 
     bool m_stepInProgress;
+    int m_idGame;
 
 };
 

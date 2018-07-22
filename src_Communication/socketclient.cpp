@@ -122,9 +122,28 @@ bool SocketClient::listAllPlayers(QJsonDocument &jsonResponse)
     return success;
 }
 
-int SocketClient::createANewGame()
+bool SocketClient::createANewGame(const QString &nameGame, int idOpponent, QJsonDocument &jsonResponse)
 {
-    return 1;
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_CreateANewGame);
+    jsonRequest["token"] = m_token;
+    jsonRequest["name"] = nameGame;
+    jsonRequest["uidOtherPlayer"] = idOpponent;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
 }
 
 bool SocketClient::removeAGame()
@@ -160,7 +179,7 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
     connect(m_socket, &QTcpSocket::readyRead, &loop, &QEventLoop::quit);
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
 
-    m_socket->write(jsonSender.toJson());
+    m_socket->write(jsonSender.toJson(QJsonDocument::Compact));
 
     loop.exec();
     QByteArray response = m_socket->readAll();

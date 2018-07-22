@@ -20,7 +20,7 @@ public:
     bool tryToConnect();
     bool authentificate(const QString& name, const QString& password, QJsonDocument& jsonResponse);
     bool listAllPlayers(QJsonDocument &jsonResponse);
-    int createANewGame();
+    bool createANewGame(const QString& nameGame, int idOpponent, QJsonDocument &jsonResponse);
     bool removeAGame();
 
 signals:

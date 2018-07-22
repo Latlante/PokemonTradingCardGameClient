@@ -33,7 +33,8 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards),
-    m_stepInProgress(false)
+    m_stepInProgress(false),
+    m_idGame(0)
 {
     //initGame();
     connect(&m_ctrlSelectingCards, &CtrlSelectingCards::listsComplete, this, &CtrlGameBoard::onListsComplete_CtrlSelectingCards);
@@ -199,6 +200,7 @@ void CtrlGameBoard::listOfAllPlayers()
         QJsonObject obj = jsonResponse.object();
 
         QJsonArray arrayPlayers = obj["players"].toArray();
+        m_listAllPlayers->clear();
         for(int i=0;i<arrayPlayers.count();++i)
         {
             //MODIF A VENIR
@@ -216,23 +218,43 @@ void CtrlGameBoard::listOfAllPlayers()
     }
 }
 
-void CtrlGameBoard::createANewGame(const QString &opponent)
+void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
 {
-    qDebug() << __PRETTY_FUNCTION__ << opponent;
-    if(m_socket->createANewGame())
+    qDebug() << __PRETTY_FUNCTION__ << nameGame << idOpponent;
+    setStepInProgress(true);
+
+    QJsonDocument jsonResponse;
+
+    if(m_socket->createANewGame(nameGame, idOpponent, jsonResponse))
     {
-        m_factoryMainPageLoader->displaySelectCards();
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj["idGame"].toInt() != 0)
+        {
+            m_idGame = obj["idGame"].toInt();
+            m_listOfGamesAvailable->addNewGame(m_idGame, nameGame, m_listAllPlayers->namePlayerFromId(idOpponent));
+            setStepInProgress(false);
+            m_factoryMainPageLoader->displaySelectCards();
+        }
     }
 }
 
 void CtrlGameBoard::listOfGamesAvailable()
 {
-
+    if(m_listOfGamesAvailable->count() > 1)
+    {
+        m_factoryMainPageLoader->displayAllGamesAvailable();
+    }
+    else if(m_listOfGamesAvailable->count() == 1)
+    {
+        joinAGame(m_listOfGamesAvailable->id(0));
+    }
 }
 
 void CtrlGameBoard::joinAGame(int idGame)
 {
-
+    m_factoryMainPageLoader->displayBoard();
 }
 
 void CtrlGameBoard::returnToTheMenu()

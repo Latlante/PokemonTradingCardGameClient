@@ -19,6 +19,33 @@ void ModelListOfGamesAvailable::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+int ModelListOfGamesAvailable::id(int index)
+{
+    int id = 0;
+    if((index >= 0) && (index < m_listGames.count()))
+        id = m_listGames[index].id;
+
+    return id;
+}
+
+QString ModelListOfGamesAvailable::name(int index) const
+{
+    QString name = "";
+    if((index >= 0) && (index < m_listGames.count()))
+        name = m_listGames[index].name;
+
+    return name;
+}
+
+QString ModelListOfGamesAvailable::opponent(int index) const
+{
+    QString opponent = "";
+    if((index >= 0) && (index < m_listGames.count()))
+        opponent = m_listGames[index].name;
+
+    return opponent;
+}
+
 void ModelListOfGamesAvailable::addNewGame(int idGame, const QString& nameGame, const QString& opponent)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -43,6 +70,11 @@ void ModelListOfGamesAvailable::removeGame(int index)
 int ModelListOfGamesAvailable::count()
 {
     return m_listGames.count();
+}
+
+void ModelListOfGamesAvailable::clear()
+{
+    m_listGames.clear();
 }
 
 QVariant ModelListOfGamesAvailable::data(const QModelIndex &index, int role) const

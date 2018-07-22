@@ -12,11 +12,15 @@ public:
 
     static void declareQML();
 
+    QString namePlayerFromId(int id) const;
+
     void addNewPlayer(int idPlayer, const QString& name);
     void addListNewPlayers(const QStringList& listPlayers);
     void removeOnePlayer(const QString& name);
+    void clear();
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
+    //virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 protected:

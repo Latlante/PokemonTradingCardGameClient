@@ -10,12 +10,66 @@ Item {
         id: background
         anchors.fill: parent
 
-        color: "#AAAAAA"
+        color: "#2b95ff"
 
         Rectangle {
             id: rectangleContainerListView
+            anchors.rightMargin: 10
+            anchors.leftMargin: 10
+            anchors.bottomMargin: 10
+            anchors.topMargin: 10
             anchors.fill: parent
             anchors.margins: 0
+
+            Text {
+                id: textNameGame
+                height: 20
+                text: qsTr("Nom de la partie")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                font.pixelSize: 20
+            }
+
+            Rectangle {
+                id: rectangleContainerNameGame
+                height: 25
+                color: "#ffffff"
+                border.width: 1
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.top: textNameGame.bottom
+                anchors.topMargin: 0
+
+                TextInput {
+                    id: textInputNameGame
+                    text: qsTr("Partie n1")
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.fill: parent
+                    font.pixelSize: 18
+                }
+            }
+
+            Text {
+                id: textOpponent
+                text: qsTr("Adversaire")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.top: rectangleContainerNameGame.bottom
+                anchors.topMargin: 10
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 20
+            }
 
             ListView {
                 id: listViewAllPlayers
@@ -25,77 +79,65 @@ Item {
                 anchors.leftMargin: 0
                 anchors.bottom: boutonOk.top
                 anchors.bottomMargin: 0
-                anchors.top: parent.top
+                anchors.top: textOpponent.bottom
                 anchors.topMargin: 0
 
                 model: ctrlGameBoard.modelAllPlayers()
                 delegate: Rectangle {
                     width: parent.width
                     height: 30
-                    color: "blue"
+                    color: index == listViewAllPlayers.currentIndex ? "lightgray" : "white"
 
                     Text {
                         id: textNamePlayer
                         anchors.fill: parent
+                        font.pixelSize: 20
                         color: "black"
                         text: model.name
+
+                        MouseArea {
+                            id: mouseAreaNamePlayer
+                            anchors.fill: parent
+                            onClicked: listViewAllPlayers.currentIndex = index
+                        }
                     }
                 }
             }
 
-            Rectangle {
+
+
+
+            ButtonStyleGold {
                 id: boutonOk
 
                 width: parent.width / 2
                 height: 40
-                border.width: 1
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
+                text: qsTr("Ok")
 
-                Text {
-                    id: textBtOk
-                    text: qsTr("Ok")
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.fill: parent
-                    font.pixelSize: 20
-
-                    MouseArea {
-                        id: mouseAreaBtOk
-                        anchors.fill: parent
-                        onClicked: ctrlGameBoard.createANewGame(listViewAllPlayers.currentItem)
-                    }
-                }
-
-
+                onClicked: ctrlGameBoard.createANewGame(textInputNameGame.text, listViewAllPlayers.currentIndex+1)
             }
 
-            Rectangle {
+
+
+
+            ButtonStyleGold {
                 id: boutonCancel
-                y: -6
+
                 height: 40
-                border.width: 1
                 anchors.left: boutonOk.right
                 anchors.leftMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
-                Text {
-                    id: textBtCancel
-                    text: qsTr("Annuler")
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.fill: parent
-                    font.pixelSize: 20
+                text: qsTr("Cancel")
 
-                    MouseArea {
-                        id: mouseAreaBtCancel
-                        anchors.fill: parent
-
-                        onClicked: ctrlGameBoard.returnToTheMenu()
-                    }
-                }
+                onClicked: ctrlGameBoard.returnToTheMenu()
             }
+
+
+
         }
 
 

@@ -19,6 +19,15 @@ void ModelListAllPlayers::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+QString ModelListAllPlayers::namePlayerFromId(int id) const
+{
+    QString namePlayer = "";
+    if((id >= 0) && (id < m_listOfPlayers.count()))
+        namePlayer = m_listOfPlayers[id];
+
+    return namePlayer;
+}
+
 void ModelListAllPlayers::addNewPlayer(int idPlayer, const QString &name)
 {
     qDebug() << __PRETTY_FUNCTION__ << name;
@@ -46,6 +55,11 @@ void ModelListAllPlayers::removeOnePlayer(const QString &name)
     }
 }
 
+void ModelListAllPlayers::clear()
+{
+    m_listOfPlayers.clear();
+}
+
 QVariant ModelListAllPlayers::data(const QModelIndex &index, int role) const
 {
     //qDebug() << __PRETTY_FUNCTION__;
@@ -64,6 +78,15 @@ QVariant ModelListAllPlayers::data(const QModelIndex &index, int role) const
 
     return QVariant();
 }
+
+/*Qt::ItemFlags ModelListAllPlayers::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags currentFlags = QAbstractListModel::flags(index);
+
+    currentFlags |= Qt::ItemIsSelectable;
+
+    return currentFlags;
+}*/
 
 int ModelListAllPlayers::rowCount(const QModelIndex &) const
 {
