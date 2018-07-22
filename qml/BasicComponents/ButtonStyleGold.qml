@@ -10,25 +10,24 @@ Item {
     property alias text: textButton.text
     signal clicked
 
-    /*style: ButtonStyle {
-        background: Rectangle {
-            implicitWidth: 500
-            implicitHeight: 100
-            color: "#ffc90e"
-        }
-
-        label: Text {
-
-        }
-    }*/
-
     Rectangle {
         id: rectangleBackground
         property string backgroundNormal: "#ffc90e"
         property string backgroundPressed: "#ffe63c"
+        gradient: Gradient {
+            GradientStop {
+                position: 0.671
+                color: "#ffc90e"
+            }
+
+            GradientStop {
+                position: 1
+                color: "#ffffff"
+            }
+        }
 
         anchors.fill: parent
-        color: backgroundNormal
+        border.width: 2
     }
 
     Text {
@@ -47,6 +46,14 @@ Item {
         onReleased: rectangleBackground.color = rectangleBackground.backgroundNormal
 
         onClicked: buttonStyleGold.clicked();
+    }
+
+    Rectangle {
+        id: rectangle
+        color: "#00000000"
+        border.width: 1
+        anchors.margins: 5
+        anchors.fill: parent
     }
 
 }
