@@ -9,7 +9,6 @@ Item {
 
     property int colCount: 4
     property int space: 4   //PAS DE NOMBRE IMPAIRE
-    property bool lastPlayer: viewCards.model.lastPlayer
 
     Rectangle {
         id: background
@@ -116,7 +115,7 @@ Item {
                         anchors.bottom: parent.bottom
                         text: "-"
 
-                        onClicked: ctrlSelectingCards.removeACard(index)
+                        onClicked: model.quantity = model.quantity - 1
                     }
 
                     Rectangle {
@@ -144,7 +143,7 @@ Item {
                         anchors.bottom: parent.bottom
                         text: "+"
 
-                        onClicked: ctrlSelectingCards.addANewCard(index)
+                        onClicked: model.quantity = model.quantity + 1
                     }
                 }
             }
@@ -158,28 +157,13 @@ Item {
             anchors.leftMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
-            anchors.bottom: lastPlayer === true ? buttonOk.top : buttonNext.top
+            anchors.bottom: buttonOk.top
             anchors.bottomMargin: 10
             text: "Générer deck aléatoire"
 
             onClicked: ctrlSelectingCards.fillARandomList()
         }
 
-        ButtonStyleGold {
-            id: buttonNext
-            height: 40
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            visible: lastPlayer === false
-            text: "Joueur suivant"
-            enabled: viewCards.model.countTotalQuantity === viewCards.model.maxCards()
-
-            onClicked: ctrlSelectingCards.onClickedListFinished()
-        }
 
         ButtonStyleGold {
             id: buttonOk
@@ -190,7 +174,6 @@ Item {
             anchors.rightMargin: 10
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
-            visible: lastPlayer === true
             text: "OK"
             enabled: viewCards.model.countTotalQuantity === viewCards.model.maxCards()
 

@@ -11,8 +11,7 @@
 
 ModelSelectingCards::ModelSelectingCards(QObject *parent) :
     QAbstractListModel(parent),
-    m_listCardsSelected(QList<InfoCard*>()),
-    m_lastPlayer(false)
+    m_listCardsSelected(QList<InfoCard>())
 {
     initListCards();
 }
@@ -48,17 +47,14 @@ void ModelSelectingCards::applyAFilter(int filter)
     }
     else if(filter == static_cast<int>(SelCardsFilter_CardsPokemonOnly))
     {
-        foreach(InfoCard* info, m_listCardsSelected)
+        foreach(InfoCard info, m_listCardsSelected)
         {
-            if(info != nullptr)
-            {
-                AbstractCard* card = info->card;
+            AbstractCard* card = info.card;
 
-                if(card != nullptr)
-                {
-                    if(card->type() == AbstractCard::TypeOfCard_Pokemon)
-                        m_listCardsFiltered.append(info);
-                }
+            if(card != nullptr)
+            {
+                if(card->type() == AbstractCard::TypeOfCard_Pokemon)
+                    m_listCardsFiltered.append(info);
             }
         }
     }
@@ -99,60 +95,51 @@ void ModelSelectingCards::applyAFilter(int filter)
             elementPokemon = AbstractCard::Element_Whatever;
         }
 
-        foreach(InfoCard* info, m_listCardsSelected)
+        foreach(InfoCard info, m_listCardsSelected)
         {
-            if(info != nullptr)
+            AbstractCard* card = info.card;
+
+            if(card != nullptr)
             {
-                AbstractCard* card = info->card;
-
-                if(card != nullptr)
+                if(card->type() == AbstractCard::TypeOfCard_Pokemon)
                 {
-                    if(card->type() == AbstractCard::TypeOfCard_Pokemon)
-                    {
-                        CardPokemon* pokemon = static_cast<CardPokemon*>(card);
+                    CardPokemon* pokemon = static_cast<CardPokemon*>(card);
 
-                        if(pokemon->element() == elementPokemon)
-                            m_listCardsFiltered.append(info);
-                    }
+                    if(pokemon->element() == elementPokemon)
+                        m_listCardsFiltered.append(info);
                 }
             }
         }
     }
     else if(filter == static_cast<int>(SelCardsFilter_CardsEnergiesOnly))
     {
-        foreach(InfoCard* info, m_listCardsSelected)
+        foreach(InfoCard info, m_listCardsSelected)
         {
-            if(info != nullptr)
-            {
-                AbstractCard* card = info->card;
+            AbstractCard* card = info.card;
 
-                if(card != nullptr)
-                {
-                    if(card->type() == AbstractCard::TypeOfCard_Energy)
-                        m_listCardsFiltered.append(info);
-                }
+            if(card != nullptr)
+            {
+                if(card->type() == AbstractCard::TypeOfCard_Energy)
+                    m_listCardsFiltered.append(info);
             }
         }
     }
     else if(filter == static_cast<int>(SelCardsFilter_CardsTrainersOnly))
     {
-        foreach(InfoCard* info, m_listCardsSelected)
+        foreach(InfoCard info, m_listCardsSelected)
         {
-            if(info != nullptr)
-            {
-                AbstractCard* card = info->card;
+            AbstractCard* card = info.card;
 
-                if(card != nullptr)
-                {
-                    if(card->type() == AbstractCard::TypeOfCard_Action)
-                        m_listCardsFiltered.append(info);
-                }
+            if(card != nullptr)
+            {
+                if(card->type() == AbstractCard::TypeOfCard_Action)
+                    m_listCardsFiltered.append(info);
             }
         }
     }
 }
 
-QList<InfoCard*> ModelSelectingCards::listCardsSelected()
+QList<InfoCard> ModelSelectingCards::listCardsSelected()
 {
     return m_listCardsSelected;
 }
@@ -171,36 +158,55 @@ void ModelSelectingCards::setName(const QString &name)
     }
 }
 
-bool ModelSelectingCards::isLastPlayer()
+int ModelSelectingCards::quantity(int id)
 {
-    return m_lastPlayer;
+    int indexListSelected = indexListSelectedFromIdCard(id);
+    return m_listCardsSelected[indexListSelected].quantity;
 }
 
-void ModelSelectingCards::setLastPlayer(bool lastPlayer)
+void ModelSelectingCards::setQuantity(int id, int quantity)
 {
-    if(m_lastPlayer != lastPlayer)
-    {
-        m_lastPlayer = lastPlayer;
-        emit lastPlayerChanged();
-    }
-}
+    //List selected
+    int indexListSelected = indexListSelectedFromIdCard(id);
 
-void ModelSelectingCards::changeQuantityCard(int id, int quantity)
-{
-    if((id >= 0) && (id < m_listCardsSelected.count()))
+    if(indexListSelected != -1)
     {
-        InfoCard* info = m_listCardsSelected[id];
-        int delta = quantity - info->quantity;
+        int oldQuantity = m_listCardsSelected[indexListSelected].quantity;
 
-        if((info->quantity != quantity) &&
-            (quantity >= 0) &&
-            (canAcceptXNewCards(delta) == true))
+        //try
+        m_listCardsSelected[indexListSelected].quantity = quantity;
+
+        if(countTotalQuantity() > maxCards())
         {
-            info->quantity = quantity;
-            m_listCardsSelected.replace(id, info);
-
+            //error
+            m_listCardsSelected[indexListSelected].quantity = oldQuantity;
+        }
+        else
+        {
+            //ok
             emit countTotalQuantityChanged();
-            emit dataChanged(index(id, 0), index(id, 0));
+        }
+    }
+
+    //List filtered
+    int indexListFiltered = indexListFilteredFromIdCard(id);
+
+    if(indexListFiltered != -1)
+    {
+        int oldQuantity = m_listCardsSelected[indexListFiltered].quantity;
+
+        //try
+        m_listCardsSelected[indexListFiltered].quantity = quantity;
+
+        if(countTotalQuantity() > maxCards())
+        {
+            //error
+            m_listCardsSelected[indexListFiltered].quantity = oldQuantity;
+        }
+        else
+        {
+            //ok
+            emit dataChanged(index(indexListFiltered, 0), index(indexListFiltered, 0));
         }
     }
 }
@@ -217,13 +223,36 @@ QVariant ModelSelectingCards::data(const QModelIndex &index, int role) const
 
     switch(role)
     {
-    case SelCards_Card:         return QVariant::fromValue<AbstractCard*>(m_listCardsFiltered[iRow]->card);
-    case SelCards_Name:         return m_listCardsFiltered[iRow]->card->name();
-    case SelCards_ImageCard:    return m_listCardsFiltered[iRow]->card->image();
-    case SelCards_Quantity:     return m_listCardsFiltered[iRow]->quantity;
+    case SelCards_Card:         return QVariant::fromValue<AbstractCard*>(m_listCardsFiltered[iRow].card);
+    case SelCards_Name:         return m_listCardsFiltered[iRow].card->name();
+    case SelCards_ImageCard:    return m_listCardsFiltered[iRow].card->image();
+    case SelCards_Quantity:     return m_listCardsFiltered[iRow].quantity;
     }
 
     return QVariant();
+}
+
+bool ModelSelectingCards::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    int iRow = index.row();
+    if ((iRow < 0) || (iRow >= rowCount()))
+    {
+        qCritical() << __PRETTY_FUNCTION__ << "bad row num : " << iRow;
+        return false;
+    }
+
+    switch(role)
+    {
+    case SelCards_Quantity:
+        if((m_listCardsFiltered[iRow].card != nullptr) && (value.type() == QVariant::Int))
+        {
+            setQuantity(m_listCardsFiltered[iRow].card->id(), value.toInt());
+            return true;
+        }
+        break;
+    }
+
+    return false;
 }
 
 int ModelSelectingCards::rowCount(const QModelIndex &) const
@@ -231,18 +260,24 @@ int ModelSelectingCards::rowCount(const QModelIndex &) const
     return m_listCardsFiltered.count();
 }
 
-int ModelSelectingCards::rowCountById(int id) const
+int ModelSelectingCards::rowCountById(int id)
 {
-    return m_listCardsSelected[id]->quantity;
+    int quantity = -1;
+    int indexCard = indexListSelectedFromIdCard(id);
+
+    if(indexCard != -1)
+        quantity = m_listCardsSelected[indexCard].quantity;
+
+    return quantity;
 }
 
 void ModelSelectingCards::clear()
 {
     for(int i=0;i<m_listCardsSelected.count();++i)
     {
-        InfoCard* info = m_listCardsSelected[i];
-        info->quantity = 0;
-        m_listCardsSelected[i] = info;
+        InfoCard info = m_listCardsSelected[i];
+        info.quantity = 0;
+        m_listCardsSelected.replace(i, info);
     }
 
     QVector<int> listRole = QVector<int>() << SelCards_Quantity;
@@ -285,9 +320,9 @@ void ModelSelectingCards::initListCards()
 
         if(card != NULL)
         {
-            InfoCard* info = new InfoCard;
-            info->card = card;
-            info->quantity = 0;
+            InfoCard info;
+            info.card = card;
+            info.quantity = 0;
 
             m_listCardsSelected.append(info);
             beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -302,11 +337,9 @@ void ModelSelectingCards::cleanListCards()
     while(m_listCardsSelected.count() > 0)
     {
         beginRemoveRows(QModelIndex(), rowCount()-1, rowCount());
-        InfoCard* info = m_listCardsSelected.takeFirst();
-        delete info->card;
-        info->card = nullptr;
-        delete info;
-        info = nullptr;
+        InfoCard info = m_listCardsSelected.takeFirst();
+        delete info.card;
+        info.card = nullptr;
         endRemoveRows();
     }
 
@@ -317,13 +350,50 @@ int ModelSelectingCards::countTotalQuantity()
 {
     int count = 0;
 
-    foreach(InfoCard* info, m_listCardsSelected)
-        count += info->quantity;
+    foreach(InfoCard info, m_listCardsSelected)
+        count += info.quantity;
 
     return count;
 }
 
-bool ModelSelectingCards::canAcceptXNewCards(int quantity)
+int ModelSelectingCards::indexListSelectedFromIdCard(int id)
 {
-    return (countTotalQuantity() + quantity) <= maxCards();
+    int indexInList = -1;
+    int indexLoop = 0;
+
+    while((indexLoop < m_listCardsSelected.count()) && (indexInList == -1))
+    {
+        AbstractCard* card = m_listCardsSelected[indexLoop].card;
+
+        if(card != nullptr)
+        {
+            if(card->id() == id)
+                indexInList = indexLoop;
+        }
+
+        indexLoop++;
+    }
+
+    return indexInList;
+}
+
+int ModelSelectingCards::indexListFilteredFromIdCard(int id)
+{
+    int indexInList = -1;
+    int indexLoop = 0;
+
+    while((indexLoop < m_listCardsFiltered.count()) && (indexInList == -1))
+    {
+        AbstractCard* card = m_listCardsFiltered[indexLoop].card;
+
+        if(card != nullptr)
+        {
+            if(card->id() == id)
+                indexInList = indexLoop;
+        }
+
+        indexLoop++;
+    }
+
+    return indexInList;
 }

@@ -20,7 +20,6 @@ class ModelSelectingCards : public QAbstractListModel
     Q_OBJECT
     //Q_PROPERTY(QList<InfoCard*> listCardsSelected READ listCardsSelected NOTIFY listCardsSelectedChanged)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-    Q_PROPERTY(bool lastPlayer READ isLastPlayer NOTIFY lastPlayerChanged)
     Q_PROPERTY(int countTotalQuantity READ countTotalQuantity NOTIFY countTotalQuantityChanged)
 
 public:
@@ -54,17 +53,17 @@ public:
     Q_INVOKABLE int maxCards();
     Q_INVOKABLE void applyAFilter(int filter);
 
-    QList<InfoCard *> listCardsSelected();
+    QList<InfoCard> listCardsSelected();
     QString name();
     void setName(const QString& name);
-    bool isLastPlayer();
-    void setLastPlayer(bool lastPlayer);
 
-    void changeQuantityCard(int id, int quantity);
+    int quantity(int id);
+    void setQuantity(int id, int quantity);
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     virtual int rowCount(const QModelIndex & = QModelIndex()) const override;
-    int rowCountById(int id) const;
+    int rowCountById(int id);
 
     void clear();
 
@@ -79,15 +78,15 @@ protected:
 
 private:
     QString m_name;
-    QList<InfoCard*> m_listCardsSelected;
-    QList<InfoCard*> m_listCardsFiltered;
-    bool m_lastPlayer;
+    QList<InfoCard> m_listCardsSelected;
+    QList<InfoCard> m_listCardsFiltered;
     //QHash<AbstractCard*, unsigned short> m_listCardsSelected;
 
     void initListCards();
     void cleanListCards();
     int countTotalQuantity();
-    bool canAcceptXNewCards(int quantity);
+    int indexListSelectedFromIdCard(int id);
+    int indexListFilteredFromIdCard(int id);
 };
 
 #endif // MODELSELECTINGCARDS_H
