@@ -34,6 +34,11 @@ void FactoryMainPageLoader::displayAllPlayers()
     setLink("qrc:/PageListPlayers.qml");
 }
 
+void FactoryMainPageLoader::displayAllGamesAvailable()
+{
+    setLink("qrc:/PageSelectionExistingGame.qml");
+}
+
 void FactoryMainPageLoader::displayCreateChooseGame()
 {
     setLink("qrc:/CreateChooseGame.qml");

@@ -17,6 +17,7 @@ public:
 
     void displayLogin();
     void displayAllPlayers();
+    void displayAllGamesAvailable();
     void displayCreateChooseGame();
     void displaySelectPlayers();
     void displaySelectCards();
