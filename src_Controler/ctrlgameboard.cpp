@@ -37,7 +37,6 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_idGame(0)
 {
     //initGame();
-    connect(&m_ctrlSelectingCards, &CtrlSelectingCards::listsComplete, this, &CtrlGameBoard::onListsComplete_CtrlSelectingCards);
     connect(m_gameManager, &GameManager::indexCurrentPlayerChanged, this, &CtrlGameBoard::currentPlayerChanged);
     connect(m_gameManager, &GameManager::gameStatusChanged, this, &CtrlGameBoard::gameStatusChanged);
 
@@ -242,14 +241,15 @@ void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
 
 void CtrlGameBoard::listOfGamesAvailable()
 {
-    if(m_listOfGamesAvailable->count() > 1)
-    {
-        m_factoryMainPageLoader->displayAllGamesAvailable();
-    }
-    else if(m_listOfGamesAvailable->count() == 1)
-    {
-        joinAGame(m_listOfGamesAvailable->id(0));
-    }
+//    if(m_listOfGamesAvailable->count() > 1)
+//    {
+//        m_factoryMainPageLoader->displayAllGamesAvailable();
+//    }
+//    else if(m_listOfGamesAvailable->count() == 1)
+//    {
+//        joinAGame(m_listOfGamesAvailable->id(0));
+//    }
+    m_factoryMainPageLoader->displayAllGamesAvailable();
 }
 
 void CtrlGameBoard::joinAGame(int idGame)
@@ -262,10 +262,29 @@ void CtrlGameBoard::returnToTheMenu()
     m_factoryMainPageLoader->displayCreateChooseGame();
 }
 
+void CtrlGameBoard::sendCardsSelected()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QList<InfoCard> listCards = m_ctrlSelectingCards.listCards();
+    QJsonDocument jsonResponse;
+    setStepInProgress(true);
+
+    if(m_socket->sendCardsSelected(m_idGame, listCards, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj["success"].toBool() != 0)
+        {
+            m_factoryMainPageLoader->displayBoard();
+        }
+    }
+}
+
 void CtrlGameBoard::onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers)
 {
     m_factoryMainPageLoader->displaySelectCards();
-    m_ctrlSelectingCards.selectCards(listOfPlayers);
+    //m_ctrlSelectingCards.selectCards(listOfPlayers);
 
     /*for(int i=0;i<listOfPlayers.count();++i)
     {
@@ -364,17 +383,6 @@ void CtrlGameBoard::onListsComplete_CtrlSelectingCards()
     qDebug() << __PRETTY_FUNCTION__;
 #endif
 
-    QMap<QString,QList<AbstractCard*> > listCardsByPlayer = m_ctrlSelectingCards.listCardsByPlayer();
-
-    for(int i=0;i<listCardsByPlayer.keys().count();++i)
-    {
-        QString name = listCardsByPlayer.keys()[i];
-        m_gameManager->addNewPlayer(name, listCardsByPlayer[name]);
-    }
-
-    m_gameManager->initGame();
-    m_factoryMainPageLoader->displayBoard();
-    m_gameManager->displayMessage("Préparez votre jeu");
 
 }
 

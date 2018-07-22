@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QJsonDocument>
 
+#include "src_Models/modelselectingcards.h"
+
 class QTcpSocket;
 
 class SocketClient : public QObject
@@ -22,6 +24,8 @@ public:
     bool listAllPlayers(QJsonDocument &jsonResponse);
     bool createANewGame(const QString& nameGame, int idOpponent, QJsonDocument &jsonResponse);
     bool removeAGame();
+
+    bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse);
 
 signals:
     void connected();

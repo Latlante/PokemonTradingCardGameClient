@@ -11,6 +11,7 @@
 
 #include "common/utils.h"
 #include "Share/constantesshared.h"
+#include "src_Cards/cardpokemon.h"
 
 SocketClient::SocketClient(QObject *parent) :
     QObject(parent),
@@ -149,6 +150,40 @@ bool SocketClient::createANewGame(const QString &nameGame, int idOpponent, QJson
 bool SocketClient::removeAGame()
 {
     return true;
+}
+
+bool SocketClient::sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_SelectCards);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    QJsonArray arrayCards;
+    foreach(InfoCard info, listInfoCards)
+    {
+        QJsonObject objCard;
+        objCard["id"] = info.card->id();
+        objCard["quantity"] = info.quantity;
+
+        arrayCards.append(objCard);
+    }
+    jsonRequest["cards"] = arrayCards;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
 }
 
 /************************************************************

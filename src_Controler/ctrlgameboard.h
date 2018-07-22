@@ -58,6 +58,8 @@ public:
     Q_INVOKABLE void joinAGame(int idGame);
     Q_INVOKABLE void returnToTheMenu();
 
+    Q_INVOKABLE void sendCardsSelected();
+
     Q_INVOKABLE void onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers);
     Q_INVOKABLE void displaySelectingCardsForNextPlayers();
     Q_INVOKABLE void onClicked_ButtonOk_SelectCards();
