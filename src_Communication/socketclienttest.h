@@ -1,18 +1,15 @@
-#ifndef SOCKETCLIENT_H
-#define SOCKETCLIENT_H
+#ifndef SOCKETCLIENTTEST_H
+#define SOCKETCLIENTTEST_H
 
 #include "abstractsocketclient.h"
 
-class QTcpSocket;
+class QTimer;
 
-class SocketClient : public AbstractSocketClient
+class SocketClientTest : public AbstractSocketClient
 {
     Q_OBJECT
 public:
-    explicit SocketClient(QObject *parent = nullptr);
-    ~SocketClient();
-
-    void setToken(const QString& token) override;
+    explicit SocketClientTest(QObject *parent = nullptr);
 
     bool tryToConnect() override;
     bool authentificate(const QString& name, const QString& password, QJsonDocument& jsonResponse) override;
@@ -22,19 +19,10 @@ public:
 
     bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse) override;
 
-signals:
-    void connected();
 
-private slots:
-    void onConnected_Socket();
-    void onReadyRead_Socket();
 
 private:
-    QTcpSocket* m_socket;
-
-    QString m_token;
-
-    bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
+    void waitForTimeOut();
 };
 
-#endif // SOCKETCLIENT_H
+#endif // SOCKETCLIENTTEST_H

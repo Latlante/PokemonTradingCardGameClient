@@ -14,9 +14,8 @@
 #include "src_Cards/cardpokemon.h"
 
 SocketClient::SocketClient(QObject *parent) :
-    QObject(parent),
+    AbstractSocketClient(parent),
     m_socket(new QTcpSocket(this)),
-    m_timeOut(10000),
     m_token("")
 {
     connect(m_socket, &QTcpSocket::connected, this, &SocketClient::onConnected_Socket);
@@ -31,16 +30,6 @@ SocketClient::~SocketClient()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
-int SocketClient::timeOut()
-{
-    return m_timeOut;
-}
-
-void SocketClient::setTimeOut(int timer)
-{
-    m_timeOut = timer;
-}
-
 void SocketClient::setToken(const QString &token)
 {
     m_token = token;
