@@ -10,9 +10,11 @@
 #include "src_Models/modellistallplayers.h"
 #include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistenergies.h"
+#include "src_Models/modellistselection.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
 #include "src_Models/modelselectingcards.h"
+#include "src_Models/proxymodelselectingcards.h"
 #include "player.h"
 #include "src_Cards/abstractcard.h"
 #include "src_Cards/cardaction.h"
@@ -44,9 +46,11 @@ int main(int argc, char *argv[])
     ModelListAllPlayers::declareQML();
     ModelListOfGamesAvailable::declareQML();
     ModelListEnergies::declareQML();
+    ModelListSelection::declareQML();
     ModelPopupSelectCardInPacket::declareQML();
     ModelPopupSelectEnergyInPokemon::declareQML();
     ModelSelectingCards::declareQML();
+    ProxyModelSelectingCards::declareQML();
     Player::declareQML();
     AbstractCard::declareQML();
     CardAction::declareQML();

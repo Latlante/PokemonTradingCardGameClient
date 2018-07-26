@@ -59,6 +59,11 @@ void FactoryMainPageLoader::displayBoard()
     setLink("qrc:/BoardQML.qml");
 }
 
+void FactoryMainPageLoader::displayPageSelection()
+{
+    setLink("qrc:/PageSelection.qml");
+}
+
 /************************************************************
 *****				FONCTIONS PRIVEES					*****
 ************************************************************/

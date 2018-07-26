@@ -9,6 +9,9 @@ Item {
 
     property int colCount: 4
     property int space: 4   //PAS DE NOMBRE IMPAIRE
+    property string nameOfThePlayer: ctrlSelectingCards.model().name
+    property int countTotalQuantity: ctrlSelectingCards.model().countTotalQuantity
+    property int maxCards: ctrlSelectingCards.model().maxCards()
 
     Rectangle {
         id: background
@@ -26,7 +29,10 @@ Item {
             MouseArea {
                 id: mouseAreaSave
                 anchors.fill: parent
-                onClicked: ctrlSelectingCards.savePacket()
+                onClicked: {
+                    popupCardLineEdit1.visible = true;
+                    //ctrlSelectingCards.savePacket()
+                }
             }
         }
 
@@ -42,7 +48,10 @@ Item {
             MouseArea {
                 id: mouseAreaLoad
                 anchors.fill: parent
-                onClicked: ctrlSelectingCards.loadPacket()
+                onClicked: {
+                    ctrlGameBoard.displayPageSelection()
+                    //ctrlSelectingCards.loadPacket("")
+                }
             }
         }
 
@@ -53,7 +62,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             font.pixelSize: 35
-            text: viewCards.model.name + " (" + viewCards.model.countTotalQuantity + " / " + viewCards.model.maxCards() + ")"
+            text: nameOfThePlayer + " (" + countTotalQuantity + " / " + maxCards + ")"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -74,7 +83,7 @@ Item {
             cellHeight: 270
             clip: true
 
-            model: ctrlSelectingCards.model()
+            model: ctrlSelectingCards.proxy()
             delegate: Item {
                 id: itemCard
                 //anchors.fill: parent
@@ -175,7 +184,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             text: "OK"
-            enabled: viewCards.model.countTotalQuantity === viewCards.model.maxCards()
+            enabled: viewCards.model.countTotalQuantity === ctrlSelectingCards.model().maxCards()
 
             onClicked: ctrlGameBoard.onClicked_ButtonOk_SelectCards()
         }
@@ -186,4 +195,55 @@ Item {
         anchors.fill: parent
         visible: false
     }
+
+    PopupLineEdit {
+        id: popupCardLineEdit1
+        anchors.fill: parent
+        visible: false
+        onClicked: ctrlSelectingCards.savePacket(result);
+    }
+
+    /*Popup {
+        id: popupLineEdit
+        width: 200
+        height: 300
+        modal: true
+        focus: true
+        visible: false
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Column {
+            anchors.fill: parent
+            Text {
+                text: "Nom de la partie"
+            }
+
+            Rectangle {
+                id: rectangleContainerLineEdit
+                height: 25
+                color: "#ffffff"
+                border.width: 1
+
+                TextInput {
+                    id: textInputLineEdit
+                    text: qsTr("Partie n1")
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.fill: parent
+                    font.pixelSize: 18
+                }
+            }
+
+            ButtonStyleGold {
+                id: boutonOkLineEdit
+
+                //width: parent.width
+                height: 40
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                text: qsTr("Ok")
+
+                onClicked: console.log("clicked ok")
+            }
+        }
+    }*/
 }

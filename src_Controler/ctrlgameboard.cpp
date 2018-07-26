@@ -1,4 +1,5 @@
 #include "ctrlgameboard.h"
+#include <QDir>
 #include <QEventLoop>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -18,6 +19,7 @@
 #include "src_Models/factorymainpageloader.h"
 #include "src_Models/modellistallplayers.h"
 #include "src_Models/modellistofgamesavailable.h"
+#include "src_Models/modellistselection.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Packets/bencharea.h"
 #include "src_Packets/packetdeck.h"
@@ -113,6 +115,21 @@ ModelListOfGamesAvailable* CtrlGameBoard::modelAllOfGamesAvailable()
     return m_listOfGamesAvailable;
 }
 
+ModelListSelection* CtrlGameBoard::modelListSelect()
+{
+    QStringList listFilesSaved = QDir("save").entryList();
+    listFilesSaved.removeOne(".");
+    listFilesSaved.removeOne("..");
+
+    ModelListSelection* model = new ModelListSelection();
+    foreach(QString file, listFilesSaved)
+        model->addElement(file);
+
+    model->setNameSelection("Paquet(s) sauvegardé(s)");
+
+    return model;
+}
+
 FactoryMainPageLoader* CtrlGameBoard::factory()
 {
     return m_factoryMainPageLoader;
@@ -145,7 +162,7 @@ void CtrlGameBoard::setStepInProgress(bool inProgress)
 void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    setStepInProgress(true);
+    /*setStepInProgress(true);
 
     if(m_socket->tryToConnect())
     {
@@ -170,6 +187,7 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
             }
 
             setStepInProgress(false);
+            m_ctrlSelectingCards.setName(name);
             m_factoryMainPageLoader->displayCreateChooseGame();
         }
         else
@@ -182,7 +200,10 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
     {
         setStepInProgress(false);
         qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
-    }
+    }*/
+
+    m_ctrlSelectingCards.setName(name);
+    m_factoryMainPageLoader->displaySelectCards();
 }
 
 void CtrlGameBoard::listOfAllPlayers()
@@ -372,6 +393,17 @@ void CtrlGameBoard::actionFinishYourTurn()
 void CtrlGameBoard::testAnimation()
 {
     onMovingCardAnimationStart();
+}
+
+void CtrlGameBoard::displayPageSelection()
+{
+    m_factoryMainPageLoader->displayPageSelection();
+}
+
+void CtrlGameBoard::validatePageSelection(const QString &item)
+{
+    m_ctrlSelectingCards.loadPacket(item);
+    m_factoryMainPageLoader->displaySelectCards();
 }
 
 /************************************************************

@@ -16,6 +16,7 @@ class CtrlPopups;
 class CtrlSelectingCards;
 class ModelListAllPlayers;
 class ModelListOfGamesAvailable;
+class ModelListSelection;
 class ModelPopupSelectCardInPacket;
 class BenchArea;
 class PacketDeck;
@@ -42,6 +43,7 @@ public:
 
     Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
     Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
+    Q_INVOKABLE ModelListSelection* modelListSelect();
     Q_INVOKABLE FactoryMainPageLoader* factory();
     Q_INVOKABLE void initGame();
     Q_INVOKABLE Player* playerAt(int index);
@@ -69,7 +71,8 @@ public:
     Q_INVOKABLE void actionFinishYourTurn();
 
     Q_INVOKABLE void testAnimation();
-
+    Q_INVOKABLE void displayPageSelection();
+    Q_INVOKABLE void validatePageSelection(const QString& item);
 
 signals:
     void nextPlayer();

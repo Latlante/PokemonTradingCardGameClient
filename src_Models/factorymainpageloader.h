@@ -22,6 +22,7 @@ public:
     void displaySelectPlayers();
     void displaySelectCards();
     void displayBoard();
+    void displayPageSelection();
 
 signals:
     void linkChanged();

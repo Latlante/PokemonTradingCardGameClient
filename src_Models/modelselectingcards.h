@@ -51,7 +51,7 @@ public:
 
     static void declareQML();
     Q_INVOKABLE int maxCards();
-    Q_INVOKABLE void applyAFilter(int filter);
+    //Q_INVOKABLE void applyAFilter(int filter);
 
     QList<InfoCard> listCardsSelected();
     QString name();
@@ -78,15 +78,13 @@ protected:
 
 private:
     QString m_name;
-    QList<InfoCard> m_listCardsSelected;
-    QList<InfoCard> m_listCardsFiltered;
+    QList<InfoCard> m_listCards;
     //QHash<AbstractCard*, unsigned short> m_listCardsSelected;
 
     void initListCards();
     void cleanListCards();
     int countTotalQuantity();
-    int indexListSelectedFromIdCard(int id);
-    int indexListFilteredFromIdCard(int id);
+    int indexListFromIdCard(int id);
 };
 
 #endif // MODELSELECTINGCARDS_H

@@ -1,6 +1,7 @@
 #include "ctrlselectingcards.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QQmlEngine>
 #include <QQmlApplicationEngine>
@@ -12,13 +13,18 @@
 
 CtrlSelectingCards::CtrlSelectingCards(QObject *parent) :
     QObject(parent),
-    m_modelSelectingCards(new ModelSelectingCards())
+    m_modelSelectingCards(new ModelSelectingCards()),
+    m_proxy(new ProxyModelSelectingCards())
 {
-
+    m_proxy->setSourceModel(m_modelSelectingCards);
+    /*m_proxy->setSortRole(ModelSelectingCards::SelCards_Name);
+    m_proxy->setDynamicSortFilter(true);
+    m_proxy->sort(0, Qt::AscendingOrder);*/
 }
 
 CtrlSelectingCards::~CtrlSelectingCards()
 {
+    delete m_proxy;
     if(m_modelSelectingCards != nullptr)
     {
         delete m_modelSelectingCards;
@@ -37,6 +43,16 @@ void CtrlSelectingCards::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+QString CtrlSelectingCards::name()
+{
+    return m_modelSelectingCards->name();
+}
+
+void CtrlSelectingCards::setName(const QString &name)
+{
+    m_modelSelectingCards->setName(name);
+}
+
 void CtrlSelectingCards::newSelection(const QString &name)
 {
     m_modelSelectingCards->clear();
@@ -90,6 +106,12 @@ ModelSelectingCards* CtrlSelectingCards::model()
     return m_modelSelectingCards;
 }
 
+ProxyModelSelectingCards* CtrlSelectingCards::proxy()
+{
+    QQmlEngine::setObjectOwnership(m_proxy, QQmlEngine::CppOwnership);
+    return m_proxy;
+}
+
 /*void CtrlSelectingCards::addANewCard(int id)
 {
     changeQuantityCard(id, m_modelSelectingCards->rowCountById(id)+1);
@@ -116,26 +138,30 @@ void CtrlSelectingCards::fillARandomList()
     }
 }
 
-void CtrlSelectingCards::savePacket()
+void CtrlSelectingCards::savePacket(const QString& name)
 {
     QList<InfoCard> listCardsSelected = m_modelSelectingCards->listCardsSelected();
     QString container = "";
 
     for(int i=0;i<listCardsSelected.count();++i)
-        container += QString::number(i) + "##" + QString::number(listCardsSelected[i].quantity) + "\n";
+    {
+        if(listCardsSelected[i].quantity > 0)
+            container += QString::number(listCardsSelected[i].card->id()) + "##" + QString::number(listCardsSelected[i].quantity) + "\n";
+    }
 
-    QFile fichier("save/" + m_modelSelectingCards->name() + ".ptc");
+    QFile fichier("save/" + name + ".ptc");
     fichier.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     fichier.write(container.toLatin1());
     fichier.close();
 }
 
-void CtrlSelectingCards::loadPacket()
+void CtrlSelectingCards::loadPacket(const QString& name)
 {
-    QFile fichier("save/" + m_modelSelectingCards->name() + ".ptc");
+    QFile fichier("save/" + name);
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     QString container = fichier.readAll();
     fichier.close();
+    qDebug() << name << container;
 
     QStringList containerSplit = container.split("\n");
     m_modelSelectingCards->clear();

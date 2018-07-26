@@ -11,7 +11,8 @@
 
 ModelSelectingCards::ModelSelectingCards(QObject *parent) :
     QAbstractListModel(parent),
-    m_listCardsSelected(QList<InfoCard>())
+    m_name("joueur"),
+    m_listCards(QList<InfoCard>())
 {
     initListCards();
 }
@@ -37,7 +38,7 @@ int ModelSelectingCards::maxCards()
     return MAXCARDS_DECK;
 }
 
-void ModelSelectingCards::applyAFilter(int filter)
+/*void ModelSelectingCards::applyAFilter(int filter)
 {
     m_listCardsFiltered.clear();
 
@@ -137,11 +138,11 @@ void ModelSelectingCards::applyAFilter(int filter)
             }
         }
     }
-}
+}*/
 
 QList<InfoCard> ModelSelectingCards::listCardsSelected()
 {
-    return m_listCardsSelected;
+    return m_listCards;
 }
 
 QString ModelSelectingCards::name()
@@ -160,53 +161,32 @@ void ModelSelectingCards::setName(const QString &name)
 
 int ModelSelectingCards::quantity(int id)
 {
-    int indexListSelected = indexListSelectedFromIdCard(id);
-    return m_listCardsSelected[indexListSelected].quantity;
+    int indexList = indexListFromIdCard(id);
+    return m_listCards[indexList].quantity;
 }
 
 void ModelSelectingCards::setQuantity(int id, int quantity)
 {
-    //List selected
-    int indexListSelected = indexListSelectedFromIdCard(id);
+    //qDebug() << __PRETTY_FUNCTION__ << id << quantity;
+    int indexList = indexListFromIdCard(id);
 
-    if(indexListSelected != -1)
+    if(indexList != -1)
     {
-        int oldQuantity = m_listCardsSelected[indexListSelected].quantity;
+        int oldQuantity = m_listCards[indexList].quantity;
 
         //try
-        m_listCardsSelected[indexListSelected].quantity = quantity;
+        m_listCards[indexList].quantity = quantity;
 
         if(countTotalQuantity() > maxCards())
         {
             //error
-            m_listCardsSelected[indexListSelected].quantity = oldQuantity;
+            m_listCards[indexList].quantity = oldQuantity;
         }
         else
         {
             //ok
             emit countTotalQuantityChanged();
-        }
-    }
-
-    //List filtered
-    int indexListFiltered = indexListFilteredFromIdCard(id);
-
-    if(indexListFiltered != -1)
-    {
-        int oldQuantity = m_listCardsSelected[indexListFiltered].quantity;
-
-        //try
-        m_listCardsSelected[indexListFiltered].quantity = quantity;
-
-        if(countTotalQuantity() > maxCards())
-        {
-            //error
-            m_listCardsSelected[indexListFiltered].quantity = oldQuantity;
-        }
-        else
-        {
-            //ok
-            emit dataChanged(index(indexListFiltered, 0), index(indexListFiltered, 0));
+            emit dataChanged(index(indexList, 0), index(indexList, 0));
         }
     }
 }
@@ -223,10 +203,10 @@ QVariant ModelSelectingCards::data(const QModelIndex &index, int role) const
 
     switch(role)
     {
-    case SelCards_Card:         return QVariant::fromValue<AbstractCard*>(m_listCardsFiltered[iRow].card);
-    case SelCards_Name:         return m_listCardsFiltered[iRow].card->name();
-    case SelCards_ImageCard:    return m_listCardsFiltered[iRow].card->image();
-    case SelCards_Quantity:     return m_listCardsFiltered[iRow].quantity;
+    case SelCards_Card:         return QVariant::fromValue<AbstractCard*>(m_listCards[iRow].card);
+    case SelCards_Name:         return m_listCards[iRow].card->name();
+    case SelCards_ImageCard:    return m_listCards[iRow].card->image();
+    case SelCards_Quantity:     return m_listCards[iRow].quantity;
     }
 
     return QVariant();
@@ -234,6 +214,8 @@ QVariant ModelSelectingCards::data(const QModelIndex &index, int role) const
 
 bool ModelSelectingCards::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    //qDebug() << __PRETTY_FUNCTION__ << index << role << value;
+
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))
     {
@@ -244,9 +226,9 @@ bool ModelSelectingCards::setData(const QModelIndex &index, const QVariant &valu
     switch(role)
     {
     case SelCards_Quantity:
-        if((m_listCardsFiltered[iRow].card != nullptr) && (value.type() == QVariant::Int))
+        if((m_listCards[iRow].card != nullptr) && (value.type() == QVariant::Double))
         {
-            setQuantity(m_listCardsFiltered[iRow].card->id(), value.toInt());
+            setQuantity(m_listCards[iRow].card->id(), value.toInt());
             return true;
         }
         break;
@@ -257,27 +239,27 @@ bool ModelSelectingCards::setData(const QModelIndex &index, const QVariant &valu
 
 int ModelSelectingCards::rowCount(const QModelIndex &) const
 {
-    return m_listCardsFiltered.count();
+    return m_listCards.count();
 }
 
 int ModelSelectingCards::rowCountById(int id)
 {
     int quantity = -1;
-    int indexCard = indexListSelectedFromIdCard(id);
+    int indexCard = indexListFromIdCard(id);
 
     if(indexCard != -1)
-        quantity = m_listCardsSelected[indexCard].quantity;
+        quantity = m_listCards[indexCard].quantity;
 
     return quantity;
 }
 
 void ModelSelectingCards::clear()
 {
-    for(int i=0;i<m_listCardsSelected.count();++i)
+    for(int i=0;i<m_listCards.count();++i)
     {
-        InfoCard info = m_listCardsSelected[i];
+        InfoCard info = m_listCards[i];
         info.quantity = 0;
-        m_listCardsSelected.replace(i, info);
+        m_listCards.replace(i, info);
     }
 
     QVector<int> listRole = QVector<int>() << SelCards_Quantity;
@@ -324,9 +306,8 @@ void ModelSelectingCards::initListCards()
             info.card = card;
             info.quantity = 0;
 
-            m_listCardsSelected.append(info);
             beginInsertRows(QModelIndex(), rowCount(), rowCount());
-            m_listCardsFiltered.append(info);
+            m_listCards.append(info);
             endInsertRows();
         }
     }
@@ -334,36 +315,36 @@ void ModelSelectingCards::initListCards()
 
 void ModelSelectingCards::cleanListCards()
 {
-    while(m_listCardsSelected.count() > 0)
+    while(m_listCards.count() > 0)
     {
         beginRemoveRows(QModelIndex(), rowCount()-1, rowCount());
-        InfoCard info = m_listCardsSelected.takeFirst();
+        InfoCard info = m_listCards.takeFirst();
         delete info.card;
         info.card = nullptr;
         endRemoveRows();
     }
 
-    m_listCardsFiltered.clear();
+    m_listCards.clear();
 }
 
 int ModelSelectingCards::countTotalQuantity()
 {
     int count = 0;
 
-    foreach(InfoCard info, m_listCardsSelected)
+    foreach(InfoCard info, m_listCards)
         count += info.quantity;
 
     return count;
 }
 
-int ModelSelectingCards::indexListSelectedFromIdCard(int id)
+int ModelSelectingCards::indexListFromIdCard(int id)
 {
     int indexInList = -1;
     int indexLoop = 0;
 
-    while((indexLoop < m_listCardsSelected.count()) && (indexInList == -1))
+    while((indexLoop < m_listCards.count()) && (indexInList == -1))
     {
-        AbstractCard* card = m_listCardsSelected[indexLoop].card;
+        AbstractCard* card = m_listCards[indexLoop].card;
 
         if(card != nullptr)
         {
@@ -377,23 +358,3 @@ int ModelSelectingCards::indexListSelectedFromIdCard(int id)
     return indexInList;
 }
 
-int ModelSelectingCards::indexListFilteredFromIdCard(int id)
-{
-    int indexInList = -1;
-    int indexLoop = 0;
-
-    while((indexLoop < m_listCardsFiltered.count()) && (indexInList == -1))
-    {
-        AbstractCard* card = m_listCardsFiltered[indexLoop].card;
-
-        if(card != nullptr)
-        {
-            if(card->id() == id)
-                indexInList = indexLoop;
-        }
-
-        indexLoop++;
-    }
-
-    return indexInList;
-}

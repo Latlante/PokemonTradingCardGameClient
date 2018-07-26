@@ -10,6 +10,8 @@
 #define MAXCARDS_REWARD     6
 #define MAXCARDS_TRASH      60
 
+#define MAX_SAME_POKEMON_IN_DECK        4
+
 #define DAMAGE_POISON           10
 #define DAMAGE_WHEN_CONFUSED    30
 

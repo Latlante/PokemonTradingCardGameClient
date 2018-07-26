@@ -23,5 +23,7 @@
         <file alias="CreateChooseGame.qml">qml/CreateChooseGame.qml</file>
         <file alias="PageListPlayers.qml">qml/PageListPlayers.qml</file>
         <file alias="PageSelectionExistingGame.qml">qml/PageSelectionExistingGame.qml</file>
+        <file alias="PopupLineEdit.qml">qml/Popups/PopupLineEdit.qml</file>
+        <file alias="PageSelection.qml">qml/PageSelection.qml</file>
     </qresource>
 </RCC>

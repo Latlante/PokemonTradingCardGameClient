@@ -45,7 +45,11 @@ SOURCES += \
     common/utils.cpp \
     src_Models/modellistallplayers.cpp \
     src_Models/modellistofgamesavailable.cpp \
-    Share/constantesshared.cpp
+    Share/constantesshared.cpp \
+    src_Communication/abstractsocketclient.cpp \
+    src_Communication/socketclienttest.cpp \
+    src_Models/proxymodelselectingcards.cpp \
+    src_Models/modellistselection.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -93,4 +97,8 @@ HEADERS += \
     common/utils.h \
     src_Models/modellistallplayers.h \
     src_Models/modellistofgamesavailable.h \
-    Share/constantesshared.h
+    Share/constantesshared.h \
+    src_Communication/abstractsocketclient.h \
+    src_Communication/socketclienttest.h \
+    src_Models/proxymodelselectingcards.h \
+    src_Models/modellistselection.h
