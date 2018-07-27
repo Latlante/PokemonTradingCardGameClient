@@ -295,9 +295,47 @@ void CtrlGameBoard::sendCardsSelected()
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
-        if(obj["success"].toBool() != 0)
+        if(obj["success"].toBool() == true)
         {
+            setStepInProgress(false);
             m_factoryMainPageLoader->displayBoard();
+        }
+    }
+}
+
+void CtrlGameBoard::initReady()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QJsonDocument jsonResponse;
+    setStepInProgress(true);
+
+    if(m_socket->initIsReady(m_idGame, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj["success"].toBool() == true)
+        {
+            setStepInProgress(false);
+            //m_factoryMainPageLoader->displayBoard();
+        }
+    }
+}
+
+void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacketDestination, int idCardDestination)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QJsonDocument jsonResponse;
+    setStepInProgress(true);
+
+    if(m_socket->moveACard(m_idGame, static_cast<ConstantesShared::EnumPacket>(idPacketOrigin), idCardOrigin, static_cast<ConstantesShared::EnumPacket>(idPacketDestination), idCardDestination, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj["success"].toBool() == true)
+        {
+            setStepInProgress(false);
         }
     }
 }

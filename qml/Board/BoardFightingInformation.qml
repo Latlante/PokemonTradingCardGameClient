@@ -137,38 +137,21 @@ Item {
                 //onEntered: console.log("dropAreaFightingArea entered");
                 //onExited: console.log("dropAreaFightingArea exited");
                 onDropped: {
-                    //console.log("DropArea in fightingArea");
-                    //console.log("drag.source: " + drag.source.parent.objectName);
                     //Si ca vient du banc
                     if((drag.source.parent.player === boardFightingInfo1.player) &&
                             (drag.source.objectName === "itemDelegatePacketBench"))
                     {
                         console.log("DropArea from bench");
-                        //boardFightingInfo1.player.moveCardFromBenchToFight(drag.source.parent.listViewPacketBench.dragItemIndex);
-                        //drag.source.parent.listViewPacketBench.dragItemIndex = -1;
                     }
                     //Ca vient de la main
                     else if((drag.source.parent.parent.player === boardFightingInfo1.player) &&
                             (drag.source.objectName === "imageCardInHand"))
                     {
-                        //console.log("DropArea from hand, " + drag.source.parent.objectName);
-                        boardFightingInfo1.player.moveCardFromHandToFight(drag.source.parent.dragItemIndex);
-                        //drag.source.parent.listViewPacketHand.dragItemIndex = -1;
+                        //boardFightingInfo1.player.moveCardFromHandToFight(drag.source.parent.dragItemIndex);
+                        ctrlGameBoard.moveACard(4, drag.source.parent.dragItemIndex, 3, -1);
                     }
 
-                    /*if((boardPlayer1.listViewPacketBench.dragItemIndex !== -1) &&
-                            (boardPlayer1.player === boardFightingInfo1.player))
-                    {
-                        console.log("DropArea from bench");
-                        player.moveCardFromBenchToFight()
-                    }
-                    if((boardPlayer1.listViewPacketBench.dragItemIndex !== -1) &&
-                            (boardPlayer1.player === boardFightingInfo1.player))
-                    {
-                        listView.model.append(listView3.model.get(listView3.dragItemIndex))
-                        listView3.model.remove(listView3.dragItemIndex)
-                        listView3.dragItemIndex = -1;
-                    }*/
+
                 }
             }
         }
@@ -276,8 +259,8 @@ Item {
 
                 onClicked: {
                     console.log("buttonReadyPreparation clicked")
-                    player.checkIfInitReady()
-                    ctrlGameBoard.onClicked_ButtonReadyPreparation()
+                    //player.checkIfInitReady()
+                    ctrlGameBoard.initReady()
                 }
             }
 

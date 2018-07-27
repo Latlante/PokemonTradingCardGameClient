@@ -306,7 +306,8 @@ Item {
                             console.log("onDropped dropAreaBenchCardBench, " + drag.source.objectName);
                             if(drag.source.objectName === "imageCardInHand")
                             {
-                                player.moveCardFromHandToBench(listViewPacketHand.dragItemIndex, modelIndex);
+                                //player.moveCardFromHandToBench(listViewPacketHand.dragItemIndex, modelIndex);
+                                ctrlGameBoard.moveACard(4, listViewPacketHand.dragItemIndex, 1, modelIndex)
                                 listViewPacketHand.dragItemIndex = -1;
                             }
                         }
@@ -389,7 +390,8 @@ Item {
                         console.log("onDropped dropAreaBenchEmptyCard");
                         if(drag.source.objectName === "imageCardInHand")
                         {
-                            player.moveCardFromHandToBench(listViewPacketHand.dragItemIndex, modelIndex);
+                            //player.moveCardFromHandToBench(listViewPacketHand.dragItemIndex, modelIndex);
+                            ctrlGameBoard.moveACard(4, listViewPacketHand.dragItemIndex, 1, modelIndex)
                             listViewPacketHand.dragItemIndex = -1;
                         }
                     }

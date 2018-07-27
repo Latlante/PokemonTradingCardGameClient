@@ -18,8 +18,9 @@ public:
     bool removeAGame() override;
 
     bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse) override;
+    bool initIsReady(int idGame, QJsonDocument &jsonResponse) override;
 
-
+    bool moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse) override;
 
 private:
     void waitForTimeOut();

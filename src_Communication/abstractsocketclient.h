@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QJsonDocument>
 #include "src_Models/modelselectingcards.h"
+#include "Share/constantesshared.h"
 
 class AbstractSocketClient : public QObject
 {
@@ -23,6 +24,9 @@ public:
     virtual bool removeAGame() = 0;
 
     virtual bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse) = 0;
+    virtual bool initIsReady(int idGame, QJsonDocument &jsonResponse) = 0;
+
+    virtual bool moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse) = 0;
 
 signals:
 

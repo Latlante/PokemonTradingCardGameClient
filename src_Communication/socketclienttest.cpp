@@ -72,6 +72,16 @@ bool SocketClientTest::sendCardsSelected(int idGame, QList<InfoCard> listInfoCar
     return success;
 }
 
+bool SocketClientTest::initIsReady(int idGame, QJsonDocument &jsonResponse)
+{
+
+}
+
+bool SocketClientTest::moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse)
+{
+
+}
+
 void SocketClientTest::waitForTimeOut()
 {
     QTimer timerTimeOut;

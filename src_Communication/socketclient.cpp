@@ -10,7 +10,6 @@
 #include <QThread>
 
 #include "common/utils.h"
-#include "Share/constantesshared.h"
 #include "src_Cards/cardpokemon.h"
 
 SocketClient::SocketClient(QObject *parent) :
@@ -162,6 +161,56 @@ bool SocketClient::sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, 
         arrayCards.append(objCard);
     }
     jsonRequest["cards"] = arrayCards;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::initIsReady(int idGame, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_InitReady);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_MoveACard);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+    jsonRequest["idPacketOrigin"] = static_cast<int>(idPacketOrigin);
+    jsonRequest["idCardOrigin"] = idCardOrigin;
+    jsonRequest["idPacketDestination"] = static_cast<int>(idPacketDestination);
+    jsonRequest["idCardDestination"] = idCardDestination;
 
     if(sendMessage(QJsonDocument(jsonRequest), response))
     {

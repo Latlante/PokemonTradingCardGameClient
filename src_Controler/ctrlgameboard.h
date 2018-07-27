@@ -61,6 +61,9 @@ public:
     Q_INVOKABLE void returnToTheMenu();
 
     Q_INVOKABLE void sendCardsSelected();
+    Q_INVOKABLE void initReady();
+
+    Q_INVOKABLE void moveACard(int idPacketOrigin, int idCardOrigin, int idPacketDestination, int idCardDestination);
 
     Q_INVOKABLE void onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers);
     Q_INVOKABLE void displaySelectingCardsForNextPlayers();
