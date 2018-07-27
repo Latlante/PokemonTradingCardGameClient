@@ -39,8 +39,6 @@ public:
 	void newTurn();
     void turnFinished();
     bool isPlaying();
-	void drawOneCard();
-    void drawOneReward(AbstractCard *cardReward);
     bool isLoser();
 
     bool initReady();
@@ -49,22 +47,6 @@ public:
 
     bool canPlay();
     void setCanPlay(bool status);
-
-    bool moveCardFromDeckToHand(AbstractCard* cardDeckToMove = nullptr);
-    bool moveCardFromDeckToReward(AbstractCard* cardDeckToMove = nullptr);
-    Q_INVOKABLE bool moveCardFromHandToBench(int indexHand, int indexBench);
-    bool moveCardFromHandToDeck(AbstractCard* cardHandToMove);
-    Q_INVOKABLE bool moveCardFromHandToFight(int indexHand);
-    bool moveCardFromHandToTrash(AbstractCard *cardHandToMove);
-    bool moveCardFromBenchToFight(CardPokemon *pokemonToMove);
-    bool moveCardFromBenchToTrash(int index);
-    bool moveCardFromFightToTrash(int index);
-    bool moveCardFromRewardToHand(AbstractCard *cardReward);
-    bool moveCardFromTrashToHand(AbstractCard *cardTrash);
-    bool moveAllCardFromHandToDeck();
-
-    bool swapCardsBetweenBenchAndFight(CardPokemon *pokemonBenchToSwap);
-
 
 signals:
     void endOfTurn();
@@ -86,8 +68,6 @@ private:
     bool m_canPlay;
     bool m_energyPlayedForThisRound;
 
-    bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, int index);
-    bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, AbstractCard* cardToMove);
 
 };
 
