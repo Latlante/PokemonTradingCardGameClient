@@ -12,6 +12,20 @@ Item {
     property string nameOfThePlayer: ctrlSelectingCards.model().name
     property int countTotalQuantity: ctrlSelectingCards.model().countTotalQuantity
     property int maxCards: ctrlSelectingCards.model().maxCards()
+    property bool stepInProgress: ctrlGameBoard.stepInProgress
+
+    onStepInProgressChanged: {
+        if(stepInProgress == false)
+        {
+            background.enabled = true
+            loading_P1.visible = false
+        }
+        else if(stepInProgress == true)
+        {
+            background.enabled = false
+            loading_P1.visible = true
+        }
+    }
 
     Rectangle {
         id: background
@@ -186,8 +200,17 @@ Item {
             text: "OK"
             enabled: viewCards.model.countTotalQuantity === ctrlSelectingCards.model().maxCards()
 
-            onClicked: ctrlGameBoard.onClicked_ButtonOk_SelectCards()
+            onClicked: ctrlGameBoard.sendCardsSelected()
         }
+    }
+
+    Loading_P {
+        id: loading_P1
+        width: 100
+        height: 100
+        visible: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     PopupCardDetailsBasic {
