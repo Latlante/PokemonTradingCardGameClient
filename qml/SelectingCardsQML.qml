@@ -14,6 +14,8 @@ Item {
     property int maxCards: ctrlSelectingCards.model().maxCards()
     property bool stepInProgress: ctrlGameBoard.stepInProgress
 
+    onCountTotalQuantityChanged: console.log("onCountTotalQuantityChanged:" + countTotalQuantity)
+
     onStepInProgressChanged: {
         if(stepInProgress == false)
         {
@@ -198,7 +200,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             text: "OK"
-            enabled: viewCards.model.countTotalQuantity === ctrlSelectingCards.model().maxCards()
+            enabled: (selectCards1.countTotalQuantity === selectCards1.maxCards) && (stepInProgress === false)
 
             onClicked: ctrlGameBoard.sendCardsSelected()
         }

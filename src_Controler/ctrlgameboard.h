@@ -27,7 +27,6 @@ class CtrlGameBoard : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Player* currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
-    Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
     Q_PROPERTY(bool stepInProgress READ stepInProgress WRITE setStepInProgress NOTIFY stepInProgressChanged)
 
 
@@ -39,13 +38,11 @@ public:
     bool install(QQmlApplicationEngine *pEngine);
 
     Player* currentPlayer();
-    ConstantesQML::StepGame gameStatus();
 
     Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
     Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
     Q_INVOKABLE ModelListSelection* modelListSelect();
     Q_INVOKABLE FactoryMainPageLoader* factory();
-    Q_INVOKABLE void initGame();
     Q_INVOKABLE Player* playerAt(int index);
 
     bool stepInProgress();

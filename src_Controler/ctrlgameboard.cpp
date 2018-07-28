@@ -40,7 +40,6 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
 {
     //initGame();
     connect(m_gameManager, &GameManager::indexCurrentPlayerChanged, this, &CtrlGameBoard::currentPlayerChanged);
-    connect(m_gameManager, &GameManager::gameStatusChanged, this, &CtrlGameBoard::gameStatusChanged);
 
     connect(m_gameManager, &GameManager::displayAllElementsAsked, this ,&CtrlGameBoard::onDisplayAllElementsAsked);
     connect(m_gameManager, &GameManager::displayEnergiesForAPokemonAsked, this, &CtrlGameBoard::onDisplayEnergiesForAPokemonAsked);
@@ -100,11 +99,6 @@ Player* CtrlGameBoard::currentPlayer()
     return m_gameManager->currentPlayer();
 }
 
-ConstantesQML::StepGame CtrlGameBoard::gameStatus()
-{
-    return m_gameManager->gameStatus();
-}
-
 ModelListAllPlayers* CtrlGameBoard::modelAllPlayers()
 {
     return m_listAllPlayers;
@@ -135,11 +129,6 @@ FactoryMainPageLoader* CtrlGameBoard::factory()
     return m_factoryMainPageLoader;
 }
 
-void CtrlGameBoard::initGame()
-{
-    m_gameManager->initGame();
-}
-
 Player* CtrlGameBoard::playerAt(int index)
 {
     return m_gameManager->playerAt(index);
@@ -162,7 +151,7 @@ void CtrlGameBoard::setStepInProgress(bool inProgress)
 void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    /*setStepInProgress(true);
+    setStepInProgress(true);
 
     if(m_socket->tryToConnect())
     {
@@ -200,10 +189,10 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
     {
         setStepInProgress(false);
         qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
-    }*/
+    }
 
-    m_ctrlSelectingCards.setName(name);
-    m_factoryMainPageLoader->displaySelectCards();
+    /*m_ctrlSelectingCards.setName(name);
+    m_factoryMainPageLoader->displaySelectCards();*/
 }
 
 void CtrlGameBoard::listOfAllPlayers()
@@ -224,10 +213,10 @@ void CtrlGameBoard::listOfAllPlayers()
         for(int i=0;i<arrayPlayers.count();++i)
         {
             //MODIF A VENIR
-            //QJsonObject objPlayer = arrayPlayers[i].toObject();
-            //m_listAllPlayers->addNewPlayer(objPlayer["id"].toInt(), objPlayer["name"].toString());
+            QJsonObject objPlayer = arrayPlayers[i].toObject();
+            m_listAllPlayers->addNewPlayer(objPlayer["uid"].toInt(), objPlayer["name"].toString());
 
-            m_listAllPlayers->addNewPlayer(i, arrayPlayers[i].toString());
+            //m_listAllPlayers->addNewPlayer(i, arrayPlayers[i].toString());
         }
 
         if(m_listAllPlayers->rowCount() > 0)
@@ -295,10 +284,14 @@ void CtrlGameBoard::sendCardsSelected()
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
-        if(obj["success"].toBool() == true)
+        if(obj["success"].toString() == "ok")
         {
             setStepInProgress(false);
             m_factoryMainPageLoader->displayBoard();
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
         }
     }
 }
@@ -314,10 +307,14 @@ void CtrlGameBoard::initReady()
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
-        if(obj["success"].toBool() == true)
+        if(obj["success"].toString() == "ok")
         {
             setStepInProgress(false);
             //m_factoryMainPageLoader->displayBoard();
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
         }
     }
 }
@@ -333,9 +330,13 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
-        if(obj["success"].toBool() == true)
+        if(obj["success"].toString() == "ok")
         {
             setStepInProgress(false);
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
         }
     }
 }

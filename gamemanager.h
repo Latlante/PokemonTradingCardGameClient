@@ -26,17 +26,13 @@ public:
     Player* currentPlayer();
     Player* playerAttacked();
     Player* playerAt(int index);
-    ConstantesQML::StepGame gameStatus();
-    void setGameStatus(ConstantesQML::StepGame step);
 
     //Preparation de la partie
-    void initGame();
     Player* addNewPlayer(QString name, QList<AbstractCard*> listCards);
     void selectFirstPlayer();
     void setInitReady();
 
     //Phase de combat
-    void startGame();
 	void nextPlayer();
     CardPokemon::Enum_StatusOfAttack attack(CardPokemon* pokemonAttacking, unsigned short index);
     bool retreat(CardPokemon *pokemonToRetreat);
@@ -101,12 +97,6 @@ private:
 
     void setIndexCurrentPlayer(int index);
     Player* enemyOf(Player* play);
-
-    bool checkHandOfEachPlayer();
-    void drawFirstCards(Player *play);
-    void checkPokemonDead();
-    void checkStatusPokemonForNewRound();
-    void checkAttacksBlocked();
 
 
 };
