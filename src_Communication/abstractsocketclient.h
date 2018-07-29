@@ -22,6 +22,7 @@ public:
     virtual bool listAllPlayers(QJsonDocument &jsonResponse) = 0;
     virtual bool createANewGame(const QString& nameGame, int idOpponent, QJsonDocument &jsonResponse) = 0;
     virtual bool removeAGame() = 0;
+    virtual bool getAllInfoOnTheGame(int idGame, QJsonDocument &jsonResponse) = 0;
 
     virtual bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse) = 0;
     virtual bool initIsReady(int idGame, QJsonDocument &jsonResponse) = 0;

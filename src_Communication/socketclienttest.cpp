@@ -62,6 +62,11 @@ bool SocketClientTest::removeAGame()
     return true;
 }
 
+bool SocketClientTest::getAllInfoOnTheGame(int idGame, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
 bool SocketClientTest::sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse)
 {
     qDebug() << __PRETTY_FUNCTION__;

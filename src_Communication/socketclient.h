@@ -19,6 +19,7 @@ public:
     bool listAllPlayers(QJsonDocument &jsonResponse) override;
     bool createANewGame(const QString& nameGame, int idOpponent, QJsonDocument &jsonResponse) override;
     bool removeAGame() override;
+    bool getAllInfoOnTheGame(int idGame, QJsonDocument &jsonResponse) override;
 
     bool sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse) override;
     bool initIsReady(int idGame, QJsonDocument &jsonResponse) override;
