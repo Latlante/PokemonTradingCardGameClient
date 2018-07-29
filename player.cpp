@@ -173,6 +173,94 @@ void Player::setCanPlay(bool status)
     }
 }
 
+bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index)
+{
+    bool moveSuccess = false;
+
+    if (destination->isFull() == false)
+    {
+        AbstractCard* cardToMove = source->takeACard(index);
+
+        if (cardToMove != nullptr)
+        {
+            destination->addNewCard(cardToMove);
+            moveSuccess = true;
+        }
+        else
+        {
+            qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
+
+        }
+    }
+
+    return moveSuccess;
+}
+
+bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, AbstractCard *cardToMove)
+{
+    bool moveSuccess = false;
+
+    if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
+    {
+        if (destination->isFull() == false)
+        {
+            //get data before action
+            ConstantesShared::EnumPacket packetOrigin = ConstantesShared::EnumPacketFromName(source->name());
+            int indexCardOrigin = source->indexOf(cardToMove);
+            ConstantesShared::EnumPacket packetDestination = ConstantesShared::EnumPacketFromName(destination->name());
+            int idCard = cardToMove->id();
+
+            //action
+            moveSuccess = source->removeFromPacketWithoutDelete(cardToMove);
+
+            if(moveSuccess == true)
+            {
+                moveSuccess = destination->addNewCard(cardToMove);
+
+                //Send notification
+                emit cardMoved(name(), packetOrigin, indexCardOrigin, packetDestination, idCard);
+            }
+        }
+    }
+    else
+    {
+        QString messageError = "Element(s) is/are nullptr:\n";
+        if(source == nullptr)
+            messageError += "  - err: source is nullptr";
+        else
+            messageError += "  - source is " + source->name();
+
+        if(destination == nullptr)
+            messageError += "  - err: destination is nullptr";
+        else
+            messageError += "  - destination is " + destination->name();
+
+        if(cardToMove == nullptr)
+            messageError += "  - err: cardToMove is nullptr";
+        else
+            messageError += "  - source is " + cardToMove->name();
+
+        qCritical() << __PRETTY_FUNCTION__ << messageError;
+
+    }
+
+    return moveSuccess;
+}
+
+AbstractPacket* Player::packetFromEnumPacket(ConstantesShared::EnumPacket ePacket)
+{
+    switch(ePacket)
+    {
+    case ConstantesShared::PACKET_Bench:    return bench();
+    case ConstantesShared::PACKET_Deck:     return deck();
+    case ConstantesShared::PACKET_Fight:    return fight();
+    case ConstantesShared::PACKET_Hand:     return hand();
+    case ConstantesShared::PACKET_Rewards:  return rewards();
+    case ConstantesShared::PACKET_Trash:    return trash();
+    }
+
+    return nullptr;
+}
 
 /************************************************************
 *****				FONCTIONS PRIVEES					*****

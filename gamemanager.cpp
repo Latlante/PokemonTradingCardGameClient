@@ -104,6 +104,27 @@ Player* GameManager::playerAt(int index)
     return play;
 }
 
+Player* GameManager::playerByName(const QString &name)
+{
+    Player* playToReturn = nullptr;
+    int index = 0;
+
+    while((playToReturn == nullptr) && (index < m_listPlayers.count()))
+    {
+        Player* play = m_listPlayers[index];
+        if((play != nullptr) && (play->name() == name))
+        {
+            playToReturn = play;
+        }
+        else
+        {
+            index++;
+        }
+    }
+
+    return playToReturn;
+}
+
 
 //PREPARATION DE LA PARTIE
 Player *GameManager::addNewPlayer(QString name, QList<AbstractCard*> listCards)

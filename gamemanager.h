@@ -26,6 +26,7 @@ public:
     Player* currentPlayer();
     Player* playerAttacked();
     Player* playerAt(int index);
+    Player* playerByName(const QString& name);
 
     //Preparation de la partie
     Player* addNewPlayer(QString name, QList<AbstractCard*> listCards);

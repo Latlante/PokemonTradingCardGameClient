@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include "Share/constantesshared.h"
+
 class AbstractCard;
 class CardAction;
 class CardEnergy;
@@ -47,6 +49,10 @@ public:
 
     bool canPlay();
     void setCanPlay(bool status);
+
+    bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, int index);
+    bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, AbstractCard* cardToMove);
+    AbstractPacket* packetFromEnumPacket(ConstantesShared::EnumPacket ePacket);
 
 signals:
     void endOfTurn();
