@@ -49,7 +49,8 @@ SOURCES += \
     src_Communication/abstractsocketclient.cpp \
     src_Communication/socketclienttest.cpp \
     src_Models/proxymodelselectingcards.cpp \
-    src_Models/modellistselection.cpp
+    src_Models/modellistselection.cpp \
+    src_Cards/cardempty.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -101,4 +102,5 @@ HEADERS += \
     src_Communication/abstractsocketclient.h \
     src_Communication/socketclienttest.h \
     src_Models/proxymodelselectingcards.h \
-    src_Models/modellistselection.h
+    src_Models/modellistselection.h \
+    src_Cards/cardempty.h
