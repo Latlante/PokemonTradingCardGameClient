@@ -264,7 +264,43 @@ void CtrlGameBoard::listOfGamesAvailable()
 
 void CtrlGameBoard::joinAGame(int idGame)
 {
-    m_factoryMainPageLoader->displayBoard();
+    qDebug() << __PRETTY_FUNCTION__;
+    QJsonDocument jsonResponse;
+    setStepInProgress(true);
+
+    if(m_socket->getAllInfoOnTheGame(idGame, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        m_idGame = idGame;
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj["success"].toString() == "ok")
+        {
+            setStepInProgress(false);
+
+            ConstantesQML::StepGame step = static_cast<ConstantesQML::StepGame>(obj["gameStatus"].toInt());
+            switch(step)
+            {
+            case ConstantesQML::StepSelectionCards:
+                m_factoryMainPageLoader->displaySelectCards();
+                break;
+
+            case ConstantesQML::StepPreparation:
+            case ConstantesQML::StepGameInProgress:
+                m_factoryMainPageLoader->displayBoard();
+                break;
+
+            case ConstantesQML::StepFinished:
+                m_factoryMainPageLoader->displayBoard();
+                m_ctrlPopups.displayMessage("Victoire de " + obj["winner"].toString());
+                break;
+            }
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+        }
+    }
 }
 
 void CtrlGameBoard::returnToTheMenu()
@@ -535,4 +571,36 @@ void CtrlGameBoard::onMovingCardAnimationStart()
 #endif
 
     m_ctrlAnim.startAnimationMovingCard(CtrlAnimation::Location_Deck, CtrlAnimation::Location_Hand);
+}
+
+/************************************************************
+*****				FONCTIONS PRIVATE					*****
+************************************************************/
+void CtrlGameBoard::executeActions(QJsonObject objActions)
+{
+    if((objActions.contains("indexBegin") == true) && (objActions.contains("indexEnd") == true))
+    {
+        int indexActionBegin = objActions["indexBegin"].toInt();
+        int indexActionEnd = objActions["indexEnd"].toInt();
+
+        for(int i=indexActionBegin;i<indexActionEnd;++i)
+        {
+            QJsonObject objAction = objActions[QString::number(i)];
+            QString namePlayer = objActions["namePlayer"].toString();
+            int phase = objAction["index"].toInt();
+
+            Player* play =  m_gameManager->playerByName(namePlayer);
+
+            switch(phase)
+            {
+            case ConstantesShared::PHASE_NotifCardMoved:
+                AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(objAction["idPacketOrigin"].toInt()));
+                AbstractPacket* packetDestination = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(objAction["idPacketDestination"].toInt()));
+                play->mo
+                break;
+            }
+        }
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "actions does not contains indexBegin and indexEnd";
 }

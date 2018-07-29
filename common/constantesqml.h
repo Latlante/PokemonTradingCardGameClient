@@ -11,7 +11,8 @@ class ConstantesQML : public QObject
 public:
     enum StepGame
     {
-        StepPreparation = 0,
+        StepSelectionCards = 0,
+        StepPreparation,
         StepGameInProgress,
         StepFinished
     };

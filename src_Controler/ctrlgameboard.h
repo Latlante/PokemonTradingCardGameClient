@@ -106,6 +106,7 @@ private:
     bool m_stepInProgress;
     int m_idGame;
 
+    void executeActions(QJsonObject objActions);
 };
 
 #endif // CTRLGAMEBOARD_H
