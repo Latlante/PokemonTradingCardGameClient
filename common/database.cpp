@@ -93,7 +93,7 @@ QList<int> Database::listIdAllCardsTrainers()
 
 AbstractCard* Database::cardById(int id)
 {
-    AbstractCard* cardToReturn = NULL;
+    AbstractCard* cardToReturn = nullptr;
     QFile fichier(m_PATH_DB);
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
 
@@ -131,12 +131,37 @@ AbstractCard* Database::cardById(int id)
     return cardToReturn;
 }
 
+CardEnergy* Database::newCardEnergyFromElement(AbstractCard::Enum_element element)
+{
+    QFile fichier(m_PATH_DB);
+    fichier.open(QIODevice::ReadOnly | QIODevice::Text);
+
+    QByteArray textFromFile = fichier.readAll();
+    QString contenuGeneral = QString::fromLatin1(textFromFile);
+    QStringList contenuParLigne = contenuGeneral.split("\n");
+
+    int indexLine = -1;
+    for(int i=INDEX_START_ENERGIES;i<INDEX_START_ACTION;++i)
+    //foreach(QString ligne, contenuParLigne)
+    {
+        int elementCard = contenuParLigne[i].section(";", InfoDbNrj_Element, InfoDbNrj_Element).toInt();
+
+        if (elementCard == element)
+        {
+            indexLine = i;
+            break;
+        }
+    }
+
+    return static_cast<CardEnergy*>(newCardEnergy(contenuParLigne[indexLine]));
+}
+
 /************************************************************
 *****				FONCTIONS PRIVEES					*****
 ************************************************************/
 CardPokemon* Database::newCardPokemon(const QString& infoCsv)
 {
-    CardPokemon* cardPokemonToReturn = NULL;
+    CardPokemon* cardPokemonToReturn = nullptr;
     QStringList arguments = infoCsv.split(";");
 
     if(arguments[InfoDbPok_Useable] == "1")
@@ -192,14 +217,14 @@ CardPokemon* Database::newCardPokemon(const QString& infoCsv)
 
 CardEnergy* Database::newCardEnergy(const QString &infoCsv)
 {
-    CardEnergy* cardEnergyToReturn = NULL;
+    CardEnergy* cardEnergyToReturn = nullptr;
     QStringList arguments = infoCsv.split(";");
 
     if(arguments[InfoDbNrj_Useable] == "1")
     {
         cardEnergyToReturn = new CardEnergy(arguments[InfoDbNrj_Id].toInt(),
                                             arguments[InfoDbNrj_Name],
-                                            static_cast<AbstractCard::Enum_element>(arguments[InfoDbNrj_Id].toInt()-INDEX_START_ENERGIES),
+                                            static_cast<AbstractCard::Enum_element>(arguments[InfoDbNrj_Element].toInt()),
                                             arguments[InfoDbNrj_Quantity].toUShort());
     }
 
@@ -208,7 +233,7 @@ CardEnergy* Database::newCardEnergy(const QString &infoCsv)
 
 CardAction *Database::newCardTrainer(const QString &infoCsv)
 {
-    CardAction* cardTrainerToReturn = NULL;
+    CardAction* cardTrainerToReturn = nullptr;
     QStringList arguments = infoCsv.split(";");
     bool ok;
 

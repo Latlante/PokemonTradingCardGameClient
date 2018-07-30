@@ -737,6 +737,56 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                     }
                 }
                     break;
+
+                case ConstantesShared::PHASE_NotifEnergyAdded:
+                {
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("elementEnergy")))
+                    {
+                        const QString namePlayer = objAction["namePlyer"].toString();
+
+                        Player* play = m_gameManager->playerByName(namePlayer);
+                        if(play != nullptr)
+                        {
+                            const int idPacket = objAction["idPacket"].toInt();
+                            const ConstantesShared::EnumPacket ePacket = static_cast<ConstantesShared::EnumPacket>(idPacket);
+                            AbstractPacket* packet = play->packetFromEnumPacket(ePacket);
+                            if(packet != nullptr)
+                            {
+                                const int indexCard = objAction["indexCard"].toInt();
+                                AbstractCard* abCard = packet->card(indexCard);
+                                if(abCard != nullptr)
+                                {
+                                    if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+                                    {
+                                        Database db;
+                                        const int elementEnergy = objAction["elementEnergy"].toInt();
+                                        CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+
+                                        pokemon->addEnergy(db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(elementEnergy)));
+                                    }
+                                    else
+                                        qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
+
+                                }
+                                else
+                                    qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
+
+                            }
+                            else
+                                qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
+
+                        }
+                        else
+                            qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
+
+
+                    }
+
+                }
+                    break;
+
+                default:
+                    qWarning() << "phase " << phase << " not developp yet";
                 }
             }
             else

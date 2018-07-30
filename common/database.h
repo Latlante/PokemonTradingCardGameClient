@@ -73,6 +73,7 @@ public:
     QList<int> listIdAllCardsEnergies();
     QList<int> listIdAllCardsTrainers();
     AbstractCard* cardById(int id);
+    CardEnergy* newCardEnergyFromElement(AbstractCard::Enum_element element);
 
 signals:
 
