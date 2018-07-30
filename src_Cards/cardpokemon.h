@@ -77,7 +77,7 @@ public:
                 short evolutionFrom = -1,
                 unsigned short costRetreat = 0);
     CardPokemon(const CardPokemon& card);
-    ~CardPokemon();
+    ~CardPokemon() override;
 
     static void declareQML();
 
@@ -134,29 +134,10 @@ public:
 	unsigned short countEnergies();
 	unsigned short countEnergies(Enum_element element);
     Q_INVOKABLE ModelListEnergies* modelListOfEnergies();
-	
-    Enum_StatusOfAttack tryToAttack(int indexAttack, CardPokemon *enemy);
-	void takeDamage(unsigned short damage);
-    void killed();
-    void restoreLife(unsigned short life);
-	bool canAttackFromStatus();
-	bool hasEnoughEnergies(AttackData attack);
-	bool hasEnoughEnergies(int indexAttack);
 
-    bool evolve(CardPokemon* evolution);
 	bool isBase();
 	bool isSubEvolutionOf(CardPokemon* evolution);
     bool isEvolutionOf(CardPokemon* subEvolution);
-
-    void applyDamageIfPoisoned();
-    unsigned short damagePoisonPerRound();
-    void setDamagePoisonPerRound(unsigned short damage);
-    bool isDestinyBond();
-    void setDestinyBond(bool state);
-    AttackData lastAttackUsed();
-    int lastIndexOfAttackUsed();
-    unsigned short lastDamageReceived();
-    void resetLastDamageReceived();
 
     unsigned short costRetreat();
     bool canRetreat();
@@ -196,7 +177,6 @@ private:
     unsigned short currentDamage();
     void setDamage(unsigned short damage);
     QString statusToString(Enum_statusOfPokemon status);
-    unsigned short calculOfNewDamageDependOfWeaknessAndResistance(CardPokemon *enemy, unsigned short originalDamage);
 };
 
 #endif // CARDPOKEMON_H

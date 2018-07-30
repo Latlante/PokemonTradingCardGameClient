@@ -11,7 +11,7 @@ class CardAction : public AbstractCard
 public:
     CardAction(unsigned short id, const QString& name, const QString& description);
     CardAction(const CardAction& card);
-    ~CardAction();
+    ~CardAction() override;
 
     static void declareQML();
 	

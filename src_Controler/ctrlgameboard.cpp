@@ -599,9 +599,9 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
         int indexActionBegin = objActions["indexBegin"].toInt();
         int indexActionEnd = objActions["indexEnd"].toInt();
 
-        for(int i=indexActionBegin;i<indexActionEnd;++i)
+        for(int indexAction=indexActionBegin;indexAction<indexActionEnd;++indexAction)
         {
-            QJsonObject objAction = objActions[QString::number(i)].toObject();
+            QJsonObject objAction = objActions[QString::number(indexAction)].toObject();
             QString namePlayer = objActions["namePlayer"].toString();
             int phase = objAction["index"].toInt();
 
