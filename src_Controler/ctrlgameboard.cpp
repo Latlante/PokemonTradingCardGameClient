@@ -611,6 +611,40 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 switch(phase)
                 {
+                case ConstantesShared::PHASE_NotifPlayerIsReady:
+                {
+                    if(objAction.contains("everyoneIsReady"))
+                    {
+                        bool everyoneIsReady = objAction["everyoneIsReady"].toBool();
+                        if(everyoneIsReady)
+                        {
+                            setGameStatus(ConstantesQML::StepGameInProgress);
+                        }
+                        else
+                        {
+                            QJsonArray arrayPlayers = objAction["players"].toArray();
+                            for(int i=0;i<arrayPlayers.count();++i)
+                            {
+                                QJsonObject objPlayer = arrayPlayers[i].toObject();
+                                if((!objPlayer.isEmpty()) && (objPlayer.contains("namePlayer")) && (objPlayer.contains("ready")))
+                                {
+                                    const QString namePlayer = objPlayer["namePlayer"].toString();
+                                    bool initReady = objPlayer["ready"].toBool();
+                                    Player* play = m_gameManager->playerByName(namePlayer);
+                                    if(play != nullptr)
+                                    {
+                                        play->setInitReady(initReady);
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+                    else
+                        qWarning() << __PRETTY_FUNCTION__ << "PHASE_NotifPlayerIsReady does not contain \"everyoneIsReady\"";
+                }
+                    break;
 
                 case ConstantesShared::PHASE_NotifCardMoved:
                 {
