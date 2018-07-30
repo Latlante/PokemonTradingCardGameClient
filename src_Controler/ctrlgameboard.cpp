@@ -646,6 +646,25 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                 }
                     break;
 
+                case ConstantesShared::PHASE_NotifEndOfTurn:
+                {
+                    if((objAction.contains("endOfTurn")) && (objAction.contains("newTurn")))
+                    {
+                        const QString namePlayerEndOfTurn = objAction["endOfTurn"].toString();
+                        const QString namePlayerNewTurn = objAction["newTurn"].toString();
+                        Player* playerEndOfTurn = m_gameManager->playerByName(namePlayerEndOfTurn);
+                        Player* playerNewTurn = m_gameManager->playerByName(namePlayerNewTurn);
+
+                        if(playerEndOfTurn != nullptr)
+                            playerEndOfTurn->setCanPlay(false);
+
+                        if(playerNewTurn != nullptr)
+                            playerNewTurn->setCanPlay(true);
+                    }
+
+                }
+                    break;
+
                 case ConstantesShared::PHASE_NotifCardMoved:
                 {
                     int idPacketOrigin = objAction["idPacketOrigin"].toInt();
