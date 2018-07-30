@@ -28,6 +28,7 @@ class CtrlGameBoard : public QObject
     Q_OBJECT
     Q_PROPERTY(Player* currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
     Q_PROPERTY(bool stepInProgress READ stepInProgress WRITE setStepInProgress NOTIFY stepInProgressChanged)
+    Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
 
 
 public:
@@ -47,6 +48,8 @@ public:
 
     bool stepInProgress();
     void setStepInProgress(bool inProgress);
+    ConstantesQML::StepGame gameStatus();
+    void setGameStatus(ConstantesQML::StepGame status);
 
     //Actions
     Q_INVOKABLE void authentificate(const QString& name, const QString& password);
@@ -105,6 +108,7 @@ private:
 
     bool m_stepInProgress;
     int m_idGame;
+    ConstantesQML::StepGame m_gameStatus;
 
     void executeActions(QJsonObject objActions);
 };

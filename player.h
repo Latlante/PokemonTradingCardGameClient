@@ -52,6 +52,7 @@ public:
 
     bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, int index);
     bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, AbstractCard* cardToMove);
+    bool moveCardFromPacketToAnother(AbstractPacket* source, AbstractPacket* destination, int index, AbstractCard* cardToMove);
     AbstractPacket* packetFromEnumPacket(ConstantesShared::EnumPacket ePacket);
 
 signals:

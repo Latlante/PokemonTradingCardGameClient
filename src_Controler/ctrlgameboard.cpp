@@ -11,6 +11,7 @@
 #include <QtQml/qqml.h>
 
 #include "player.h"
+#include "common/database.h"
 #include "src_Cards/cardpokemon.h"
 #include "src_Communication/socketclient.h"
 #include "src_Controler/ctrlanimation.h"
@@ -36,7 +37,8 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards),
     m_stepInProgress(false),
-    m_idGame(0)
+    m_idGame(0),
+    m_gameStatus(ConstantesQML::StepPreparation)
 {
     //initGame();
     connect(m_gameManager, &GameManager::indexCurrentPlayerChanged, this, &CtrlGameBoard::currentPlayerChanged);
@@ -145,6 +147,20 @@ void CtrlGameBoard::setStepInProgress(bool inProgress)
     {
         m_stepInProgress = inProgress;
         emit stepInProgressChanged();
+    }
+}
+
+ConstantesQML::StepGame CtrlGameBoard::gameStatus()
+{
+    return m_gameStatus;
+}
+
+void CtrlGameBoard::setGameStatus(ConstantesQML::StepGame status)
+{
+    if(status != m_gameStatus)
+    {
+        m_gameStatus = status;
+        emit gameStatusChanged();
     }
 }
 
@@ -585,20 +601,45 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
         for(int i=indexActionBegin;i<indexActionEnd;++i)
         {
-            QJsonObject objAction = objActions[QString::number(i)];
+            QJsonObject objAction = objActions[QString::number(i)].toObject();
             QString namePlayer = objActions["namePlayer"].toString();
             int phase = objAction["index"].toInt();
 
-            Player* play =  m_gameManager->playerByName(namePlayer);
-
-            switch(phase)
+            if(!objAction.isEmpty())
             {
-            case ConstantesShared::PHASE_NotifCardMoved:
-                AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(objAction["idPacketOrigin"].toInt()));
-                AbstractPacket* packetDestination = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(objAction["idPacketDestination"].toInt()));
-                play->mo
-                break;
+                Player* play =  m_gameManager->playerByName(namePlayer);
+
+                switch(phase)
+                {
+
+                case ConstantesShared::PHASE_NotifCardMoved:
+                {
+                    int idPacketOrigin = objAction["idPacketOrigin"].toInt();
+                    int idPacketDestination = objAction["idPacketDestination"].toInt();
+                    int indexCardOrigin = objAction["indexCardOrigin"].toInt();
+                    AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(idPacketOrigin));
+                    AbstractPacket* packetDestination = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(idPacketDestination));
+
+                    if(objAction.contains("idCard"))
+                    {
+                        Database db;
+                        int idCard = objAction["idCard"].toInt();
+                        AbstractCard* abCard = db.cardById(idCard);
+
+                        if(abCard != nullptr)
+                            play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
+                        else
+                            qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
+                    }
+                    else
+                        play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
+                }
+                    break;
+                }
             }
+            else
+                qWarning() << __PRETTY_FUNCTION__ << "objAction is empty";
+
         }
     }
     else

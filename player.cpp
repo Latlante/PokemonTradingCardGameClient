@@ -204,21 +204,60 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
     {
         if (destination->isFull() == false)
         {
-            //get data before action
-            ConstantesShared::EnumPacket packetOrigin = ConstantesShared::EnumPacketFromName(source->name());
-            int indexCardOrigin = source->indexOf(cardToMove);
-            ConstantesShared::EnumPacket packetDestination = ConstantesShared::EnumPacketFromName(destination->name());
-            int idCard = cardToMove->id();
-
             //action
             moveSuccess = source->removeFromPacketWithoutDelete(cardToMove);
 
             if(moveSuccess == true)
             {
                 moveSuccess = destination->addNewCard(cardToMove);
+            }
+        }
+    }
+    else
+    {
+        QString messageError = "Element(s) is/are nullptr:\n";
+        if(source == nullptr)
+            messageError += "  - err: source is nullptr";
+        else
+            messageError += "  - source is " + source->name();
 
-                //Send notification
-                emit cardMoved(name(), packetOrigin, indexCardOrigin, packetDestination, idCard);
+        if(destination == nullptr)
+            messageError += "  - err: destination is nullptr";
+        else
+            messageError += "  - destination is " + destination->name();
+
+        if(cardToMove == nullptr)
+            messageError += "  - err: cardToMove is nullptr";
+        else
+            messageError += "  - source is " + cardToMove->name();
+
+        qCritical() << __PRETTY_FUNCTION__ << messageError;
+
+    }
+
+    return moveSuccess;
+}
+
+bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index, AbstractCard *cardToMove)
+{
+    bool moveSuccess = false;
+
+    if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
+    {
+        if (destination->isFull() == false)
+        {
+            AbstractCard* cardToDelete = source->takeACard(index);
+
+            if (cardToDelete != nullptr)
+            {
+                delete cardToDelete;
+                destination->addNewCard(cardToMove);
+                moveSuccess = true;
+            }
+            else
+            {
+                qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
+
             }
         }
     }
@@ -257,6 +296,8 @@ AbstractPacket* Player::packetFromEnumPacket(ConstantesShared::EnumPacket ePacke
     case ConstantesShared::PACKET_Hand:     return hand();
     case ConstantesShared::PACKET_Rewards:  return rewards();
     case ConstantesShared::PACKET_Trash:    return trash();
+    default:
+        break;
     }
 
     return nullptr;
