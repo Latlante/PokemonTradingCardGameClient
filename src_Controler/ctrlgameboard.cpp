@@ -611,11 +611,23 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 switch(phase)
                 {
+                case ConstantesShared::PHASE_NotifNewGameCreated:
+                {
+                    if((objAction.contains("uidGame")) && (objAction.contains("nameGame")) && (objAction.contains("opponent")))
+                    {
+                        const int uidGame = objAction["uidGame"].toInt();
+                        const QString nameGame = objAction["nameGame"].toString();
+                        const QString opponent = objAction["opponent"].toString();
+                        m_listOfGamesAvailable->addNewGame(uidGame, nameGame, opponent);
+                    }
+                }
+                    break;
+
                 case ConstantesShared::PHASE_NotifPlayerIsReady:
                 {
                     if(objAction.contains("everyoneIsReady"))
                     {
-                        bool everyoneIsReady = objAction["everyoneIsReady"].toBool();
+                        const bool everyoneIsReady = objAction["everyoneIsReady"].toBool();
                         if(everyoneIsReady)
                         {
                             setGameStatus(ConstantesQML::StepGameInProgress);
@@ -667,16 +679,16 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifCardMoved:
                 {
-                    int idPacketOrigin = objAction["idPacketOrigin"].toInt();
-                    int idPacketDestination = objAction["idPacketDestination"].toInt();
-                    int indexCardOrigin = objAction["indexCardOrigin"].toInt();
+                    const int idPacketOrigin = objAction["idPacketOrigin"].toInt();
+                    const int idPacketDestination = objAction["idPacketDestination"].toInt();
+                    const int indexCardOrigin = objAction["indexCardOrigin"].toInt();
                     AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketOrigin));
                     AbstractPacket* packetDestination = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketDestination));
 
                     if(objAction.contains("idCard"))
                     {
                         Database db;
-                        int idCard = objAction["idCard"].toInt();
+                        const int idCard = objAction["idCard"].toInt();
                         AbstractCard* abCard = db.cardById(idCard);
 
                         if(abCard != nullptr)
@@ -702,7 +714,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                             AbstractPacket* packet = play->packetFromEnumPacket(ePacket);
                             if(packet != nullptr)
                             {
-                                int indexCard = objAction["indexCard"].toInt();
+                                const int indexCard = objAction["indexCard"].toInt();
                                 AbstractCard* abCard = packet->card(indexCard);
                                 if(abCard != nullptr)
                                 {
