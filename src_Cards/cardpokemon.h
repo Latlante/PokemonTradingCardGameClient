@@ -15,8 +15,7 @@ struct AttackData
 	QString description;
 	unsigned short damage;
     QMap<AbstractCard::Enum_element, unsigned short> costEnergies;
-    AbstractAction* action;
-    short numberOfTurnAttackStillBlocks;
+    bool blocked;
 
     bool operator ==(const AttackData& extData)
     {
@@ -24,8 +23,7 @@ struct AttackData
                 (description == extData.description) &&
                 (damage == extData.damage) &&
                 (costEnergies == extData.costEnergies) &&
-                (action == extData.action) &&
-                (numberOfTurnAttackStillBlocks == extData.numberOfTurnAttackStillBlocks));
+                (blocked == extData.blocked));
     }
 };
 
@@ -93,6 +91,7 @@ public:
     unsigned short lifeTotal();
     bool isDied();
     unsigned short lifeLeft();
+    void setLifeLeft(unsigned short lifeLeft);
     unsigned short damageMarker();
     Enum_statusOfPokemon status();
     Q_INVOKABLE QString statusFormatString();
@@ -122,9 +121,8 @@ public:
     Q_INVOKABLE QString attackDescription(int index);
     Q_INVOKABLE unsigned short attackDamage(int index);
     bool replaceOneAttack(int index, AttackData data);
-    short numberOfTurnAttackStillBlocks(int indexAttack);
-    void decrementNumberOfTurnAttackStillBlocks();
-    void setNumberOfTurnAttackStillBlocks(int indexAttack, short value);
+    bool attackIsBlocked(int indexAttack);
+    void setAttackBlocked(int indexAttack, bool blocked);
 #ifdef TESTS_UNITAIRES
     void setAttacks(int index, AttackData data);
 #endif

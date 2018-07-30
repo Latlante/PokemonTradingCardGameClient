@@ -670,8 +670,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                     int idPacketOrigin = objAction["idPacketOrigin"].toInt();
                     int idPacketDestination = objAction["idPacketDestination"].toInt();
                     int indexCardOrigin = objAction["indexCardOrigin"].toInt();
-                    AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(idPacketOrigin));
-                    AbstractPacket* packetDestination = play->packetFromEnumPacket(static_const<ConstantesShared::EnumPacket>(idPacketDestination));
+                    AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketOrigin));
+                    AbstractPacket* packetDestination = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketDestination));
 
                     if(objAction.contains("idCard"))
                     {
@@ -686,6 +686,55 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                     }
                     else
                         play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
+                }
+                    break;
+
+                case ConstantesShared::PHASE_NotifDataPokemonChanged:
+                {
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")))
+                    {
+                        const QString namePlayer = objAction["namePlayer"].toString();
+                        Player* play = m_gameManager->playerByName(namePlayer);
+                        if(play != nullptr)
+                        {
+                            int idPacket = objAction["idPacket"].toInt();
+                            ConstantesShared::EnumPacket ePacket = static_cast<ConstantesShared::EnumPacket>(idPacket);
+                            AbstractPacket* packet = play->packetFromEnumPacket(ePacket);
+                            if(packet != nullptr)
+                            {
+                                int indexCard = objAction["indexCard"].toInt();
+                                AbstractCard* abCard = packet->card(indexCard);
+                                if(abCard != nullptr)
+                                {
+                                    if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+                                    {
+                                        CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                                        int lifeLeft = objAction["lifeLeft"].toInt();
+                                        QJsonArray arrayAttacks = objAction["attacks"].toArray();
+
+                                        pokemon->setLifeLeft(static_cast<unsigned short>(lifeLeft));
+                                        for(int i=0;i<arrayAttacks.count();++i)
+                                        {
+                                            QJsonObject objAttack = arrayAttacks[i].toObject();
+                                            if(!objAttack.isEmpty())
+                                                pokemon->setAttackBlocked(objAttack["index"].toInt(), objAttack["available"].toBool());
+                                        }
+                                    }
+                                    else
+                                        qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
+
+                                }
+                                else
+                                    qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
+
+                            }
+                            else
+                                qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
+
+                        }
+                        else
+                            qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
+                    }
                 }
                     break;
                 }

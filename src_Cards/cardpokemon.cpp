@@ -193,6 +193,11 @@ unsigned short CardPokemon::lifeLeft()
     return lifeTotal() - currentDamage();
 }
 
+void CardPokemon::setLifeLeft(unsigned short lifeLeft)
+{
+    setDamage(lifeTotal() - lifeLeft);
+}
+
 unsigned short CardPokemon::damageMarker()
 {
 #ifdef TRACAGE_PRECIS
@@ -478,59 +483,23 @@ bool CardPokemon::replaceOneAttack(int index, AttackData data)
     return statusBack;
 }
 
-short CardPokemon::numberOfTurnAttackStillBlocks(int indexAttack)
+bool CardPokemon::attackIsBlocked(int indexAttack)
 {
-#ifdef TRACAGE_PRECIS
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    unsigned short result = 0;
+    bool result = true;
 
     if((indexAttack >= 0) && (indexAttack < listAttacks().count()))
-        result = listAttacks()[indexAttack].numberOfTurnAttackStillBlocks;
+        result = listAttacks()[indexAttack].blocked;
 
     return result;
 }
 
-void CardPokemon::decrementNumberOfTurnAttackStillBlocks()
+void CardPokemon::setAttackBlocked(int indexAttack, bool blocked)
 {
-#ifdef TRACAGE_PRECIS
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    if(m_cardEvolution != nullptr)
-        m_cardEvolution->decrementNumberOfTurnAttackStillBlocks();
-    else
+    if((indexAttack >= 0) && (indexAttack < listAttacks().count()))
     {
-        for(int indexAttack=0;indexAttack<listAttacks().count();++indexAttack)
-        {
-            AttackData data = listAttacks()[indexAttack];
-
-            if(data.numberOfTurnAttackStillBlocks > 0)
-                data.numberOfTurnAttackStillBlocks -= 1;
-
-            m_listAttacks.replace(indexAttack, data);
-        }
-    }
-}
-
-void CardPokemon::setNumberOfTurnAttackStillBlocks(int indexAttack, short value)
-{
-#ifdef TRACAGE_PRECIS
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    if(m_cardEvolution != nullptr)
-        m_cardEvolution->setNumberOfTurnAttackStillBlocks(indexAttack, value);
-    else
-    {
-        if((indexAttack >= 0) && (indexAttack < listAttacks().count()))
-        {
-            AttackData data = listAttacks()[indexAttack];
-            data.numberOfTurnAttackStillBlocks = value;
-
-            m_listAttacks.replace(indexAttack, data);
-        }
+        AttackData data = listAttacks()[indexAttack];
+        data.blocked = blocked;
+        m_listAttacks.replace(indexAttack, data);
     }
 }
 

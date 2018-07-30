@@ -3,7 +3,7 @@
 
 #include "abstractpacketdynamic.h"
 
-class AbsractCard;
+class AbstractCard;
 
 class PacketDeck : public AbstractPacketDynamic
 {
