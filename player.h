@@ -25,11 +25,12 @@ class Player : public QObject
     Q_PROPERTY(bool canPlay READ canPlay WRITE setCanPlay NOTIFY canPlayChanged)
 	
 public:
-	Player(QString name, QList<AbstractCard*> listCards, QObject *parent = NULL);
+    Player(unsigned int uid, QString name, QList<AbstractCard*> listCards, QObject *parent = nullptr);
 	~Player();
 
     static void declareQML();
 	
+    Q_INVOKABLE unsigned int uid();
     Q_INVOKABLE const QString name();
     Q_INVOKABLE BenchArea* bench();
     Q_INVOKABLE PacketDeck* deck();
@@ -38,14 +39,10 @@ public:
     Q_INVOKABLE PacketRewards* rewards();
     Q_INVOKABLE PacketTrash* trash();
 	
-	void newTurn();
-    void turnFinished();
-    bool isPlaying();
     bool isLoser();
 
     bool initReady();
     void setInitReady(bool ready);
-    Q_INVOKABLE void checkIfInitReady();
 
     bool canPlay();
     void setCanPlay(bool status);
@@ -61,6 +58,7 @@ signals:
     void initReadyChanged();
 
 private:
+    unsigned int m_uid;
 	QString m_name;
 
     BenchArea* m_bench;
@@ -73,7 +71,6 @@ private:
     //For the round
     bool m_initReady;
     bool m_canPlay;
-    bool m_energyPlayedForThisRound;
 
 
 };

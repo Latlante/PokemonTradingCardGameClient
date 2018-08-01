@@ -13,8 +13,9 @@
 #include "src_Packets/packetrewards.h"
 #include "src_Packets/packettrash.h"
 
-Player::Player(QString name, QList<AbstractCard*> listCards, QObject *parent) :
+Player::Player(unsigned int uid, QString name, QList<AbstractCard*> listCards, QObject *parent) :
 	QObject(parent),
+    m_uid(uid),
     m_name(name),
     m_bench(new BenchArea("Bench")),
     m_deck(new PacketDeck("Deck", listCards)),
@@ -23,11 +24,8 @@ Player::Player(QString name, QList<AbstractCard*> listCards, QObject *parent) :
     m_rewards(new PacketRewards("Rewards")),
     m_trash(new PacketTrash("Trash")),
     m_initReady(false),
-    m_canPlay(true),
-    m_energyPlayedForThisRound(false)
+    m_canPlay(true)
 {
-    foreach(AbstractCard* card, listCards)
-        card->setOwner(this);
 }
 
 Player::~Player()
@@ -51,6 +49,11 @@ void Player::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+unsigned int Player::uid()
+{
+    return m_uid;
+}
+
 const QString Player::name()
 {
     return m_name;
@@ -92,35 +95,6 @@ PacketTrash* Player::trash()
     return m_trash;
 }
 
-void Player::newTurn()
-{
-    setCanPlay(true);
-    m_energyPlayedForThisRound = false;
-    //fight()->pokemonFighter()->setStatus(CardPokemon::Status_Normal);
-}
-
-void Player::turnFinished()
-{
-    //On remet à 0 les historiques de dégats pour chaque pokémon
-    for(int i=0;i<fight()->countCard();++i)
-    {
-        fight()->pokemonFighting(i)->resetLastDamageReceived();
-    }
-
-    for(int i=0;i<bench()->countCard();++i)
-    {
-        bench()->cardPok(i)->resetLastDamageReceived();
-    }
-
-    //On bloque l'interface
-    setCanPlay(false);
-}
-
-bool Player::isPlaying()
-{
-    return m_canPlay;
-}
-
 bool Player::isLoser()
 {
     //Conditions de victoire:
@@ -147,15 +121,6 @@ void Player::setInitReady(bool ready)
     {
         m_initReady = ready;
         emit initReadyChanged();
-    }
-}
-
-void Player::checkIfInitReady()
-{
-    if(fight()->countCard() > 0)
-    {
-        setInitReady(true);
-        setCanPlay(false);
     }
 }
 
