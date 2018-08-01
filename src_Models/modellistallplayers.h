@@ -12,11 +12,10 @@ public:
 
     static void declareQML();
 
-    QString namePlayerFromId(int id) const;
+    QString namePlayerFromId(unsigned int uid) const;
 
-    void addNewPlayer(int idPlayer, const QString& name);
-    void addListNewPlayers(const QStringList& listPlayers);
-    void removeOnePlayer(const QString& name);
+    void addNewPlayer(unsigned int idPlayer, const QString& name);
+    void removeOnePlayer(int index);
     void clear();
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
@@ -27,7 +26,12 @@ protected:
     QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QStringList m_listOfPlayers;
+    struct InfoPlayer
+    {
+        unsigned int uid;
+        QString name;
+    };
+    QList<InfoPlayer> m_listOfPlayers;
 };
 
 #endif // MODELLISTALLPLAYERS_H

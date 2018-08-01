@@ -19,35 +19,34 @@ void ModelListAllPlayers::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
-QString ModelListAllPlayers::namePlayerFromId(int id) const
+QString ModelListAllPlayers::namePlayerFromId(unsigned int uid) const
 {
     QString namePlayer = "";
-    if((id >= 0) && (id < m_listOfPlayers.count()))
-        namePlayer = m_listOfPlayers[id];
+    int indexLoop = 0;
+
+    while((indexLoop < m_listOfPlayers.count()) && (namePlayer == ""))
+    {
+        if(m_listOfPlayers[indexLoop].uid == uid)
+            namePlayer = m_listOfPlayers[indexLoop].name;
+
+        indexLoop++;
+    }
 
     return namePlayer;
 }
 
-void ModelListAllPlayers::addNewPlayer(int idPlayer, const QString &name)
+void ModelListAllPlayers::addNewPlayer(unsigned int idPlayer, const QString &name)
 {
     qDebug() << __PRETTY_FUNCTION__ << name;
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_listOfPlayers.append(name);
+    m_listOfPlayers.append({ idPlayer, name });
     endInsertRows();
 }
 
-void ModelListAllPlayers::addListNewPlayers(const QStringList &listPlayers)
+void ModelListAllPlayers::removeOnePlayer(int index)
 {
-    for(int i=0;i<listPlayers.count();++i)
-        addNewPlayer(i, listPlayers[i]);
-}
-
-void ModelListAllPlayers::removeOnePlayer(const QString &name)
-{
-    int index = m_listOfPlayers.indexOf(name);
-
-    if(index >= 0)
+    if((index >= 0) && (index < m_listOfPlayers.count()))
     {
         beginRemoveRows(QModelIndex(), index, index);
         m_listOfPlayers.removeAt(index);
@@ -72,8 +71,7 @@ QVariant ModelListAllPlayers::data(const QModelIndex &index, int role) const
 
     if (Qt::DisplayRole == role)
     {
-        //qDebug() << __PRETTY_FUNCTION__ << m_listOfPlayers[iRow];
-        return m_listOfPlayers[iRow];
+        return m_listOfPlayers[iRow].name;
     }
 
     return QVariant();
