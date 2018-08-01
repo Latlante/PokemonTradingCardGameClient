@@ -131,9 +131,14 @@ FactoryMainPageLoader* CtrlGameBoard::factory()
     return m_factoryMainPageLoader;
 }
 
-Player* CtrlGameBoard::playerAt(int index)
+Player* CtrlGameBoard::playerYou()
 {
-    return m_gameManager->playerAt(index);
+    return m_gameManager->playerYou();
+}
+
+Player* CtrlGameBoard::playerOpponent()
+{
+    return m_gameManager->playerOpponent();
 }
 
 bool CtrlGameBoard::stepInProgress()

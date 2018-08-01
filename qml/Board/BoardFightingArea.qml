@@ -11,7 +11,6 @@ Item {
 
     property Player play1
     property Player play2
-    property Player currentPlayer
 
     Image {
         id: imageBackgroundFighting
@@ -66,7 +65,6 @@ Item {
         anchors.bottom: parent.bottom
 
         player: play1
-        currentPlayer: boardFightingArea1.currentPlayer
     }
 
     BoardFightingInformation {
@@ -78,6 +76,5 @@ Item {
         rotation: 180
 
         player: play2
-        currentPlayer: boardFightingArea1.currentPlayer
     }
 }

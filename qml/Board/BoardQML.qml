@@ -7,13 +7,8 @@ Item {
     width: 1200
     height: 1920
 
-    property Player player1: ctrlGameBoard.playerAt(0)
-    property Player player2: ctrlGameBoard.playerAt(1)
-    property Player currentPlayer: ctrlGameBoard.currentPlayer
-
-    onCurrentPlayerChanged: {
-        console.log("onCurrentPlayerChanged:" + currentPlayer.name())
-    }
+    property Player player1: ctrlGameBoard.playerYou()
+    property Player player2: ctrlGameBoard.playerOpponent()
 
     /*Image {
         id: background
@@ -36,7 +31,6 @@ Item {
 
             play1: board1.player1
             play2: board1.player2
-            currentPlayer: board1.currentPlayer
         }
 
         //ZONE DE JOUEUR 2

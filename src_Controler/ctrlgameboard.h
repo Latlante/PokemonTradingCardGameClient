@@ -38,13 +38,12 @@ public:
     static void declareQML();
     bool install(QQmlApplicationEngine *pEngine);
 
-    Player* currentPlayer();
-
     Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
     Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
     Q_INVOKABLE ModelListSelection* modelListSelect();
     Q_INVOKABLE FactoryMainPageLoader* factory();
-    Q_INVOKABLE Player* playerAt(int index);
+    Q_INVOKABLE Player* playerYou();
+    Q_INVOKABLE Player* playerOpponent();
 
     bool stepInProgress();
     void setStepInProgress(bool inProgress);

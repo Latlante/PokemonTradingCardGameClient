@@ -8,7 +8,6 @@ Item {
     height: 600
 
     property Player player
-    property Player currentPlayer
     property CardPokemon cardPok: player.fight().pokemonFighter
     property string pokemonName: cardPok.name
     property string pokemonImage: cardPok.image
@@ -108,7 +107,7 @@ Item {
                     if(ctrlPopups.onePopupIsDisplayed === false)
                     {
                         if((cardPok !== undefined) &&
-                                (player === currentPlayer) &&
+                                (player.canPlay) &&
                                 (ctrlGameBoard.gameStatus === ConstantesQML.StepGameInProgress))
                         {
 
@@ -232,20 +231,6 @@ Item {
                 }
             }
 
-            /*Button {
-                id: buttonAttack
-                height: 30
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                //enabled:
-                visible: player === currentPlayer
-
-                text: "Attaquer"
-
-                onClicked: ctrlGameBoard.onClicked_ButtonAttack(0)
-            }*/
-
             ButtonStyleGold {
                 id: buttonReadyPreparation
                 height: 30
@@ -270,7 +255,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                visible: (cardPok !== undefined) && (player === currentPlayer) &&
+                visible: (cardPok !== undefined) && (player.canPlay) &&
                          (ctrlGameBoard.gameStatus === ConstantesQML.StepGameInProgress)
 
                 text: "Terminer votre tour"
