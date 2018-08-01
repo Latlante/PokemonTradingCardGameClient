@@ -261,19 +261,24 @@ void SocketClient::onReadyRead_Socket()
     //message received and no message send before => notification
     m_bufferNotification += m_socket->readAll();
 
-    if(m_bufferNotification[m_bufferNotification.length()-1] == '}')
+    if(m_bufferNotification.length() >= 2)
     {
-        QJsonParseError jsonError;
-        QJsonDocument docNotif = QJsonDocument::fromJson(m_bufferNotification, &jsonError);
+        int size = (m_bufferNotification[0] << 8) | m_bufferNotification[1];
+        if(m_bufferNotification.length() >= (size + 2))
+        {
+            QByteArray jsonNotif = m_bufferNotification.mid(2, size);
+            QJsonParseError jsonError;
+            QJsonDocument docNotif = QJsonDocument::fromJson(m_bufferNotification, &jsonError);
 
-        if(jsonError.error == QJsonParseError::NoError)
-        {
-            emit newNotification(docNotif);
-            m_bufferNotification.clear();
-        }
-        else
-        {
-            qWarning() << __PRETTY_FUNCTION__ << "error parsing:" << jsonError.errorString();
+            if(jsonError.error == QJsonParseError::NoError)
+            {
+                emit newNotification(docNotif);
+                m_bufferNotification.clear();
+            }
+            else
+            {
+                qWarning() << __PRETTY_FUNCTION__ << "error parsing:" << jsonError.errorString();
+            }
         }
     }
 }
@@ -298,12 +303,23 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
     m_socket->write(jsonSender.toJson(QJsonDocument::Compact));
 
     loop.exec();
-    QByteArray response = m_socket->readAll();
+    QByteArray response = m_socket->read(2);
+    bool messageOk = false;
 
-    while(response[response.length()-1] != '}')
+    while(messageOk == false)
     {
+        if(response.length() >= 2)
+        {
+            int size = (response[0] << 8) | response[1];
+            response += m_socket->read(size);
+            if(response.length() >= (size + 2))
+            {
+                messageOk = true;
+                response = response.remove(0, 2);
+            }
+        }
         loop.exec();
-        response += m_socket->readAll();
+        //response += m_socket->readAll();
     }
 
     //not listening anymore, we can reconnect the slot
