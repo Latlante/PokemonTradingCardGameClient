@@ -15,17 +15,10 @@
 
 GameManager::GameManager(QObject *parent) :
     QObject(parent),
-#ifdef TESTS_UNITAIRES
-    m_forcedValueHeadOrTail(false),
-    m_nextValueHeadOrTail(0),
-#endif
-	m_listPlayers(QList<Player*>()),
-    m_indexCurrentPlayer(-1),
-    m_playerAttacking(nullptr),
-    m_playerAttacked(nullptr),
-    m_gameStatus(ConstantesQML::StepPreparation),
-    m_gameIsReady(false),
-    m_elementFromDisplays(QVariant())
+    m_uidGame(0),
+    m_playerYou(nullptr),
+    m_playerOpponent(nullptr),
+    m_gameStatus(ConstantesQML::StepPreparation)
 {
 	
 }
@@ -38,7 +31,24 @@ GameManager::~GameManager()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+bool GameManager::isReady()
+{
+    return ((playerYou() != nullptr) &&
+            (playerOpponent() != nullptr) &&
+            (uidGame() != 0));
+}
+
 //ACCESSEURS
+unsigned GameManager::uidGame()
+{
+    return m_uidGame;
+}
+
+void GameManager::setUidGame(unsigned int uid)
+{
+    m_uidGame = uid;
+}
+
 Player* GameManager::playerYou()
 {
     return m_playerYou;

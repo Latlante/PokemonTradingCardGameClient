@@ -18,7 +18,11 @@ public:
     GameManager(QObject *parent = nullptr);
 	~GameManager();
 
+    bool isReady();
+
     //Accesseurs
+    unsigned int uidGame();
+    void setUidGame(unsigned int uid);
     Player* playerYou();
     void setPlayerYou(unsigned int uid, const QString &name);
     Player* playerOpponent();
@@ -27,15 +31,10 @@ public:
 
 
 private:
-	QList<Player*> m_listPlayers;
+    unsigned int m_uidGame;
     Player* m_playerYou;
     Player* m_playerOpponent;
     ConstantesQML::StepGame m_gameStatus;
-	
-	bool m_gameIsReady;
-    //QList<AbstractCard*> m_listSelectionCards;
-    QVariant m_elementFromDisplays;
-
 
 };
 

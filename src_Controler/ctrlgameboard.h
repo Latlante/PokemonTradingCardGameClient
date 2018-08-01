@@ -65,13 +65,6 @@ public:
 
     Q_INVOKABLE void moveACard(int idPacketOrigin, int idCardOrigin, int idPacketDestination, int idCardDestination);
 
-    Q_INVOKABLE void onClicked_ButtonOk_SelectPlayers(QStringList listOfPlayers);
-    Q_INVOKABLE void displaySelectingCardsForNextPlayers();
-    Q_INVOKABLE void onClicked_ButtonOk_SelectCards();
-    Q_INVOKABLE void onClicked_ButtonReadyPreparation();
-
-    Q_INVOKABLE void actionAttack(CardPokemon* card);
-    Q_INVOKABLE void actionFinishYourTurn();
 
     Q_INVOKABLE void testAnimation();
     Q_INVOKABLE void displayPageSelection();
@@ -84,16 +77,6 @@ signals:
     void stepInProgressChanged();
 
 private slots:
-    void onListsComplete_CtrlSelectingCards();
-
-    void onDisplayPacketAsked(AbstractPacket *packet, unsigned short quantity, AbstractCard::Enum_typeOfCard typeOfCard);
-    void onDisplayAllElementsAsked(unsigned short quantity);
-    void onDisplaySelectHiddenCardAsked(PacketRewards *packet, unsigned short quantity);
-    void onDisplayEnergiesForAPokemonAsked(CardPokemon* pokemon, unsigned short quantity, AbstractCard::Enum_element element);
-    void onDisplayAttacksAsked(CardPokemon* card, bool authorizeRetreat);
-    void onDisplayMessageAsked(QString message);
-    void onHeadOrTailAsked();
-
     void onMovingCardAnimationStart();
 
 private:
