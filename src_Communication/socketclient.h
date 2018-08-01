@@ -28,6 +28,7 @@ public:
 
 signals:
     void connected();
+    void newNotification(QJsonDocument);
 
 private slots:
     void onConnected_Socket();
@@ -37,6 +38,7 @@ private:
     QTcpSocket* m_socket;
 
     QString m_token;
+    QByteArray m_bufferNotification;
 
     bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
 };

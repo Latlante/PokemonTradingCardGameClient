@@ -15,7 +15,8 @@
 SocketClient::SocketClient(QObject *parent) :
     AbstractSocketClient(parent),
     m_socket(new QTcpSocket(this)),
-    m_token("")
+    m_token(""),
+    m_bufferNotification(QByteArray())
 {
     connect(m_socket, &QTcpSocket::connected, this, &SocketClient::onConnected_Socket);
     connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
@@ -257,7 +258,24 @@ void SocketClient::onConnected_Socket()
 
 void SocketClient::onReadyRead_Socket()
 {
+    //message received and no message send before => notification
+    m_bufferNotification += m_socket->readAll();
 
+    if(m_bufferNotification[m_bufferNotification.length()-1] == '}')
+    {
+        QJsonParseError jsonError;
+        QJsonDocument docNotif = QJsonDocument::fromJson(m_bufferNotification, &jsonError);
+
+        if(jsonError.error == QJsonParseError::NoError)
+        {
+            emit newNotification(docNotif);
+            m_bufferNotification.clear();
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "error parsing:" << jsonError.errorString();
+        }
+    }
 }
 
 /************************************************************
@@ -272,6 +290,8 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
     timerTimeOut.start(timeOut());
 
     QEventLoop loop;
+    //disconnect private slot to get message here
+    disconnect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
     connect(m_socket, &QTcpSocket::readyRead, &loop, &QEventLoop::quit);
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
 
@@ -285,6 +305,9 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
         loop.exec();
         response += m_socket->readAll();
     }
+
+    //not listening anymore, we can reconnect the slot
+    connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
 
     if(timerTimeOut.isActive())
     {
