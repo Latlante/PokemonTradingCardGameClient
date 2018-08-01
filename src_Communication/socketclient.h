@@ -17,6 +17,7 @@ public:
     bool tryToConnect() override;
     bool authentificate(const QString& name, const QString& password, QJsonDocument& jsonResponse) override;
     bool listAllPlayers(QJsonDocument &jsonResponse) override;
+    bool listAllGamesAlreadyExisting(QJsonDocument &jsonResponse) override;
     bool createANewGame(const QString& nameGame, int idOpponent, QJsonDocument &jsonResponse) override;
     bool removeAGame() override;
     bool getAllInfoOnTheGame(int idGame, QJsonDocument &jsonResponse) override;

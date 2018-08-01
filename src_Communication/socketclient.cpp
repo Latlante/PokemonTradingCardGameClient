@@ -112,6 +112,28 @@ bool SocketClient::listAllPlayers(QJsonDocument &jsonResponse)
     return success;
 }
 
+bool SocketClient::listAllGamesAlreadyExisting(QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_ListOfGameForThePlayer);
+    jsonRequest["token"] = m_token;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
 bool SocketClient::createANewGame(const QString &nameGame, int idOpponent, QJsonDocument &jsonResponse)
 {
     qDebug() << __PRETTY_FUNCTION__;

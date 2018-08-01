@@ -22,6 +22,9 @@ bool SocketClientTest::tryToConnect()
 
 bool SocketClientTest::authentificate(const QString &name, const QString &password, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(name)
+    Q_UNUSED(password)
+
     QJsonObject jsonObj;
     jsonObj["token"] = "token";
     QJsonArray arrayGames;
@@ -40,6 +43,17 @@ bool SocketClientTest::authentificate(const QString &name, const QString &passwo
 
 bool SocketClientTest::listAllPlayers(QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(jsonResponse)
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+
+    return success;
+}
+
+bool SocketClientTest::listAllGamesAlreadyExisting(QJsonDocument &jsonResponse)
+{
+    Q_UNUSED(jsonResponse)
     qDebug() << __PRETTY_FUNCTION__;
 
     bool success = false;
@@ -49,6 +63,9 @@ bool SocketClientTest::listAllPlayers(QJsonDocument &jsonResponse)
 
 bool SocketClientTest::createANewGame(const QString &nameGame, int idOpponent, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(nameGame)
+    Q_UNUSED(idOpponent)
+    Q_UNUSED(jsonResponse)
     qDebug() << __PRETTY_FUNCTION__;
 
     bool success = false;
@@ -64,27 +81,47 @@ bool SocketClientTest::removeAGame()
 
 bool SocketClientTest::getAllInfoOnTheGame(int idGame, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(idGame)
+    Q_UNUSED(jsonResponse)
     return true;
 }
 
 bool SocketClientTest::sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(idGame)
+    Q_UNUSED(listInfoCards)
+    Q_UNUSED(jsonResponse)
     qDebug() << __PRETTY_FUNCTION__;
 
     bool success = false;
-
 
     return success;
 }
 
 bool SocketClientTest::initIsReady(int idGame, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(idGame)
+    Q_UNUSED(jsonResponse)
+    qDebug() << __PRETTY_FUNCTION__;
 
+    bool success = false;
+
+    return success;
 }
 
 bool SocketClientTest::moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse)
 {
+    Q_UNUSED(idGame)
+    Q_UNUSED(idPacketOrigin)
+    Q_UNUSED(idCardOrigin)
+    Q_UNUSED(idPacketDestination)
+    Q_UNUSED(idCardDestination)
+    Q_UNUSED(jsonResponse)
+    qDebug() << __PRETTY_FUNCTION__;
 
+    bool success = false;
+
+    return success;
 }
 
 void SocketClientTest::waitForTimeOut()

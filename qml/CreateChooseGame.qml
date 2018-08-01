@@ -129,17 +129,40 @@ Item {
                     }
                 }
 
-                Text {
-                    id: textGameInProgress
+                Rectangle {
+                    id: rectangleContainerGameInProgress
                     width: parent.width
                     height: 30
-                    color: "#ffffff"
-                    text: qsTr("Parties en cours: ") + numberOfGamesAvailable
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: 16
-                    font.bold: true
+
+                    Text {
+                        id: textGameInProgress
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        anchors.right: rectangleContainerButtonRefresh.right
+                        anchors.bottom: parent.bottom
+                        color: "#ffffff"
+                        text: qsTr("Parties en cours: ") + numberOfGamesAvailable
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pixelSize: 16
+                        font.bold: true
+                    }
+
+                    Rectangle {
+                        id: rectangleContainerButtonRefresh
+                        width: parent.height
+                        height: parent.height
+                        color: "red"
+
+                        MouseArea {
+                            id: mouseAreaButtonRefresh
+                            anchors.fill: parent
+                            onClicked: ctrlGameBoard.listOfGamesAlreadyExisting()
+                        }
+                    }
                 }
+
+
             }
 
             Loading_P {

@@ -187,8 +187,7 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
                 QJsonObject objGame = arrayGames[i].toObject();
                 m_listOfGamesAvailable->addNewGame(objGame["uid"].toInt(),
                                                    objGame["name"].toString(),
-                                                   //objGame["opponent"].toString());
-                                                   "opponent");
+                                                   objGame["opponent"].toString());
             }
 
             setStepInProgress(false);
@@ -239,6 +238,35 @@ void CtrlGameBoard::listOfAllPlayers()
         {
             setStepInProgress(false);
             m_factoryMainPageLoader->displayAllPlayers();
+        }
+    }
+}
+
+void CtrlGameBoard::listOfGamesAlreadyExisting()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    setStepInProgress(true);
+
+    QJsonDocument jsonResponse;
+
+    if(m_socket->listAllGamesAlreadyExisting(jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("games"))
+        {
+            QJsonArray arrayGames = obj["games"].toArray();
+            for(int i=0;i<arrayGames.count();++i)
+            {
+                QJsonObject objGame = arrayGames[i].toObject();
+                m_listOfGamesAvailable->addNewGame(objGame["uid"].toInt(),
+                                                   objGame["name"].toString(),
+                                                   objGame["opponent"].toString());
+            }
+
+            setStepInProgress(false);
+            m_factoryMainPageLoader->displaySelectCards();
         }
     }
 }
