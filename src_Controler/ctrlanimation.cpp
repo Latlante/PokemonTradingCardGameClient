@@ -13,7 +13,8 @@ CtrlAnimation::CtrlAnimation(QObject *parent) :
     m_movingCardStarted(false),
     m_movingCardPlayer(nullptr),
     m_movingCardLocationStart(Location_Bench),
-    m_movingCardLocationEnd(Location_Bench)
+    m_movingCardLocationEnd(Location_Bench),
+    m_stepInProgress(false)
 {
 
 }
@@ -35,10 +36,10 @@ bool CtrlAnimation::install(QQmlApplicationEngine *pEngine)
 
     bool bInstalled = false;
 
-    if (NULL != pEngine)
+    if (nullptr != pEngine)
     {
         QQmlContext* pContext = pEngine->rootContext();
-        if (NULL != pContext)
+        if (nullptr != pContext)
         {
             bInstalled = true;
             qDebug() << "CtrlAnimation is installed in QML engine";
@@ -113,5 +114,19 @@ void CtrlAnimation::setMovingCardLocationEnd(CtrlAnimation::LocationAnimation lo
     {
         m_movingCardLocationEnd = location;
         emit movingCardLocationEndChanged();
+    }
+}
+
+bool CtrlAnimation::stepInProgress()
+{
+    return m_stepInProgress;
+}
+
+void CtrlAnimation::setStepInProgress(bool inProgress)
+{
+    if(m_stepInProgress != inProgress)
+    {
+        m_stepInProgress = inProgress;
+        emit stepInProgressChanged();
     }
 }

@@ -36,7 +36,6 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards),
-    m_stepInProgress(false),
     m_idGame(0),
     m_gameStatus(ConstantesQML::StepPreparation)
 {
@@ -127,20 +126,6 @@ Player* CtrlGameBoard::playerOpponent()
     return m_gameManager->playerOpponent();
 }
 
-bool CtrlGameBoard::stepInProgress()
-{
-    return m_stepInProgress;
-}
-
-void CtrlGameBoard::setStepInProgress(bool inProgress)
-{
-    if(m_stepInProgress != inProgress)
-    {
-        m_stepInProgress = inProgress;
-        emit stepInProgressChanged();
-    }
-}
-
 ConstantesQML::StepGame CtrlGameBoard::gameStatus()
 {
     return m_gameStatus;
@@ -158,7 +143,7 @@ void CtrlGameBoard::setGameStatus(ConstantesQML::StepGame status)
 void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->tryToConnect())
     {
@@ -181,20 +166,20 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
                                                    objGame["opponent"].toString());
             }
 
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             m_gameManager->setPlayerYou(0, name);
             m_ctrlSelectingCards.setName(name);
             m_factoryMainPageLoader->displayCreateChooseGame();
         }
         else
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             qDebug() << __PRETTY_FUNCTION__ << "Error during the authentification";
         }
     }
     else
     {
-        setStepInProgress(false);
+        m_ctrlAnim.setStepInProgress(false);
         qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
     }
 
@@ -205,7 +190,7 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 void CtrlGameBoard::listOfAllPlayers()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     //Get list of all players
     QJsonDocument jsonResponse;
@@ -228,7 +213,7 @@ void CtrlGameBoard::listOfAllPlayers()
 
         if(m_listAllPlayers->rowCount() > 0)
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displayAllPlayers();
         }
     }
@@ -237,7 +222,7 @@ void CtrlGameBoard::listOfAllPlayers()
 void CtrlGameBoard::listOfGamesAlreadyExisting()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     QJsonDocument jsonResponse;
 
@@ -257,7 +242,7 @@ void CtrlGameBoard::listOfGamesAlreadyExisting()
                                                    objGame["opponent"].toString());
             }
 
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displaySelectCards();
         }
     }
@@ -266,7 +251,7 @@ void CtrlGameBoard::listOfGamesAlreadyExisting()
 void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
 {
     qDebug() << __PRETTY_FUNCTION__ << nameGame << idOpponent;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     QJsonDocument jsonResponse;
 
@@ -281,7 +266,7 @@ void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
             m_listOfGamesAvailable->addNewGame(idGame, nameGame, m_listAllPlayers->namePlayerFromId(idOpponent));
             m_gameManager->setPlayerOpponent(static_cast<unsigned int>(idOpponent), m_listAllPlayers->namePlayerFromId(idOpponent));
             m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displaySelectCards();
         }
     }
@@ -304,7 +289,7 @@ void CtrlGameBoard::joinAGame(int idGame)
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->getAllInfoOnTheGame(idGame, jsonResponse))
     {
@@ -314,7 +299,7 @@ void CtrlGameBoard::joinAGame(int idGame)
 
         if(obj["success"].toString() == "ok")
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
 
             ConstantesQML::StepGame step = static_cast<ConstantesQML::StepGame>(obj["gameStatus"].toInt());
             switch(step)
@@ -351,7 +336,7 @@ void CtrlGameBoard::sendCardsSelected()
     qDebug() << __PRETTY_FUNCTION__;
     QList<InfoCard> listCards = m_ctrlSelectingCards.listCards();
     QJsonDocument jsonResponse;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->sendCardsSelected(m_idGame, listCards, jsonResponse))
     {
@@ -360,7 +345,7 @@ void CtrlGameBoard::sendCardsSelected()
 
         if(obj["success"].toString() == "ok")
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displayBoard();
         }
         else
@@ -374,7 +359,7 @@ void CtrlGameBoard::initReady()
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->initIsReady(m_idGame, jsonResponse))
     {
@@ -383,7 +368,7 @@ void CtrlGameBoard::initReady()
 
         if(obj["success"].toString() == "ok")
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
             //m_factoryMainPageLoader->displayBoard();
         }
         else
@@ -397,7 +382,7 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
-    setStepInProgress(true);
+    m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->moveACard(m_idGame, static_cast<ConstantesShared::EnumPacket>(idPacketOrigin), idCardOrigin, static_cast<ConstantesShared::EnumPacket>(idPacketDestination), idCardDestination, jsonResponse))
     {
@@ -406,7 +391,7 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
 
         if(obj["success"].toString() == "ok")
         {
-            setStepInProgress(false);
+            m_ctrlAnim.setStepInProgress(false);
         }
         else
         {

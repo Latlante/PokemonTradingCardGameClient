@@ -27,7 +27,6 @@ class CtrlGameBoard : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(Player* currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
-    Q_PROPERTY(bool stepInProgress READ stepInProgress WRITE setStepInProgress NOTIFY stepInProgressChanged)
     Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
 
 
@@ -45,8 +44,6 @@ public:
     Q_INVOKABLE Player* playerYou();
     Q_INVOKABLE Player* playerOpponent();
 
-    bool stepInProgress();
-    void setStepInProgress(bool inProgress);
     ConstantesQML::StepGame gameStatus();
     void setGameStatus(ConstantesQML::StepGame status);
 
@@ -74,7 +71,6 @@ signals:
     void nextPlayer();
     void currentPlayerChanged();
     void gameStatusChanged();
-    void stepInProgressChanged();
 
 private slots:
     void onMovingCardAnimationStart();
@@ -89,7 +85,6 @@ private:
     CtrlPopups& m_ctrlPopups;
     CtrlSelectingCards& m_ctrlSelectingCards;
 
-    bool m_stepInProgress;
     int m_idGame;
     ConstantesQML::StepGame m_gameStatus;
 

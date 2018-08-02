@@ -15,6 +15,8 @@ class CtrlAnimation : public QObject
     Q_PROPERTY(LocationAnimation movingCardLocationEnd READ movingCardLocationEnd WRITE setMovingCardLocationEnd NOTIFY movingCardLocationEndChanged)
     Q_PROPERTY(Player* movingCardPlayer READ movingCardPlayer WRITE setMovingCardPlayer NOTIFY movingCardPlayerChanged)
 
+    Q_PROPERTY(bool stepInProgress READ stepInProgress WRITE setStepInProgress NOTIFY stepInProgressChanged)
+
 public:
     enum LocationAnimation
     {
@@ -42,7 +44,8 @@ public:
     CtrlAnimation::LocationAnimation movingCardLocationEnd();
     void setMovingCardLocationEnd(CtrlAnimation::LocationAnimation location);
 
-
+    bool stepInProgress();
+    void setStepInProgress(bool inProgress);
 
 signals:
     void movingCardStartedChanged();
@@ -50,11 +53,15 @@ signals:
     void movingCardLocationStartChanged();
     void movingCardLocationEndChanged();
 
+    void stepInProgressChanged();
+
 private:
     bool m_movingCardStarted;
     Player* m_movingCardPlayer;
     LocationAnimation m_movingCardLocationStart;
     LocationAnimation m_movingCardLocationEnd;
+
+    bool m_stepInProgress;
 };
 
 #endif // CTRLANIMATION_H

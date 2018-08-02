@@ -12,7 +12,7 @@ Item {
     property string nameOfThePlayer: ctrlSelectingCards.model().name
     property int countTotalQuantity: ctrlSelectingCards.model().countTotalQuantity
     property int maxCards: ctrlSelectingCards.model().maxCards()
-    property bool stepInProgress: ctrlGameBoard.stepInProgress
+    property bool stepInProgress: ctrlAnimation.stepInProgress
 
     onCountTotalQuantityChanged: console.log("onCountTotalQuantityChanged:" + countTotalQuantity)
 
