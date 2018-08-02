@@ -1,4 +1,5 @@
 #include "socketclient.h"
+#include <QDataStream>
 #include <QEventLoop>
 #include <QHostAddress>
 #include <QJsonArray>
@@ -16,7 +17,7 @@ SocketClient::SocketClient(QObject *parent) :
     AbstractSocketClient(parent),
     m_socket(new QTcpSocket(this)),
     m_token(""),
-    m_bufferNotification(QByteArray())
+    m_sizeAnswerAsynchrone(0)
 {
     connect(m_socket, &QTcpSocket::connected, this, &SocketClient::onConnected_Socket);
     connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
@@ -280,28 +281,36 @@ void SocketClient::onConnected_Socket()
 
 void SocketClient::onReadyRead_Socket()
 {
-    //message received and no message send before => notification
-    m_bufferNotification += m_socket->readAll();
+    //init the answer
+    QByteArray responseSerialize;
+    QDataStream requestToRead(m_socket);
 
-    if(m_bufferNotification.length() >= 2)
+    if(m_sizeAnswerAsynchrone == 0)
     {
-        int size = (m_bufferNotification[0] << 8) | m_bufferNotification[1];
-        if(m_bufferNotification.length() >= (size + 2))
-        {
-            QByteArray jsonNotif = m_bufferNotification.mid(2, size);
-            QJsonParseError jsonError;
-            QJsonDocument docNotif = QJsonDocument::fromJson(m_bufferNotification, &jsonError);
+        //Check we have the minimum to start reading
+        if(m_socket->bytesAvailable() < sizeof(quint16))
+            return;
 
-            if(jsonError.error == QJsonParseError::NoError)
-            {
-                emit newNotification(docNotif);
-                m_bufferNotification.clear();
-            }
-            else
-            {
-                qWarning() << __PRETTY_FUNCTION__ << "error parsing:" << jsonError.errorString();
-            }
-        }
+        //Check we have all the answer
+        requestToRead >> m_sizeAnswerAsynchrone;
+    }
+
+    if(m_socket->bytesAvailable() < m_sizeAnswerAsynchrone)
+        return;
+
+    //From here, we have everything, so we can get all the message
+    requestToRead >> responseSerialize;
+    QJsonParseError jsonError;
+    QJsonDocument docNotif = QJsonDocument::fromJson(responseSerialize, &jsonError);
+
+    if(jsonError.error == QJsonParseError::NoError)
+    {
+        emit newNotification(docNotif);
+        m_sizeAnswerAsynchrone = 0;
+    }
+    else
+    {
+        qWarning() << __PRETTY_FUNCTION__ << "error parsing:" << jsonError.errorString();
     }
 }
 
@@ -312,49 +321,64 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
 {
     bool success = false;
 
+    //init timer time out
     QTimer timerTimeOut;
     timerTimeOut.setSingleShot(true);
     timerTimeOut.start(timeOut());
 
+    //init request
+    QByteArray jsonSerialize = jsonSender.toJson(QJsonDocument::Compact);
+    QByteArray requestToSend;
+    QDataStream dataToSend(&requestToSend, QIODevice::WriteOnly);
+    dataToSend << static_cast<quint16>(jsonSerialize.length());
+    dataToSend << jsonSerialize;
+
+    //init loop to synchronize with the answer
     QEventLoop loop;
-    //disconnect private slot to get message here
+        //disconnect private slot to get message here
     disconnect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
     connect(m_socket, &QTcpSocket::readyRead, &loop, &QEventLoop::quit);
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
 
-    m_socket->write(jsonSender.toJson(QJsonDocument::Compact));
+    //send the request
+    m_socket->write(requestToSend);
 
+    //wait the answer
     loop.exec();
-    QByteArray response = m_socket->read(2);
-    bool messageOk = false;
 
-    while(messageOk == false)
+    //Check we not pass because the timer time out
+    if(timerTimeOut.isActive())
     {
-        if(response.length() >= 2)
-        {
-            int size = (response[0] << 8) | response[1];
-            response += m_socket->read(size);
-            if(response.length() >= (size + 2))
-            {
-                messageOk = true;
-                response = response.remove(0, 2);
-            }
-        }
-        loop.exec();
-        //response += m_socket->readAll();
+        //Check we have the minimum to start reading
+        while(m_socket->bytesAvailable() < sizeof(quint16))
+            loop.exec();
     }
-
-    //not listening anymore, we can reconnect the slot
-    connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
 
     if(timerTimeOut.isActive())
     {
-        timerTimeOut.stop();
-        jsonResponse = QJsonDocument::fromJson(response);
-        success = true;
+        //init the answer
+        QByteArray responseSerialize;
+        QDataStream requestToRead(m_socket);
+        quint16 sizeAnswer = 0;
+
+        requestToRead >> sizeAnswer;
+
+        //Check we have all the answer
+        while(m_socket->bytesAvailable() < sizeAnswer)
+            loop.exec();
+
+        //From here, we have everything, so we are not listening anymore, we can reconnect the slot and stop the timer
+        connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
+        if(timerTimeOut.isActive())
+        {
+            timerTimeOut.stop();
+            requestToRead >> responseSerialize;
+            jsonResponse = QJsonDocument::fromJson(responseSerialize);
+            success = true;
+        }
     }
 
-    qDebug() << __PRETTY_FUNCTION__ << "response:" << response;
+    qDebug() << __PRETTY_FUNCTION__ << "response:" << jsonResponse;
 
     return success;
 }

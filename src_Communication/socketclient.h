@@ -10,7 +10,7 @@ class SocketClient : public AbstractSocketClient
     Q_OBJECT
 public:
     explicit SocketClient(QObject *parent = nullptr);
-    ~SocketClient();
+    ~SocketClient() override;
 
     void setToken(const QString& token) override;
 
@@ -39,7 +39,7 @@ private:
     QTcpSocket* m_socket;
 
     QString m_token;
-    QByteArray m_bufferNotification;
+    quint16 m_sizeAnswerAsynchrone;
 
     bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
 };
