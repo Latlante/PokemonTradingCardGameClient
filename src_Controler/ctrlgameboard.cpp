@@ -36,7 +36,6 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards),
-    m_idGame(0),
     m_gameStatus(ConstantesQML::StepPreparation)
 {
 
@@ -260,6 +259,9 @@ void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
+
         if(obj["idGame"].toInt() != 0)
         {
             int idGame = obj["idGame"].toInt();
@@ -287,15 +289,18 @@ void CtrlGameBoard::listOfGamesAvailable()
 
 void CtrlGameBoard::joinAGame(int idGame)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__ << idGame;
     QJsonDocument jsonResponse;
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->getAllInfoOnTheGame(idGame, jsonResponse))
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
-        m_idGame = idGame;
+        m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
         QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
 
         if(obj["success"].toString() == "ok")
         {
@@ -338,10 +343,13 @@ void CtrlGameBoard::sendCardsSelected()
     QJsonDocument jsonResponse;
     m_ctrlAnim.setStepInProgress(true);
 
-    if(m_socket->sendCardsSelected(m_idGame, listCards, jsonResponse))
+    if(m_socket->sendCardsSelected(m_gameManager->uidGame(), listCards, jsonResponse))
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
 
         if(obj["success"].toString() == "ok")
         {
@@ -361,10 +369,13 @@ void CtrlGameBoard::initReady()
     QJsonDocument jsonResponse;
     m_ctrlAnim.setStepInProgress(true);
 
-    if(m_socket->initIsReady(m_idGame, jsonResponse))
+    if(m_socket->initIsReady(m_gameManager->uidGame(), jsonResponse))
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
 
         if(obj["success"].toString() == "ok")
         {
@@ -384,10 +395,13 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
     QJsonDocument jsonResponse;
     m_ctrlAnim.setStepInProgress(true);
 
-    if(m_socket->moveACard(m_idGame, static_cast<ConstantesShared::EnumPacket>(idPacketOrigin), idCardOrigin, static_cast<ConstantesShared::EnumPacket>(idPacketDestination), idCardDestination, jsonResponse))
+    if(m_socket->moveACard(m_gameManager->uidGame(), static_cast<ConstantesShared::EnumPacket>(idPacketOrigin), idCardOrigin, static_cast<ConstantesShared::EnumPacket>(idPacketDestination), idCardDestination, jsonResponse))
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
 
         if(obj["success"].toString() == "ok")
         {
@@ -442,7 +456,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
         {
             QJsonObject objAction = objActions[QString::number(indexAction)].toObject();
             QString namePlayer = objActions["namePlayer"].toString();
-            int phase = objAction["index"].toInt();
+            int phase = objAction["phase"].toInt();
 
             if(!objAction.isEmpty())
             {

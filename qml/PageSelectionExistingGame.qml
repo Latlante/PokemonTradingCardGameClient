@@ -36,9 +36,10 @@ Item {
                 delegate: Rectangle {
                     width: parent.width
                     height: 30
+                    color: index == listViewAllGamesAvailable.currentIndex ? "lightgray" : "white"
 
                     Text {
-                        id: textNamePlayer
+                        id: textNameGame
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
@@ -46,6 +47,12 @@ Item {
                         font.pixelSize: 20
                         color: "black"
                         text: model.nameGame + "(" + model.nameOpponent + ")";
+
+                        MouseArea {
+                            id: mouseAreaNameGame
+                            anchors.fill: parent
+                            onClicked: listViewAllGamesAvailable.currentIndex = index
+                        }
                     }
 
                     Text {
@@ -70,7 +77,7 @@ Item {
                 anchors.left: parent.left
                 text: qsTr("Ok")
 
-                onClicked: ctrlGameBoard.joinAGame(listViewAllGamesAvailable.currentIndex)
+                onClicked: ctrlGameBoard.joinAGame(listViewAllGamesAvailable.currentIndex+1)
             }
 
 

@@ -4,7 +4,7 @@ import model 1.0
 Item {
     height: 600
 
-    property bool stepInProgress: ctrlGameBoard.stepInProgress
+    property bool stepInProgress: ctrlAnimation.stepInProgress
     property ModelListOfGamesAvailable modelGamesAvailable: ctrlGameBoard.modelAllOfGamesAvailable()
     property int numberOfGamesAvailable: modelGamesAvailable.count
 

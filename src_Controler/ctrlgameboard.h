@@ -26,7 +26,6 @@ class SocketClient;
 class CtrlGameBoard : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Player* currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
     Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
 
 
@@ -85,7 +84,6 @@ private:
     CtrlPopups& m_ctrlPopups;
     CtrlSelectingCards& m_ctrlSelectingCards;
 
-    int m_idGame;
     ConstantesQML::StepGame m_gameStatus;
 
     void executeActions(QJsonObject objActions);

@@ -321,6 +321,8 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
 {
     bool success = false;
 
+    qDebug() << __PRETTY_FUNCTION__ << "jsonSender: " << jsonSender;
+
     //init timer time out
     QTimer timerTimeOut;
     timerTimeOut.setSingleShot(true);
@@ -376,7 +378,11 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
             jsonResponse = QJsonDocument::fromJson(responseSerialize);
             success = true;
         }
+        else
+            qDebug() << __PRETTY_FUNCTION__ << "Time out";
     }
+    else
+        qDebug() << __PRETTY_FUNCTION__ << "Time out";
 
     qDebug() << __PRETTY_FUNCTION__ << "response:" << jsonResponse;
 

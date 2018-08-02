@@ -44,3 +44,11 @@ AbstractCard* CardEmpty::clone()
 {
     return new CardEmpty(*this);
 }
+
+CardEmpty& CardEmpty::operator =(const CardEmpty& source)
+{
+    m_id = source.m_id;
+    m_name = source.m_name;
+
+    return *this;
+}
