@@ -190,10 +190,8 @@ CardPokemon* Database::newCardPokemon(const QString& infoCsv)
                 }
 
                 attack.costEnergies = listEnergies;
-                bool ok;
-                int idAction = arguments[offset+InfoAtt_ActionType].toInt(&ok);
 
-                attack.numberOfTurnAttackStillBlocks = 0;
+                attack.blocked = false;
                 listAttacks.append(attack);
             }
             offset += InfoAtt_COUNT;

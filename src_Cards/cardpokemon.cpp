@@ -473,7 +473,7 @@ bool CardPokemon::replaceOneAttack(int index, AttackData data)
         currentData.damage = data.damage;
         currentData.description = data.description;
         currentData.name = data.name;
-        currentData.numberOfTurnAttackStillBlocks = 0;
+        currentData.blocked = false;
 
         m_listAttacks.replace(index, currentData);
     }
