@@ -9,26 +9,46 @@
 #include <QtQml/qqml.h>
 
 #include "src_Cards/abstractcard.h"
+#include "src_Models/modellistfiltersselectingcards.h"
 #include "common/utils.h"
 
 CtrlSelectingCards::CtrlSelectingCards(QObject *parent) :
     QObject(parent),
     m_modelSelectingCards(new ModelSelectingCards()),
-    m_proxy(new ProxyModelSelectingCards())
+    m_proxySelectingCards(new ProxyModelSelectingCards()),
+    m_modelListFilters(new ModelListFiltersSelectingCards())
 {
-    m_proxy->setSourceModel(m_modelSelectingCards);
-    /*m_proxy->setSortRole(ModelSelectingCards::SelCards_Name);
-    m_proxy->setDynamicSortFilter(true);
-    m_proxy->sort(0, Qt::AscendingOrder);*/
+    m_proxySelectingCards->setSourceModel(m_modelSelectingCards);
+    /*m_proxySelectingCards->setSortRole(ModelSelectingCards::SelCards_Name);
+    m_proxySelectingCards->setDynamicSortFilter(true);
+    m_proxySelectingCards->sort(0, Qt::AscendingOrder);*/
+
+    m_modelListFilters->addFilter("Tout", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_AllCards));
+    m_modelListFilters->addFilter("Dresseur seulement", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsTrainersOnly));
+    m_modelListFilters->addFilter("Energie seulement", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsEnergiesOnly));
+    m_modelListFilters->addFilter("Pokemon seulement", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsPokemonOnly));
+    m_modelListFilters->addFilter("El. combat", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementFightingOnly));
+    m_modelListFilters->addFilter("El. eau", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementWaterOnly));
+    m_modelListFilters->addFilter("El. electrique", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementElectricOnly));
+    m_modelListFilters->addFilter("El. feu", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementFireOnly));
+    m_modelListFilters->addFilter("El. normal", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementNormalOnly));
+    m_modelListFilters->addFilter("El. plante", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementGrassOnly));
+    m_modelListFilters->addFilter("El. psy", static_cast<int>(ProxyModelSelectingCards::SelCardsFilter_CardsElementPsyOnly));
 }
 
 CtrlSelectingCards::~CtrlSelectingCards()
 {
-    delete m_proxy;
+    delete m_proxySelectingCards;
     if(m_modelSelectingCards != nullptr)
     {
         delete m_modelSelectingCards;
         m_modelSelectingCards = nullptr;
+    }
+
+    if(m_modelListFilters != nullptr)
+    {
+        delete m_modelListFilters;
+        m_modelListFilters = nullptr;
     }
 }
 
@@ -59,16 +79,21 @@ void CtrlSelectingCards::newSelection(const QString &name)
     m_modelSelectingCards->setName(name);
 }
 
+void CtrlSelectingCards::setFilterProxy(int filter)
+{
+    m_proxySelectingCards->setFilter(static_cast<ProxyModelSelectingCards::SelectingCardsFilter>(filter));
+}
+
 bool CtrlSelectingCards::install(QQmlApplicationEngine *pEngine)
 {
     qDebug() << "installing controleur...";
 
     bool bInstalled = false;
 
-    if (NULL != pEngine)
+    if (nullptr != pEngine)
     {
         QQmlContext* pContext = pEngine->rootContext();
-        if (NULL != pContext)
+        if (nullptr != pContext)
         {
             bInstalled = true;
             qDebug() << "CtrlSelectingCards is installed in QML engine";
@@ -108,8 +133,14 @@ ModelSelectingCards* CtrlSelectingCards::model()
 
 ProxyModelSelectingCards* CtrlSelectingCards::proxy()
 {
-    QQmlEngine::setObjectOwnership(m_proxy, QQmlEngine::CppOwnership);
-    return m_proxy;
+    QQmlEngine::setObjectOwnership(m_proxySelectingCards, QQmlEngine::CppOwnership);
+    return m_proxySelectingCards;
+}
+
+ModelListFiltersSelectingCards* CtrlSelectingCards::modelFilters()
+{
+    QQmlEngine::setObjectOwnership(m_modelListFilters, QQmlEngine::CppOwnership);
+    return m_modelListFilters;
 }
 
 /*void CtrlSelectingCards::addANewCard(int id)

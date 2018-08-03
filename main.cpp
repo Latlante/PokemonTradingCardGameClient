@@ -8,8 +8,9 @@
 #include "src_Controler/ctrlpopups.h"
 #include "src_Controler/ctrlselectingcards.h"
 #include "src_Models/modellistallplayers.h"
-#include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistenergies.h"
+#include "src_Models/modellistfiltersselectingcards.h"
+#include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistselection.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
@@ -44,8 +45,9 @@ int main(int argc, char *argv[])
     CtrlPopups::declareQML();
     CtrlSelectingCards::declareQML();
     ModelListAllPlayers::declareQML();
-    ModelListOfGamesAvailable::declareQML();
     ModelListEnergies::declareQML();
+    ModelListFiltersSelectingCards::declareQML();
+    ModelListOfGamesAvailable::declareQML();
     ModelListSelection::declareQML();
     ModelPopupSelectCardInPacket::declareQML();
     ModelPopupSelectEnergyInPokemon::declareQML();

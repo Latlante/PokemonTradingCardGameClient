@@ -31,23 +31,8 @@ public:
         SelCards_Quantity
     };
 
-    enum SelectingCardsFilter
-    {
-        SelCardsFilter_AllCards = 0,
-        SelCardsFilter_CardsPokemonOnly,
-        SelCardsFilter_CardsElementElectricOnly,
-        SelCardsFilter_CardsElementFightingOnly,
-        SelCardsFilter_CardsElementFireOnly,
-        SelCardsFilter_CardsElementGrassOnly,
-        SelCardsFilter_CardsElementNormalOnly,
-        SelCardsFilter_CardsElementPsyOnly,
-        SelCardsFilter_CardsElementWaterOnly,
-        SelCardsFilter_CardsEnergiesOnly,
-        SelCardsFilter_CardsTrainersOnly
-    };
-
     explicit ModelSelectingCards(QObject *parent = nullptr);
-    ~ModelSelectingCards();
+    ~ModelSelectingCards() override;
 
     static void declareQML();
     Q_INVOKABLE int maxCards();

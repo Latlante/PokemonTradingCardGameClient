@@ -6,6 +6,7 @@
 #include "src_Models/modelselectingcards.h"
 #include "src_Models/proxymodelselectingcards.h"
 
+class ModelListFiltersSelectingCards;
 class QQmlEngine;
 class QQmlApplicationEngine;
 
@@ -22,11 +23,13 @@ public:
     QString name();
     void setName(const QString& name);
 
-    void newSelection(const QString& name);
+    Q_INVOKABLE void newSelection(const QString& name);
+    Q_INVOKABLE void setFilterProxy(int filter);
 
     QList<InfoCard> listCards();
     Q_INVOKABLE ModelSelectingCards* model();
     Q_INVOKABLE ProxyModelSelectingCards* proxy();
+    Q_INVOKABLE ModelListFiltersSelectingCards *modelFilters();
 
 
     //Q_INVOKABLE void addANewCard(int id);
@@ -39,7 +42,8 @@ public:
 
 private:
     ModelSelectingCards* m_modelSelectingCards;
-    ProxyModelSelectingCards* m_proxy;
+    ProxyModelSelectingCards* m_proxySelectingCards;
+    ModelListFiltersSelectingCards *m_modelListFilters;
 };
 
 #endif // CTRLSELECTINGCARDS_H

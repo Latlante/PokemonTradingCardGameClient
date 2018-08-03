@@ -34,6 +34,16 @@ Item {
         anchors.fill: parent
         color: "#2b95ff"
 
+        ComboBox {
+            id: comboBoxFilterSelectingCards
+            width: 100
+            height: namePlayer.height
+            anchors.top: parent.top
+            anchors.left: parent.left
+            model: ctrlSelectingCards.modelFilters()
+            onCurrentIndexChanged: ctrlSelectingCards.setFilterProxy(model.data(currentIndex, ModelListFiltersSelectingCards.ROLE_FILTER))
+        }
+
         Image {
             id: imageSave
             width: namePlayer.height
@@ -51,6 +61,7 @@ Item {
                 }
             }
         }
+
 
         Image {
             id: imageLoad
@@ -71,6 +82,7 @@ Item {
             }
         }
 
+
         Text {
             id: namePlayer
             height: 40
@@ -82,6 +94,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
+
 
         GridView {
             id: viewCards
@@ -175,6 +188,7 @@ Item {
 
         }
 
+
         ButtonStyleGold {
             id: buttonRandom
             height: 40
@@ -188,6 +202,7 @@ Item {
 
             onClicked: ctrlSelectingCards.fillARandomList()
         }
+
 
 
         ButtonStyleGold {
@@ -204,6 +219,7 @@ Item {
 
             onClicked: ctrlGameBoard.sendCardsSelected()
         }
+
     }
 
     Loading_P {

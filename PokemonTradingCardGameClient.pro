@@ -50,7 +50,8 @@ SOURCES += \
     src_Communication/socketclienttest.cpp \
     src_Models/proxymodelselectingcards.cpp \
     src_Models/modellistselection.cpp \
-    src_Cards/cardempty.cpp
+    src_Cards/cardempty.cpp \
+    src_Models/modellistfiltersselectingcards.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -103,4 +104,5 @@ HEADERS += \
     src_Communication/socketclienttest.h \
     src_Models/proxymodelselectingcards.h \
     src_Models/modellistselection.h \
-    src_Cards/cardempty.h
+    src_Cards/cardempty.h \
+    src_Models/modellistfiltersselectingcards.h

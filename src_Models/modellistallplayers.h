@@ -6,7 +6,6 @@
 
 class ModelListAllPlayers : public QAbstractListModel
 {
-    Q_OBJECT
 public:
     explicit ModelListAllPlayers(QObject *parent = nullptr);
 
