@@ -133,12 +133,13 @@ Item {
                     id: rectangleContainerGameInProgress
                     width: parent.width
                     height: 30
+                    color: "transparent"
 
                     Text {
                         id: textGameInProgress
                         anchors.top: parent.top
                         anchors.left: parent.left
-                        anchors.right: rectangleContainerButtonRefresh.right
+                        anchors.right: rectangleContainerButtonRefresh.left
                         anchors.bottom: parent.bottom
                         color: "#ffffff"
                         text: qsTr("Parties en cours: ") + numberOfGamesAvailable
@@ -152,6 +153,8 @@ Item {
                         id: rectangleContainerButtonRefresh
                         width: parent.height
                         height: parent.height
+                        anchors.top: parent.top
+                        anchors.right: parent.right
                         color: "red"
 
                         MouseArea {
