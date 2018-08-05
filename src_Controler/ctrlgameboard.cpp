@@ -2,7 +2,6 @@
 #include <QDir>
 #include <QEventLoop>
 #include <QJsonArray>
-#include <QJsonDocument>
 #include <QJsonObject>
 #include <QQmlEngine>
 #include <QQmlApplicationEngine>
@@ -38,7 +37,7 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlSelectingCards(ctrlSelectCards),
     m_gameStatus(ConstantesQML::StepPreparation)
 {
-
+    connect(m_socket, &SocketClient::newNotification, this, &CtrlGameBoard::onNewNotification);
 }
 
 CtrlGameBoard::~CtrlGameBoard()
@@ -165,23 +164,21 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
                                                    objGame["opponent"].toString());
             }
 
-            m_ctrlAnim.setStepInProgress(false);
             m_gameManager->setPlayerYou(0, name);
             m_ctrlSelectingCards.setName(name);
             m_factoryMainPageLoader->displayCreateChooseGame();
         }
         else
         {
-            m_ctrlAnim.setStepInProgress(false);
             qDebug() << __PRETTY_FUNCTION__ << "Error during the authentification";
         }
     }
     else
     {
-        m_ctrlAnim.setStepInProgress(false);
         qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
     }
 
+    m_ctrlAnim.setStepInProgress(false);
     /*m_ctrlSelectingCards.setName(name);
     m_factoryMainPageLoader->displaySelectCards();*/
 }
@@ -205,17 +202,17 @@ void CtrlGameBoard::listOfAllPlayers()
         {
             //MODIF A VENIR
             QJsonObject objPlayer = arrayPlayers[i].toObject();
-            m_listAllPlayers->addNewPlayer(objPlayer["uid"].toInt(), objPlayer["name"].toString());
+            m_listAllPlayers->addNewPlayer(objPlayer["uid"].toString().toInt(), objPlayer["name"].toString());
 
             //m_listAllPlayers->addNewPlayer(i, arrayPlayers[i].toString());
         }
 
         if(m_listAllPlayers->rowCount() > 0)
         {
-            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displayAllPlayers();
         }
     }
+    m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::listOfGamesAlreadyExisting()
@@ -240,11 +237,9 @@ void CtrlGameBoard::listOfGamesAlreadyExisting()
                                                    objGame["name"].toString(),
                                                    objGame["opponent"].toString());
             }
-
-            m_ctrlAnim.setStepInProgress(false);
-            m_factoryMainPageLoader->displaySelectCards();
         }
     }
+    m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
@@ -268,10 +263,10 @@ void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
             m_listOfGamesAvailable->addNewGame(idGame, nameGame, m_listAllPlayers->namePlayerFromId(idOpponent));
             m_gameManager->setPlayerOpponent(static_cast<unsigned int>(idOpponent), m_listAllPlayers->namePlayerFromId(idOpponent));
             m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
-            m_ctrlAnim.setStepInProgress(false);
             m_factoryMainPageLoader->displaySelectCards();
         }
     }
+    m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::listOfGamesAvailable()
@@ -287,7 +282,7 @@ void CtrlGameBoard::listOfGamesAvailable()
     m_factoryMainPageLoader->displayAllGamesAvailable();
 }
 
-void CtrlGameBoard::joinAGame(int idGame)
+void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString &nameOpponent)
 {
     qDebug() << __PRETTY_FUNCTION__ << idGame;
     QJsonDocument jsonResponse;
@@ -296,7 +291,6 @@ void CtrlGameBoard::joinAGame(int idGame)
     if(m_socket->getAllInfoOnTheGame(idGame, jsonResponse))
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
-        m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
         QJsonObject obj = jsonResponse.object();
 
         if(obj.contains("actions"))
@@ -304,7 +298,9 @@ void CtrlGameBoard::joinAGame(int idGame)
 
         if(obj["success"].toString() == "ok")
         {
-            m_ctrlAnim.setStepInProgress(false);
+            unsigned int uidPlayerOpponent = m_listAllPlayers->uidFromNamePlayer(nameOpponent);
+            m_gameManager->setPlayerOpponent(uidPlayerOpponent, nameOpponent);
+            m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
 
             ConstantesQML::StepGame step = static_cast<ConstantesQML::StepGame>(obj["gameStatus"].toInt());
             switch(step)
@@ -329,6 +325,7 @@ void CtrlGameBoard::joinAGame(int idGame)
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
         }
     }
+    m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::returnToTheMenu()
@@ -347,20 +344,26 @@ void CtrlGameBoard::sendCardsSelected()
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
+        qDebug() << __PRETTY_FUNCTION__ << "1";
 
         if(obj.contains("actions"))
             executeActions(obj["actions"].toObject());
 
+        qDebug() << __PRETTY_FUNCTION__ << "2";
+
         if(obj["success"].toString() == "ok")
         {
-            m_ctrlAnim.setStepInProgress(false);
+            qDebug() << __PRETTY_FUNCTION__ << "3";
             m_factoryMainPageLoader->displayBoard();
+            qDebug() << __PRETTY_FUNCTION__ << "4";
         }
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
         }
     }
+    qDebug() << __PRETTY_FUNCTION__ << "5";
+    m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::initReady()
@@ -442,25 +445,42 @@ void CtrlGameBoard::onMovingCardAnimationStart()
     m_ctrlAnim.startAnimationMovingCard(CtrlAnimation::Location_Deck, CtrlAnimation::Location_Hand);
 }
 
+void CtrlGameBoard::onNewNotification(QJsonDocument docActions)
+{
+    qDebug() << __PRETTY_FUNCTION__ << docActions.toJson(QJsonDocument::Compact);
+    QJsonObject objActions = docActions.object();
+    if((objActions.contains("indexBegin")) && (objActions.contains("indexEnd")))
+        executeActions(objActions);
+}
+
 /************************************************************
 *****				FONCTIONS PRIVATE					*****
 ************************************************************/
 void CtrlGameBoard::executeActions(QJsonObject objActions)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     if((objActions.contains("indexBegin") == true) && (objActions.contains("indexEnd") == true))
     {
         int indexActionBegin = objActions["indexBegin"].toInt();
         int indexActionEnd = objActions["indexEnd"].toInt();
 
+        qDebug() << __PRETTY_FUNCTION__ << indexActionBegin << indexActionEnd;
+
         for(int indexAction=indexActionBegin;indexAction<indexActionEnd;++indexAction)
         {
             QJsonObject objAction = objActions[QString::number(indexAction)].toObject();
-            QString namePlayer = objActions["namePlayer"].toString();
+            QString namePlayer = objAction["namePlayer"].toString();
             int phase = objAction["phase"].toInt();
 
             if(!objAction.isEmpty())
             {
-                Player* play =  m_gameManager->playerByName(namePlayer);
+                //Player* play =  m_gameManager->playerByName(namePlayer);
+                /*qDebug() << play
+                         << play->name()
+                         << m_gameManager->playerYou()
+                         << m_gameManager->playerYou()->name()
+                         << m_gameManager->playerOpponent()
+                         << m_gameManager->playerOpponent()->name();*/
 
                 switch(phase)
                 {
@@ -532,25 +552,33 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifCardMoved:
                 {
-                    const int idPacketOrigin = objAction["idPacketOrigin"].toInt();
-                    const int idPacketDestination = objAction["idPacketDestination"].toInt();
-                    const int indexCardOrigin = objAction["indexCardOrigin"].toInt();
-                    AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketOrigin));
-                    AbstractPacket* packetDestination = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketDestination));
+                    Player* play = m_gameManager->playerByName(namePlayer);
 
-                    if(objAction.contains("idCard"))
+                    if(play != nullptr)
                     {
-                        Database db;
-                        const int idCard = objAction["idCard"].toInt();
-                        AbstractCard* abCard = db.cardById(idCard);
+                        const int idPacketOrigin = objAction["idPacketOrigin"].toInt();
+                        const int idPacketDestination = objAction["idPacketDestination"].toInt();
+                        const int indexCardOrigin = objAction["indexCardOrigin"].toInt();
+                        AbstractPacket* packetOrigin = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketOrigin));
+                        AbstractPacket* packetDestination = play->packetFromEnumPacket(static_cast<ConstantesShared::EnumPacket>(idPacketDestination));
 
-                        if(abCard != nullptr)
-                            play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
+                        if(objAction.contains("idCard"))
+                        {
+                            Database db;
+                            const int idCard = objAction["idCard"].toInt();
+                            AbstractCard* abCard = db.cardById(idCard);
+
+                            if(abCard != nullptr)
+                                play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
+                            else
+                                qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
+                        }
                         else
-                            qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
+                            play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
                     }
                     else
-                        play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
+                        qWarning() << "player (" << namePlayer << ") is nullptr for phase: " << phase;
+
                 }
                     break;
 

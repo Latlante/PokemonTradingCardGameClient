@@ -201,11 +201,14 @@ bool SocketClient::sendCardsSelected(int idGame, QList<InfoCard> listInfoCards, 
     QJsonArray arrayCards;
     foreach(InfoCard info, listInfoCards)
     {
-        QJsonObject objCard;
-        objCard["id"] = info.card->id();
-        objCard["quantity"] = info.quantity;
+        if(info.quantity > 0)
+        {
+            QJsonObject objCard;
+            objCard["id"] = info.card->id();
+            objCard["quantity"] = info.quantity;
 
-        arrayCards.append(objCard);
+            arrayCards.append(objCard);
+        }
     }
     jsonRequest["cards"] = arrayCards;
 
@@ -281,6 +284,8 @@ void SocketClient::onConnected_Socket()
 
 void SocketClient::onReadyRead_Socket()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+
     //init the answer
     QByteArray responseSerialize;
     QDataStream requestToRead(m_socket);

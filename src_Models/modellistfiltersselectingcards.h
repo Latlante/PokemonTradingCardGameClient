@@ -6,6 +6,8 @@
 
 class ModelListFiltersSelectingCards : public QAbstractListModel
 {
+    Q_OBJECT
+    Q_PROPERTY(QStringList listInfo READ listInfo NOTIFY listInfoChanged)
 public:
     enum FilterRole
     {
@@ -19,12 +21,16 @@ public:
     static void declareQML();
 
     void addFilter(const QString &name, int filter);
+    QStringList listInfo();
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 protected:
     QHash<int, QByteArray> roleNames() const override;
+
+signals:
+    void listInfoChanged();
 
 private:
     struct InfoFilter

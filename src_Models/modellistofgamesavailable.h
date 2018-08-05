@@ -22,9 +22,9 @@ public:
 
     static void declareQML();
 
-    int id(int index);
-    QString name(int index) const;
-    QString opponent(int index) const;
+    Q_INVOKABLE int id(int index);
+    Q_INVOKABLE QString name(int index) const;
+    Q_INVOKABLE QString opponent(int index) const;
 
     void addNewGame(int idGame, const QString& nameGame, const QString& opponent);
     void removeGame(int index);

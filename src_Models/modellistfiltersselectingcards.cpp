@@ -21,6 +21,16 @@ void ModelListFiltersSelectingCards::declareQML()
 void ModelListFiltersSelectingCards::addFilter(const QString &name, int filter)
 {
     m_listInfo.append({ name, filter });
+    emit listInfoChanged();
+}
+
+QStringList ModelListFiltersSelectingCards::listInfo()
+{
+    QStringList list;
+    foreach(InfoFilter filter, m_listInfo)
+        list.append(filter.name);
+
+    return list;
 }
 
 QVariant ModelListFiltersSelectingCards::data(const QModelIndex &index, int role) const

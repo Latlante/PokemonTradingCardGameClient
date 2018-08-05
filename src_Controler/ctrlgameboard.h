@@ -2,6 +2,7 @@
 #define CTRLGAMEBOARD_H
 
 #include <QObject>
+#include <QJsonDocument>
 
 #include "gamemanager.h"
 
@@ -53,7 +54,7 @@ public:
     Q_INVOKABLE void listOfGamesAlreadyExisting();
     Q_INVOKABLE void createANewGame(const QString& nameGame, int idOpponent);
     Q_INVOKABLE void listOfGamesAvailable();
-    Q_INVOKABLE void joinAGame(int idGame);
+    Q_INVOKABLE void joinAGame(int idGame, const QString& nameGame, const QString &nameOpponent);
     Q_INVOKABLE void returnToTheMenu();
 
     Q_INVOKABLE void sendCardsSelected();
@@ -73,6 +74,7 @@ signals:
 
 private slots:
     void onMovingCardAnimationStart();
+    void onNewNotification(QJsonDocument docActions);
 
 private:
     SocketClient* m_socket;

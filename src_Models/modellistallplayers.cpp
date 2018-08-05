@@ -35,9 +35,25 @@ QString ModelListAllPlayers::namePlayerFromId(unsigned int uid) const
     return namePlayer;
 }
 
+unsigned int ModelListAllPlayers::uidFromNamePlayer(const QString &name)
+{
+    unsigned int uidPlayer = 0;
+    int indexLoop = 0;
+
+    while((indexLoop < m_listOfPlayers.count()) && (uidPlayer == 0))
+    {
+        if(m_listOfPlayers[indexLoop].name == name)
+            uidPlayer = m_listOfPlayers[indexLoop].uid;
+
+        indexLoop++;
+    }
+
+    return uidPlayer;
+}
+
 void ModelListAllPlayers::addNewPlayer(unsigned int idPlayer, const QString &name)
 {
-    qDebug() << __PRETTY_FUNCTION__ << name;
+    qDebug() << __PRETTY_FUNCTION__ << idPlayer << name;
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_listOfPlayers.append({ idPlayer, name });

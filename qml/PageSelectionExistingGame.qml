@@ -77,7 +77,10 @@ Item {
                 anchors.left: parent.left
                 text: qsTr("Ok")
 
-                onClicked: ctrlGameBoard.joinAGame(listViewAllGamesAvailable.currentIndex+1)
+                onClicked: ctrlGameBoard.joinAGame(listViewAllGamesAvailable.model.id(listViewAllGamesAvailable.currentIndex),
+                                                   listViewAllGamesAvailable.model.name(listViewAllGamesAvailable.currentIndex),
+                                                   listViewAllGamesAvailable.model.opponent(listViewAllGamesAvailable.currentIndex))
+
             }
 
 

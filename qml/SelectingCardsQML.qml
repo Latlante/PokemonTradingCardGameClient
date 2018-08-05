@@ -40,7 +40,7 @@ Item {
             height: namePlayer.height
             anchors.top: parent.top
             anchors.left: parent.left
-            model: ctrlSelectingCards.modelFilters()
+            model: ctrlSelectingCards.modelFilters().listInfo
             onCurrentIndexChanged: ctrlSelectingCards.setFilterProxy(model.data(currentIndex, ModelListFiltersSelectingCards.ROLE_FILTER))
         }
 

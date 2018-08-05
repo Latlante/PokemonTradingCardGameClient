@@ -41,7 +41,7 @@ QString ModelListOfGamesAvailable::opponent(int index) const
 {
     QString opponent = "";
     if((index >= 0) && (index < m_listGames.count()))
-        opponent = m_listGames[index].name;
+        opponent = m_listGames[index].opponent;
 
     return opponent;
 }

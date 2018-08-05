@@ -6,12 +6,14 @@
 
 class ModelListAllPlayers : public QAbstractListModel
 {
+    Q_OBJECT
 public:
     explicit ModelListAllPlayers(QObject *parent = nullptr);
 
     static void declareQML();
 
     QString namePlayerFromId(unsigned int uid) const;
+    unsigned int uidFromNamePlayer(const QString &name);
 
     void addNewPlayer(unsigned int idPlayer, const QString& name);
     void removeOnePlayer(int index);
