@@ -5,12 +5,6 @@
 #include "src_Cards/cardempty.h"
 #include "src_Controler/ctrlpopups.h"
 #include "src_Models/modellistenergies.h"
-#include "src_Packets/bencharea.h"
-#include "src_Packets/fightarea.h"
-#include "src_Packets/packetdeck.h"
-#include "src_Packets/packethand.h"
-#include "src_Packets/packetrewards.h"
-#include "src_Packets/packettrash.h"
 #include "common/utils.h"
 
 GameManager::GameManager(QObject *parent) :
@@ -56,14 +50,10 @@ Player* GameManager::playerYou()
 
 void GameManager::setPlayerYou(unsigned int uid, const QString &name)
 {
-    QList<AbstractCard*> listCardEmpty;
-    for(int i=0;i<MAXCARDS_DECK;++i)
-        listCardEmpty.append(new CardEmpty());
-
     if(m_playerYou != nullptr)
         delete m_playerYou;
 
-    m_playerYou = new Player(uid, name, listCardEmpty);
+    m_playerYou = new Player(uid, name, MAXCARDS_DECK);
 }
 
 Player* GameManager::playerOpponent()
@@ -73,14 +63,10 @@ Player* GameManager::playerOpponent()
 
 void GameManager::setPlayerOpponent(unsigned int uid, const QString &name)
 {
-    QList<AbstractCard*> listCardEmpty;
-    for(int i=0;i<MAXCARDS_DECK;++i)
-        listCardEmpty.append(new CardEmpty());
-
     if(m_playerOpponent != nullptr)
         delete m_playerOpponent;
 
-    m_playerOpponent = new Player(uid, name, listCardEmpty);
+    m_playerOpponent = new Player(uid, name, MAXCARDS_DECK);
 }
 
 Player* GameManager::playerByName(const QString &name)

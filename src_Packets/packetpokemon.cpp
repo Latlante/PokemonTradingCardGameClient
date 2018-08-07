@@ -52,6 +52,22 @@ AbstractCard* PacketPokemon::takeACard(int indexCard)
     return cardToReturn;
 }
 
+bool PacketPokemon::remove(AbstractCard* card)
+{
+    bool success = false;
+
+    if(card != nullptr)
+    {
+        if(m_listCards.contains(card))
+        {
+            m_listCards.removeOne(card);
+            success = true;
+        }
+    }
+
+    return success;
+}
+
 QVariant PacketPokemon::data(const QModelIndex &index, int role) const
 {
     int iRow = index.row();

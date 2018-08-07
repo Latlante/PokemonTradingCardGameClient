@@ -3,6 +3,7 @@
 #include <QtQml/qqml.h>
 
 #include "src_Cards/abstractcard.h"
+#include "src_Cards/cardempty.h"
 
 PacketHiddenCards::PacketHiddenCards(const QString &namePacket, int quantityOfCards) :
     AbstractPacket(namePacket),
@@ -39,9 +40,15 @@ int PacketHiddenCards::countCard() const
 
 bool PacketHiddenCards::addNewCard(AbstractCard* newCard)
 {
-    Q_UNUSED(newCard)
+    if(newCard != nullptr)
+    {
+        delete newCard;
+        newCard = nullptr;
+    }
 
     m_quantityOfCards += 1;
+
+    return true;
 }
 
 AbstractCard* PacketHiddenCards::takeACard(int indexCard)
@@ -49,6 +56,18 @@ AbstractCard* PacketHiddenCards::takeACard(int indexCard)
     Q_UNUSED(indexCard)
 
     m_quantityOfCards -= 1;
+
+    return new CardEmpty();
+}
+
+bool PacketHiddenCards::remove(AbstractCard* card)
+{
+    if(card != nullptr)
+        delete card;
+
+    m_quantityOfCards -=1;
+
+    return true;
 }
 
 QVariant PacketHiddenCards::data(const QModelIndex &index, int role) const

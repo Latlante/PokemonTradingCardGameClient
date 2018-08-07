@@ -15,7 +15,7 @@ public:
         ROLE_IMAGECARD
     };
 
-    explicit PacketPokemon(const QString &namePacket, QList<AbstractCard*> listCards);
+    explicit PacketPokemon(const QString &namePacket, QList<AbstractCard*> listCards = {});
 
     static void declareQML();
 
@@ -24,6 +24,7 @@ public:
     int countCard() const final;
     bool addNewCard(AbstractCard* newCard = nullptr) final;
     AbstractCard* takeACard(int indexCard = -1) final;
+    bool remove(AbstractCard* card) final;
 
     QVariant data(const QModelIndex &index, int role) const final;
     int rowCount(const QModelIndex& = QModelIndex()) const final;

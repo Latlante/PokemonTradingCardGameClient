@@ -6,23 +6,19 @@
 #include "src_Cards/cardaction.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Cards/cardpokemon.h"
-#include "src_Packets/bencharea.h"
-#include "src_Packets/fightarea.h"
-#include "src_Packets/packetdeck.h"
-#include "src_Packets/packethand.h"
-#include "src_Packets/packetrewards.h"
-#include "src_Packets/packettrash.h"
+#include "src_Packets/packethiddencards.h"
+#include "src_Packets/packetpokemon.h"
 
-Player::Player(unsigned int uid, QString name, QList<AbstractCard*> listCards, QObject *parent) :
+Player::Player(unsigned int uid, QString name, int countDeck, QObject *parent) :
 	QObject(parent),
     m_uid(uid),
     m_name(name),
-    m_bench(new BenchArea("Bench")),
-    m_deck(new PacketDeck("Deck", listCards)),
-    m_fight(new FightArea("Fight")),
-    m_hand(new PacketHand("Hand")),
-    m_rewards(new PacketRewards("Rewards")),
-    m_trash(new PacketTrash("Trash")),
+    m_bench(new PacketPokemon("Bench")),
+    m_deck(new PacketHiddenCards("Deck", countDeck)),
+    m_fight(new PacketPokemon("Fight")),
+    m_hand(new PacketHiddenCards("Hand")),
+    m_rewards(new PacketHiddenCards("Rewards")),
+    m_trash(new PacketHiddenCards("Trash")),
     m_initReady(false),
     m_canPlay(true)
 {
@@ -59,37 +55,37 @@ const QString Player::name()
     return m_name;
 }
 
-BenchArea* Player::bench()
+PacketPokemon* Player::bench()
 {
     QQmlEngine::setObjectOwnership(m_bench, QQmlEngine::CppOwnership);
     return m_bench;
 }
 
-PacketDeck* Player::deck()
+PacketHiddenCards* Player::deck()
 {
     QQmlEngine::setObjectOwnership(m_deck, QQmlEngine::CppOwnership);
 	return m_deck;
 }
 
-FightArea* Player::fight()
+PacketPokemon* Player::fight()
 {
     QQmlEngine::setObjectOwnership(m_fight, QQmlEngine::CppOwnership);
     return m_fight;
 }
 
-PacketHand* Player::hand()
+PacketHiddenCards* Player::hand()
 {
     QQmlEngine::setObjectOwnership(m_hand, QQmlEngine::CppOwnership);
 	return m_hand;
 }
 
-PacketRewards* Player::rewards()
+PacketHiddenCards* Player::rewards()
 {
     QQmlEngine::setObjectOwnership(m_rewards, QQmlEngine::CppOwnership);
     return m_rewards;
 }
 
-PacketTrash* Player::trash()
+PacketHiddenCards* Player::trash()
 {
     QQmlEngine::setObjectOwnership(m_trash, QQmlEngine::CppOwnership);
     return m_trash;
@@ -141,21 +137,17 @@ void Player::setCanPlay(bool status)
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index)
 {
     bool moveSuccess = false;
+    AbstractCard* cardToMove = source->takeACard(index);
 
-    if (destination->isFull() == false)
+    if (cardToMove != nullptr)
     {
-        AbstractCard* cardToMove = source->takeACard(index);
+        destination->addNewCard(cardToMove);
+        moveSuccess = true;
+    }
+    else
+    {
+        qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
 
-        if (cardToMove != nullptr)
-        {
-            destination->addNewCard(cardToMove);
-            moveSuccess = true;
-        }
-        else
-        {
-            qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
-
-        }
     }
 
     return moveSuccess;
@@ -167,15 +159,12 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
     if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
     {
-        if (destination->isFull() == false)
-        {
-            //action
-            moveSuccess = source->removeFromPacketWithoutDelete(cardToMove);
+        //action
+        moveSuccess = source->remove(cardToMove);
 
-            if(moveSuccess == true)
-            {
-                moveSuccess = destination->addNewCard(cardToMove);
-            }
+        if(moveSuccess == true)
+        {
+            moveSuccess = destination->addNewCard(cardToMove);
         }
     }
     else
@@ -209,21 +198,18 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
     if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
     {
-        if (destination->isFull() == false)
+        AbstractCard* cardToDelete = source->takeACard(index);
+
+        if (cardToDelete != nullptr)
         {
-            AbstractCard* cardToDelete = source->takeACard(index);
+            delete cardToDelete;
+            destination->addNewCard(cardToMove);
+            moveSuccess = true;
+        }
+        else
+        {
+            qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
 
-            if (cardToDelete != nullptr)
-            {
-                delete cardToDelete;
-                destination->addNewCard(cardToMove);
-                moveSuccess = true;
-            }
-            else
-            {
-                qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
-
-            }
         }
     }
     else

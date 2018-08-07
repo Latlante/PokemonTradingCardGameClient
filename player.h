@@ -11,12 +11,8 @@ class CardAction;
 class CardEnergy;
 class CardPokemon;
 class AbstractPacket;
-class PacketDeck;
-class PacketRewards;
-class PacketHand;
-class BenchArea;
-class FightArea;
-class PacketTrash;
+class PacketHiddenCards;
+class PacketPokemon;
 
 class Player : public QObject
 {
@@ -25,19 +21,19 @@ class Player : public QObject
     Q_PROPERTY(bool canPlay READ canPlay WRITE setCanPlay NOTIFY canPlayChanged)
 	
 public:
-    Player(unsigned int uid, QString name, QList<AbstractCard*> listCards, QObject *parent = nullptr);
+    Player(unsigned int uid, QString name, int countDeck, QObject *parent = nullptr);
 	~Player();
 
     static void declareQML();
 	
     Q_INVOKABLE unsigned int uid();
     Q_INVOKABLE const QString name();
-    Q_INVOKABLE BenchArea* bench();
-    Q_INVOKABLE PacketDeck* deck();
-    Q_INVOKABLE FightArea* fight();
-    Q_INVOKABLE PacketHand* hand();
-    Q_INVOKABLE PacketRewards* rewards();
-    Q_INVOKABLE PacketTrash* trash();
+    Q_INVOKABLE PacketPokemon* bench();
+    Q_INVOKABLE PacketHiddenCards* deck();
+    Q_INVOKABLE PacketPokemon* fight();
+    Q_INVOKABLE PacketHiddenCards* hand();
+    Q_INVOKABLE PacketHiddenCards* rewards();
+    Q_INVOKABLE PacketHiddenCards* trash();
 	
     bool isLoser();
 
@@ -61,12 +57,12 @@ private:
     unsigned int m_uid;
 	QString m_name;
 
-    BenchArea* m_bench;
-	PacketDeck* m_deck;
-    FightArea* m_fight;
-    PacketHand* m_hand;
-	PacketRewards* m_rewards;
-    PacketTrash* m_trash;
+    PacketPokemon* m_bench;
+    PacketHiddenCards* m_deck;
+    PacketPokemon* m_fight;
+    PacketHiddenCards* m_hand;
+    PacketHiddenCards* m_rewards;
+    PacketHiddenCards* m_trash;
 
     //For the round
     bool m_initReady;
