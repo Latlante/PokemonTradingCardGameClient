@@ -39,7 +39,10 @@ int PacketPokemon::countCard() const
 bool PacketPokemon::addNewCard(AbstractCard* newCard)
 {
     if(newCard != nullptr)
+    {
         m_listCards.append(newCard);
+        emit countChanged();
+    }
 }
 
 AbstractCard* PacketPokemon::takeACard(int indexCard)
@@ -47,7 +50,10 @@ AbstractCard* PacketPokemon::takeACard(int indexCard)
     AbstractCard *cardToReturn = nullptr;
 
     if((indexCard >= 0) && (indexCard < countCard()))
+    {
         cardToReturn = m_listCards.takeAt(indexCard);
+        emit countChanged();
+    }
 
     return cardToReturn;
 }
@@ -61,6 +67,7 @@ bool PacketPokemon::remove(AbstractCard* card)
         if(m_listCards.contains(card))
         {
             m_listCards.removeOne(card);
+            emit countChanged();
             success = true;
         }
     }

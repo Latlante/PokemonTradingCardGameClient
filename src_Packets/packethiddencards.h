@@ -15,6 +15,7 @@ public:
     AbstractPacket::TypeOfPacket type() final;
 
     int countCard() const final;
+    void setCountCard(int count);
     bool addNewCard(AbstractCard* newCard = nullptr) final;
     AbstractCard* takeACard(int indexCard = -1) final;
     bool remove(AbstractCard* card) final;

@@ -38,6 +38,15 @@ int PacketHiddenCards::countCard() const
     return rowCount();
 }
 
+void PacketHiddenCards::setCountCard(int count)
+{
+    if(count != m_quantityOfCards)
+    {
+        m_quantityOfCards = count;
+        emit countChanged();
+    }
+}
+
 bool PacketHiddenCards::addNewCard(AbstractCard* newCard)
 {
     if(newCard != nullptr)
@@ -47,6 +56,7 @@ bool PacketHiddenCards::addNewCard(AbstractCard* newCard)
     }
 
     m_quantityOfCards += 1;
+    emit countChanged();
 
     return true;
 }
@@ -56,6 +66,7 @@ AbstractCard* PacketHiddenCards::takeACard(int indexCard)
     Q_UNUSED(indexCard)
 
     m_quantityOfCards -= 1;
+    emit countChanged();
 
     return new CardEmpty();
 }
@@ -66,6 +77,7 @@ bool PacketHiddenCards::remove(AbstractCard* card)
         delete card;
 
     m_quantityOfCards -=1;
+    emit countChanged();
 
     return true;
 }
