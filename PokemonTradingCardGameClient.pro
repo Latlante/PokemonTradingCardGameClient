@@ -30,15 +30,6 @@ SOURCES += \
     src_Models/modelpopupselectenergyinpokemon.cpp \
     src_Models/modelselectingcards.cpp \
     src_Packets/abstractpacket.cpp \
-    src_Packets/abstractpacketdynamic.cpp \
-    src_Packets/abstractpacketstatic.cpp \
-    src_Packets/bencharea.cpp \
-    src_Packets/fightarea.cpp \
-    src_Packets/packetdeck.cpp \
-    src_Packets/packetdynamiccustom.cpp \
-    src_Packets/packethand.cpp \
-    src_Packets/packetrewards.cpp \
-    src_Packets/packettrash.cpp \
     gamemanager.cpp \
     player.cpp \
     src_Communication/socketclient.cpp \
@@ -51,7 +42,9 @@ SOURCES += \
     src_Models/proxymodelselectingcards.cpp \
     src_Models/modellistselection.cpp \
     src_Cards/cardempty.cpp \
-    src_Models/modellistfiltersselectingcards.cpp
+    src_Models/modellistfiltersselectingcards.cpp \
+    src_Packets/packethiddencards.cpp \
+    src_Packets/packetpokemon.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -84,15 +77,6 @@ HEADERS += \
     src_Models/modelpopupselectenergyinpokemon.h \
     src_Models/modelselectingcards.h \
     src_Packets/abstractpacket.h \
-    src_Packets/abstractpacketdynamic.h \
-    src_Packets/abstractpacketstatic.h \
-    src_Packets/bencharea.h \
-    src_Packets/fightarea.h \
-    src_Packets/packetdeck.h \
-    src_Packets/packetdynamiccustom.h \
-    src_Packets/packethand.h \
-    src_Packets/packetrewards.h \
-    src_Packets/packettrash.h \
     gamemanager.h \
     player.h \
     src_Communication/socketclient.h \
@@ -105,4 +89,6 @@ HEADERS += \
     src_Models/proxymodelselectingcards.h \
     src_Models/modellistselection.h \
     src_Cards/cardempty.h \
-    src_Models/modellistfiltersselectingcards.h
+    src_Models/modellistfiltersselectingcards.h \
+    src_Packets/packethiddencards.h \
+    src_Packets/packetpokemon.h
