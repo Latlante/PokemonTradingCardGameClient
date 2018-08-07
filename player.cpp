@@ -6,6 +6,7 @@
 #include "src_Cards/cardaction.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Cards/cardpokemon.h"
+#include "src_Packets/packetgeneric.h"
 #include "src_Packets/packethiddencards.h"
 #include "src_Packets/packetpokemon.h"
 
@@ -14,11 +15,11 @@ Player::Player(unsigned int uid, QString name, int countDeck, QObject *parent) :
     m_uid(uid),
     m_name(name),
     m_bench(new PacketPokemon("Bench")),
-    m_deck(new PacketHiddenCards("Deck", countDeck)),
+    m_deck(new PacketGeneric("Deck", countDeck)),
     m_fight(new PacketPokemon("Fight")),
-    m_hand(new PacketHiddenCards("Hand")),
-    m_rewards(new PacketHiddenCards("Rewards")),
-    m_trash(new PacketHiddenCards("Trash")),
+    m_hand(new PacketGeneric("Hand")),
+    m_rewards(new PacketGeneric("Rewards")),
+    m_trash(new PacketGeneric("Trash")),
     m_initReady(false),
     m_canPlay(true)
 {
@@ -61,7 +62,7 @@ PacketPokemon* Player::bench()
     return m_bench;
 }
 
-PacketHiddenCards* Player::deck()
+PacketGeneric* Player::deck()
 {
     QQmlEngine::setObjectOwnership(m_deck, QQmlEngine::CppOwnership);
 	return m_deck;
@@ -73,19 +74,19 @@ PacketPokemon* Player::fight()
     return m_fight;
 }
 
-PacketHiddenCards* Player::hand()
+PacketGeneric* Player::hand()
 {
     QQmlEngine::setObjectOwnership(m_hand, QQmlEngine::CppOwnership);
 	return m_hand;
 }
 
-PacketHiddenCards* Player::rewards()
+PacketGeneric* Player::rewards()
 {
     QQmlEngine::setObjectOwnership(m_rewards, QQmlEngine::CppOwnership);
     return m_rewards;
 }
 
-PacketHiddenCards* Player::trash()
+PacketGeneric* Player::trash()
 {
     QQmlEngine::setObjectOwnership(m_trash, QQmlEngine::CppOwnership);
     return m_trash;

@@ -44,7 +44,8 @@ SOURCES += \
     src_Cards/cardempty.cpp \
     src_Models/modellistfiltersselectingcards.cpp \
     src_Packets/packethiddencards.cpp \
-    src_Packets/packetpokemon.cpp
+    src_Packets/packetpokemon.cpp \
+    src_Packets/packetgeneric.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -91,4 +92,5 @@ HEADERS += \
     src_Cards/cardempty.h \
     src_Models/modellistfiltersselectingcards.h \
     src_Packets/packethiddencards.h \
-    src_Packets/packetpokemon.h
+    src_Packets/packetpokemon.h \
+    src_Packets/packetgeneric.h

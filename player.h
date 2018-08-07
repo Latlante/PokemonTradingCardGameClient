@@ -11,6 +11,7 @@ class CardAction;
 class CardEnergy;
 class CardPokemon;
 class AbstractPacket;
+class PacketGeneric;
 class PacketHiddenCards;
 class PacketPokemon;
 
@@ -29,11 +30,11 @@ public:
     Q_INVOKABLE unsigned int uid();
     Q_INVOKABLE const QString name();
     Q_INVOKABLE PacketPokemon* bench();
-    Q_INVOKABLE PacketHiddenCards* deck();
+    Q_INVOKABLE PacketGeneric* deck();
     Q_INVOKABLE PacketPokemon* fight();
-    Q_INVOKABLE PacketHiddenCards* hand();
-    Q_INVOKABLE PacketHiddenCards* rewards();
-    Q_INVOKABLE PacketHiddenCards* trash();
+    Q_INVOKABLE PacketGeneric* hand();
+    Q_INVOKABLE PacketGeneric* rewards();
+    Q_INVOKABLE PacketGeneric* trash();
 	
     bool isLoser();
 
@@ -58,11 +59,11 @@ private:
 	QString m_name;
 
     PacketPokemon* m_bench;
-    PacketHiddenCards* m_deck;
+    PacketGeneric* m_deck;
     PacketPokemon* m_fight;
-    PacketHiddenCards* m_hand;
-    PacketHiddenCards* m_rewards;
-    PacketHiddenCards* m_trash;
+    PacketGeneric* m_hand;
+    PacketGeneric* m_rewards;
+    PacketGeneric* m_trash;
 
     //For the round
     bool m_initReady;

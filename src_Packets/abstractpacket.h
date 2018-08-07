@@ -16,6 +16,7 @@ public:
     enum TypeOfPacket
     {
         Packet_HiddenCard = 0,
+        Packet_Generic,
         Packet_Pokemon
     };
 
@@ -30,7 +31,7 @@ public:
     virtual int countCard() const = 0;
     virtual bool addNewCard(AbstractCard* newCard = nullptr) = 0;
     virtual AbstractCard* takeACard(int indexCard = -1) = 0;
-    virtual bool remove(AbstractCard* card) = 0;
+    virtual bool remove(AbstractCard* card = nullptr) = 0;
 
     bool isEmpty();
 
@@ -39,6 +40,9 @@ public:
 
 signals:
     void countChanged();
+
+protected:
+    QList<AbstractCard*> m_listCards;
 
 protected slots:
     void updateAllData();

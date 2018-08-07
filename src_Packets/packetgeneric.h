@@ -1,14 +1,20 @@
-#ifndef PACKETHIDDENCARDS_H
-#define PACKETHIDDENCARDS_H
+#ifndef PACKETGENERIC_H
+#define PACKETGENERIC_H
 
 #include "abstractpacket.h"
 
-class PacketHiddenCards : public AbstractPacket
+class PacketGeneric : public AbstractPacket
 {
     Q_OBJECT
 public:
-    explicit PacketHiddenCards(const QString &namePacket, int quantityOfCards = 0);
-    virtual ~PacketHiddenCards() final;
+    enum Roles
+    {
+        ROLE_CARD = Qt::UserRole,
+        ROLE_IMAGECARD
+    };
+
+    explicit PacketGeneric(const QString &namePacket, int quantityOfCards = 0);
+    ~PacketGeneric();
 
     static void declareQML();
 
@@ -27,7 +33,6 @@ protected:
     QHash<int, QByteArray> roleNames() const final;
 
 private:
-    int m_quantityOfCards;
 };
 
-#endif // PACKETHIDDENCARDS_H
+#endif // PACKETGENERIC_H
