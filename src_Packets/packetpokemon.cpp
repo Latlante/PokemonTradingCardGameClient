@@ -4,10 +4,10 @@
 #include "src_Cards/cardpokemon.h"
 
 PacketPokemon::PacketPokemon(const QString &namePacket, QList<AbstractCard *> listCards) :
-    AbstractPacket(namePacket),
-    m_listCards(listCards)
+    AbstractPacket(namePacket)/*,
+    m_listCards(listCards)*/
 {
-
+    m_listCards = listCards;
 }
 
 PacketPokemon::~PacketPokemon()

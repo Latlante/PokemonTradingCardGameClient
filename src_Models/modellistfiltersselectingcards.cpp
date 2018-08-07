@@ -33,6 +33,18 @@ QStringList ModelListFiltersSelectingCards::listInfo()
     return list;
 }
 
+int ModelListFiltersSelectingCards::filter(int index)
+{
+    int idFilter = -1;
+
+    if((index >= 0) && (index < m_listInfo.count()))
+    {
+        idFilter = m_listInfo[index].filter;
+    }
+
+    return idFilter;
+}
+
 QVariant ModelListFiltersSelectingCards::data(const QModelIndex &index, int role) const
 {
     //qDebug() << __PRETTY_FUNCTION__;

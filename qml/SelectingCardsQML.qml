@@ -14,7 +14,7 @@ Item {
     property int maxCards: ctrlSelectingCards.model().maxCards()
     property bool stepInProgress: ctrlAnimation.stepInProgress
 
-    onCountTotalQuantityChanged: console.log("onCountTotalQuantityChanged:" + countTotalQuantity)
+    //onCountTotalQuantityChanged: console.log("onCountTotalQuantityChanged:" + countTotalQuantity)
 
     onStepInProgressChanged: {
         if(stepInProgress == false)
@@ -36,12 +36,12 @@ Item {
 
         ComboBox {
             id: comboBoxFilterSelectingCards
-            width: 100
+            width: 200
             height: namePlayer.height
             anchors.top: parent.top
             anchors.left: parent.left
             model: ctrlSelectingCards.modelFilters().listInfo
-            onCurrentIndexChanged: ctrlSelectingCards.setFilterProxy(model.data(currentIndex, ModelListFiltersSelectingCards.ROLE_FILTER))
+            onCurrentIndexChanged: ctrlSelectingCards.setFilterProxy(ctrlSelectingCards.modelFilters().filter(comboBoxFilterSelectingCards.currentIndex))
         }
 
         Image {

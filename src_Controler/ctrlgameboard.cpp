@@ -21,6 +21,7 @@
 #include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistselection.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
+#include "src_Packets/packetgeneric.h"
 #include "src_Packets/packethiddencards.h"
 #include "src_Packets/packetpokemon.h"
 

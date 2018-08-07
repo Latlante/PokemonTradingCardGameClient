@@ -6,7 +6,6 @@
 #include "src_Cards/cardaction.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Cards/cardpokemon.h"
-#include "src_Packets/packetdeck.h"
 #include "common/utils.h"
 
 ModelSelectingCards::ModelSelectingCards(QObject *parent) :

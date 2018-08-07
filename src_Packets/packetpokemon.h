@@ -16,6 +16,7 @@ public:
     };
 
     explicit PacketPokemon(const QString &namePacket, QList<AbstractCard*> listCards = {});
+    virtual ~PacketPokemon() override;
 
     static void declareQML();
 

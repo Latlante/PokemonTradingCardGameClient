@@ -34,6 +34,18 @@ bool AbstractPacket::isEmpty()
     return countCard() == 0;
 }
 
+AbstractCard* AbstractPacket::card(int index)
+{
+    AbstractCard* card = nullptr;
+
+    if ((index >= 0) && (index < countCard()))
+    {
+        card = m_listCards[index];
+    }
+
+    return card;
+}
+
 /************************************************************
 *****			FONCTIONS SLOT PROTEGEES				*****
 ************************************************************/

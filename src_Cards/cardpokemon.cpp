@@ -9,7 +9,7 @@
 #include "common/utils.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Models/modellistenergies.h"
-#include "src_Packets/packettrash.h"
+#include "src_Packets/packetgeneric.h"
 
 CardPokemon::CardPokemon(unsigned short id,
                          const QString& name,

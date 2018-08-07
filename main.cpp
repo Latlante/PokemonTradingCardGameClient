@@ -21,13 +21,9 @@
 #include "src_Cards/cardaction.h"
 #include "src_Cards/cardenergy.h"
 #include "src_Cards/cardpokemon.h"
-#include "src_Packets/bencharea.h"
-#include "src_Packets/fightarea.h"
-#include "src_Packets/packetdeck.h"
-#include "src_Packets/fightarea.h"
-#include "src_Packets/packethand.h"
-#include "src_Packets/packetrewards.h"
-#include "src_Packets/packettrash.h"
+#include "src_Packets/packetgeneric.h"
+#include "src_Packets/packethiddencards.h"
+#include "src_Packets/packetpokemon.h"
 
 int main(int argc, char *argv[])
 {
@@ -58,12 +54,9 @@ int main(int argc, char *argv[])
     CardAction::declareQML();
     CardEnergy::declareQML();
     CardPokemon::declareQML();
-    BenchArea::declareQML();
-    PacketDeck::declareQML();
-    FightArea::declareQML();
-    PacketHand::declareQML();
-    PacketRewards::declareQML();
-    PacketTrash::declareQML();
+    PacketGeneric::declareQML();
+    PacketHiddenCards::declareQML();
+    PacketPokemon::declareQML();
 
     Utils::initRandomValues();
 

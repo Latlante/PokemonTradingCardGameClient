@@ -8,11 +8,7 @@
 class CardEnergy;
 class CardPokemon;
 class AbstractPacket;
-class BenchArea;
-class PacketDeck;
-class PacketHand;
-class PacketRewards;
-class PacketTrash;
+class PacketGeneric;
 class ModelPopupSelectCardInPacket;
 class ModelPopupSelectEnergyInPokemon;
 class QQmlEngine;
@@ -64,7 +60,7 @@ public:
     void setSelectCardInPacketVisible(bool state);
 
     //SELECT HIDDEN CARD
-    QList<AbstractCard *> displaySelectHiddenCard(PacketRewards *packet, unsigned short quantity);
+    QList<AbstractCard *> displaySelectHiddenCard(PacketGeneric *packet, unsigned short quantity);
     bool selectHiddenCardVisible();
     void setSelectHiddenCardVisible(bool state);
 

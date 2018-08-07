@@ -12,12 +12,7 @@
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
 #include "src_Packets/abstractpacket.h"
-#include "src_Packets/bencharea.h"
-#include "src_Packets/packetdeck.h"
-#include "src_Packets/packetdynamiccustom.h"
-#include "src_Packets/packethand.h"
-#include "src_Packets/packetrewards.h"
-#include "src_Packets/packettrash.h"
+#include "src_Packets/packetgeneric.h"
 
 CtrlPopups::CtrlPopups(QObject *parent) :
     QObject(parent),
@@ -129,7 +124,7 @@ QList<AbstractCard *> CtrlPopups::displayPacket(AbstractPacket *packet, unsigned
 
 QList<AbstractCard *> CtrlPopups::displayAllElements(unsigned short quantity)
 {
-    Database db;
+    /*Database db;
     QList<int> listIdEnergiesAvailable = db.listIdAllCardsEnergies();
     QList<AbstractCard*> listCards;
     foreach(int id, listIdEnergiesAvailable)
@@ -137,7 +132,7 @@ QList<AbstractCard *> CtrlPopups::displayAllElements(unsigned short quantity)
 
     PacketDynamicCustom* packetAllEnergies = new PacketDynamicCustom("all Energies", listCards);
 
-    return displayPacket(packetAllEnergies, quantity);
+    return displayPacket(packetAllEnergies, quantity);*/
 }
 
 bool CtrlPopups::selectCardInPacketVisible()
@@ -158,7 +153,7 @@ void CtrlPopups::setSelectCardInPacketVisible(bool state)
 //**************************************
 //          SELECT HIDDEN CARD
 //**************************************
-QList<AbstractCard *> CtrlPopups::displaySelectHiddenCard(PacketRewards* packet, unsigned short quantity)
+QList<AbstractCard *> CtrlPopups::displaySelectHiddenCard(PacketGeneric* packet, unsigned short quantity)
 {
     //Vérification
     unsigned short newQuantity = quantity;

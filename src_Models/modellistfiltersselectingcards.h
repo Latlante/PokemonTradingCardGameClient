@@ -22,6 +22,7 @@ public:
 
     void addFilter(const QString &name, int filter);
     QStringList listInfo();
+    Q_INVOKABLE int filter(int index);
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
