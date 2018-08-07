@@ -21,9 +21,8 @@
 #include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistselection.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
-#include "src_Packets/bencharea.h"
-#include "src_Packets/packetdeck.h"
-#include "src_Packets/packetrewards.h"
+#include "src_Packets/packethiddencards.h"
+#include "src_Packets/packetpokemon.h"
 
 CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ctrlPopups, CtrlAnimation &ctrlAnim, QObject *parent) :
     QObject(parent),
@@ -319,6 +318,12 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
                 m_ctrlPopups.displayMessage("Victoire de " + obj["winner"].toString());
                 break;
             }
+
+            if(obj.contains("you"))
+                fillBoardPlayerYou(obj["you"].toObject());
+
+            if(obj.contains("enemy"))
+                fillBoardPlayerOpponent(obj["enemy"].toObject());
         }
         else
         {
@@ -736,4 +741,233 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
     }
     else
         qWarning() << __PRETTY_FUNCTION__ << "actions does not contains indexBegin and indexEnd";
+}
+
+void CtrlGameBoard::fillBoardPlayerYou(QJsonObject objYou)
+{
+    Player* playerYou = m_gameManager->playerYou();
+    if(playerYou != nullptr)
+    {
+        Database db;
+        //Bench
+        if(objYou.contains("bench"))
+        {
+            QJsonArray arrayBench = objYou["bench"].toArray();
+            for(int indexBench=0;indexBench<arrayBench.count();++indexBench)
+            {
+                QJsonObject objPokemon = arrayBench[indexBench].toObject();
+                AbstractCard* abCard = db.cardById(objPokemon["id"].toInt());
+
+                if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+                {
+                    CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                    unsigned short damage = static_cast<unsigned short>(objPokemon["damage"].toInt());
+                    pokemon->setLifeLeft(pokemon->lifeTotal() - damage);
+
+                    if(objPokemon.contains("energies"))
+                    {
+                        QJsonArray arrayEnergies = objPokemon["energies"].toArray();
+                        for(int indexEnergy=0;indexEnergy<arrayEnergies.count();++indexEnergy)
+                        {
+                            CardEnergy* energy = db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(arrayEnergies[indexEnergy].toInt()));
+                            pokemon->addEnergy(energy);
+                        }
+                    }
+
+                    playerYou->bench()->addNewCard(pokemon);
+                }
+
+            }
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "bench is not in json request";
+
+        //Deck
+        if(objYou.contains("deckCount"))
+        {
+            int deckCount = objYou["deckCount"].toInt();
+            playerYou->deck()->setCountCard(deckCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "deckCount is not in json request";
+
+        //Fight
+        if(objYou.contains("fight"))
+        {
+            QJsonObject objPokemon = objYou["fight"].toObject();
+            AbstractCard* abCard = db.cardById(objPokemon["id"].toInt());
+
+            if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+            {
+                CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                unsigned short damage = static_cast<unsigned short>(objPokemon["damage"].toInt());
+                pokemon->setLifeLeft(pokemon->lifeTotal() - damage);
+
+                int idStatus = objPokemon["status"].toInt();
+                pokemon->setStatus(static_cast<CardPokemon::Enum_statusOfPokemon>(idStatus));
+
+                if(objPokemon.contains("energies"))
+                {
+                    QJsonArray arrayEnergies = objPokemon["energies"].toArray();
+                    for(int indexEnergy=0;indexEnergy<arrayEnergies.count();++indexEnergy)
+                    {
+                        CardEnergy* energy = db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(arrayEnergies[indexEnergy].toInt()));
+                        pokemon->addEnergy(energy);
+                    }
+                }
+
+                playerYou->bench()->addNewCard(pokemon);
+            }
+
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "fight is not in json request";
+
+        //Hand
+        if(objYou.contains("hand"))
+        {
+            QJsonArray arrayIdCardInHand = objYou["hand"].toArray();
+            for(int indexArrayHand=0;indexArrayHand<arrayIdCardInHand.count();++indexArrayHand)
+            {
+                AbstractCard* abCard = db.cardById(arrayIdCardInHand[indexArrayHand].toInt());
+                playerYou->hand()->addNewCard(abCard);
+            }
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "hand is not in json request";
+
+        //Rewards
+        if(objYou.contains("rewardsCount"))
+        {
+            int rewardsCount = objYou["rewardsCount"].toInt();
+            playerYou->rewards()->setCountCard(rewardsCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "rewardsCount is not in json request";
+
+        //Trash
+        if(objYou.contains("trashCount"))
+        {
+            int trashCount = objYou["trashCount"].toInt();
+            playerYou->trash()->setCountCard(trashCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "trashCount is not in json request";
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "player is nullptr";
+}
+
+void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
+{
+    Player* playerOpponent = m_gameManager->playerOpponent();
+    if(playerOpponent != nullptr)
+    {
+        Database db;
+        //Bench
+        if(objEnemy.contains("bench"))
+        {
+            QJsonArray arrayBench = objEnemy["bench"].toArray();
+            for(int indexBench=0;indexBench<arrayBench.count();++indexBench)
+            {
+                QJsonObject objPokemon = arrayBench[indexBench].toObject();
+                AbstractCard* abCard = db.cardById(objPokemon["id"].toInt());
+
+                if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+                {
+                    CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                    unsigned short damage = static_cast<unsigned short>(objPokemon["damage"].toInt());
+                    pokemon->setLifeLeft(pokemon->lifeTotal() - damage);
+
+                    if(objPokemon.contains("energies"))
+                    {
+                        QJsonArray arrayEnergies = objPokemon["energies"].toArray();
+                        for(int indexEnergy=0;indexEnergy<arrayEnergies.count();++indexEnergy)
+                        {
+                            CardEnergy* energy = db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(arrayEnergies[indexEnergy].toInt()));
+                            pokemon->addEnergy(energy);
+                        }
+                    }
+
+                    playerOpponent->bench()->addNewCard(pokemon);
+                }
+
+            }
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "bench is not in json request";
+
+        //Deck
+        if(objEnemy.contains("deckCount"))
+        {
+            int deckCount = objEnemy["deckCount"].toInt();
+            playerOpponent->deck()->setCountCard(deckCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "deckCount is not in json request";
+
+        //Fight
+        if(objEnemy.contains("fight"))
+        {
+            QJsonObject objPokemon = objEnemy["fight"].toObject();
+            AbstractCard* abCard = db.cardById(objPokemon["id"].toInt());
+
+            if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+            {
+                CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                unsigned short damage = static_cast<unsigned short>(objPokemon["damage"].toInt());
+                pokemon->setLifeLeft(pokemon->lifeTotal() - damage);
+
+                int idStatus = objPokemon["status"].toInt();
+                pokemon->setStatus(static_cast<CardPokemon::Enum_statusOfPokemon>(idStatus));
+
+                if(objPokemon.contains("energies"))
+                {
+                    QJsonArray arrayEnergies = objPokemon["energies"].toArray();
+                    for(int indexEnergy=0;indexEnergy<arrayEnergies.count();++indexEnergy)
+                    {
+                        CardEnergy* energy = db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(arrayEnergies[indexEnergy].toInt()));
+                        pokemon->addEnergy(energy);
+                    }
+                }
+
+                playerOpponent->bench()->addNewCard(pokemon);
+            }
+
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "fight is not in json request";
+
+        //Hand
+        if(objEnemy.contains("handCount"))
+        {
+            int handCount = objEnemy["handCount"].toInt();
+            playerOpponent->hand()->setCountCard(handCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "handCount is not in json request";
+
+        //Rewards
+        if(objEnemy.contains("rewardsCount"))
+        {
+            int rewardsCount = objEnemy["rewardsCount"].toInt();
+            playerOpponent->rewards()->setCountCard(rewardsCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "rewardsCount is not in json request";
+
+        //Trash
+        if(objEnemy.contains("trashCount"))
+        {
+            int trashCount = objEnemy["trashCount"].toInt();
+            playerOpponent->trash()->setCountCard(trashCount);
+        }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "trashCount is not in json request";
+
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "player is nullptr";
+
+
 }
