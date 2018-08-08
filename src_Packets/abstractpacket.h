@@ -25,7 +25,7 @@ public:
 	
     static void declareQML();
 
-    QString name();
+    QString name() const;
     virtual TypeOfPacket type() = 0;
 	
     virtual int countCard() const = 0;

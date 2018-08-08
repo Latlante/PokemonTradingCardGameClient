@@ -33,7 +33,7 @@ AbstractPacket::TypeOfPacket PacketPokemon::type()
 
 int PacketPokemon::countCard() const
 {
-    return rowCount();
+    return m_listCards.count();
 }
 
 bool PacketPokemon::addNewCard(AbstractCard* newCard)
@@ -41,8 +41,14 @@ bool PacketPokemon::addNewCard(AbstractCard* newCard)
     if(newCard != nullptr)
     {
         m_listCards.append(newCard);
+
+        emit dataChanged(index(countCard()-1, 0), index(countCard()-1, 0));
         emit countChanged();
+
+        return true;
     }
+
+    return false;
 }
 
 AbstractCard* PacketPokemon::takeACard(int indexCard)
@@ -52,6 +58,8 @@ AbstractCard* PacketPokemon::takeACard(int indexCard)
     if((indexCard >= 0) && (indexCard < countCard()))
     {
         cardToReturn = m_listCards.takeAt(indexCard);
+
+        emit dataChanged(index(indexCard, 0), index(countCard(), 0));
         emit countChanged();
     }
 
@@ -66,7 +74,11 @@ bool PacketPokemon::remove(AbstractCard* card)
     {
         if(m_listCards.contains(card))
         {
+            int indexCard = m_listCards.indexOf(card);
+
             m_listCards.removeOne(card);
+
+            emit dataChanged(index(indexCard, 0), index(countCard(), 0));
             emit countChanged();
             success = true;
         }
@@ -77,6 +89,8 @@ bool PacketPokemon::remove(AbstractCard* card)
 
 QVariant PacketPokemon::data(const QModelIndex &index, int role) const
 {
+    qDebug() << __PRETTY_FUNCTION__ << this->name() << index << rowCount() << countCard() << role;
+
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))
     {

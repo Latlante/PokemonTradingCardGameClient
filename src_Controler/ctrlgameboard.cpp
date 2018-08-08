@@ -302,6 +302,12 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
             m_gameManager->setPlayerOpponent(uidPlayerOpponent, nameOpponent);
             m_gameManager->setUidGame(static_cast<unsigned int>(idGame));
 
+            if(obj.contains("you"))
+                fillBoardPlayerYou(obj["you"].toObject());
+
+            if(obj.contains("enemy"))
+                fillBoardPlayerOpponent(obj["enemy"].toObject());
+
             ConstantesQML::StepGame step = static_cast<ConstantesQML::StepGame>(obj["gameStatus"].toInt());
             switch(step)
             {
@@ -320,11 +326,7 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
                 break;
             }
 
-            if(obj.contains("you"))
-                fillBoardPlayerYou(obj["you"].toObject());
 
-            if(obj.contains("enemy"))
-                fillBoardPlayerOpponent(obj["enemy"].toObject());
         }
         else
         {
@@ -861,10 +863,12 @@ void CtrlGameBoard::fillBoardPlayerYou(QJsonObject objYou)
 
 void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     Player* playerOpponent = m_gameManager->playerOpponent();
     if(playerOpponent != nullptr)
     {
         Database db;
+        qDebug() << __PRETTY_FUNCTION__ << "Bench";
         //Bench
         if(objEnemy.contains("bench"))
         {
@@ -899,6 +903,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
             qWarning() << __PRETTY_FUNCTION__ << "bench is not in json request";
 
         //Deck
+        qDebug() << __PRETTY_FUNCTION__ << "Deck";
         if(objEnemy.contains("deckCount"))
         {
             int deckCount = objEnemy["deckCount"].toInt();
@@ -908,6 +913,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
             qWarning() << __PRETTY_FUNCTION__ << "deckCount is not in json request";
 
         //Fight
+        qDebug() << __PRETTY_FUNCTION__ << "Fight";
         if(objEnemy.contains("fight"))
         {
             QJsonObject objPokemon = objEnemy["fight"].toObject();
@@ -940,6 +946,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
             qWarning() << __PRETTY_FUNCTION__ << "fight is not in json request";
 
         //Hand
+        qDebug() << __PRETTY_FUNCTION__ << "Hand";
         if(objEnemy.contains("handCount"))
         {
             int handCount = objEnemy["handCount"].toInt();
@@ -949,6 +956,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
             qWarning() << __PRETTY_FUNCTION__ << "handCount is not in json request";
 
         //Rewards
+        qDebug() << __PRETTY_FUNCTION__ << "Rewards";
         if(objEnemy.contains("rewardsCount"))
         {
             int rewardsCount = objEnemy["rewardsCount"].toInt();
@@ -958,6 +966,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
             qWarning() << __PRETTY_FUNCTION__ << "rewardsCount is not in json request";
 
         //Trash
+        qDebug() << __PRETTY_FUNCTION__ << "Trash";
         if(objEnemy.contains("trashCount"))
         {
             int trashCount = objEnemy["trashCount"].toInt();

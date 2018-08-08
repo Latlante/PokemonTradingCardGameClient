@@ -140,16 +140,7 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
     bool moveSuccess = false;
     AbstractCard* cardToMove = source->takeACard(index);
 
-    if (cardToMove != nullptr)
-    {
-        destination->addNewCard(cardToMove);
-        moveSuccess = true;
-    }
-    else
-    {
-        qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
-
-    }
+    moveSuccess = destination->addNewCard(cardToMove);
 
     return moveSuccess;
 }
@@ -204,14 +195,12 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
         if (cardToDelete != nullptr)
         {
             delete cardToDelete;
-            destination->addNewCard(cardToMove);
-            moveSuccess = true;
+            cardToDelete = nullptr;
         }
-        else
-        {
-            qCritical() << __PRETTY_FUNCTION__ << "Card is nullptr";
 
-        }
+        destination->addNewCard(cardToMove);
+        moveSuccess = true;
+
     }
     else
     {

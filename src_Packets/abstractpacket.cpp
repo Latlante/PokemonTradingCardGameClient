@@ -24,7 +24,7 @@ void AbstractPacket::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
-QString AbstractPacket::name()
+QString AbstractPacket::name() const
 {
     return m_name;
 }

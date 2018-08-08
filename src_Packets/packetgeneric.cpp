@@ -57,8 +57,13 @@ void PacketGeneric::setCountCard(int count)
 
 bool PacketGeneric::addNewCard(AbstractCard* newCard)
 {
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_listCards.append(newCard);
+    endInsertRows();
+
     emit countChanged();
+
+    return true;
 }
 
 AbstractCard* PacketGeneric::takeACard(int indexCard)
@@ -67,7 +72,10 @@ AbstractCard* PacketGeneric::takeACard(int indexCard)
 
     if((indexCard >= 0) && (indexCard < countCard()))
     {
+        beginRemoveRows(QModelIndex(), indexCard, indexCard);
         cardToReturn = m_listCards.takeAt(indexCard);
+        endRemoveRows();
+
         emit countChanged();
     }
 
@@ -80,7 +88,12 @@ bool PacketGeneric::remove(AbstractCard* card)
 
     if(m_listCards.contains(card))
     {
+        int indexCard = m_listCards.indexOf(card);
+
+        beginRemoveRows(QModelIndex(), indexCard, indexCard);
         m_listCards.removeOne(card);
+        endRemoveRows();
+
         emit countChanged();
         success = true;
     }
@@ -90,6 +103,7 @@ bool PacketGeneric::remove(AbstractCard* card)
 
 QVariant PacketGeneric::data(const QModelIndex &index, int role) const
 {
+    qDebug() << __PRETTY_FUNCTION__ << name() << index << rowCount() << role;
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))
     {
@@ -110,7 +124,11 @@ QVariant PacketGeneric::data(const QModelIndex &index, int role) const
         }
         else
         {
-            return QVariant::Invalid;
+            switch(role)
+            {
+            case PacketGeneric::ROLE_CARD:            return QVariant::Invalid;
+            case PacketGeneric::ROLE_IMAGECARD:       return AbstractCard::imageByDefault();
+            }
         }
 
     }
