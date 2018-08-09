@@ -28,6 +28,8 @@ void PacketPokemon::declareQML()
 ************************************************************/
 CardPokemon* PacketPokemon::pokemon(int index)
 {
+    qDebug() << __PRETTY_FUNCTION__;
+
     CardPokemon* pokemonToReturn = nullptr;
 
     if((index >= 0) && (index < countCard()))
@@ -40,7 +42,17 @@ CardPokemon* PacketPokemon::pokemon(int index)
         }
     }
 
+    if(pokemonToReturn != nullptr)
+        qDebug() << __PRETTY_FUNCTION__ << pokemonToReturn->name();
+    else
+        qDebug() << __PRETTY_FUNCTION__ << "pokemonToReturn is nullptr";
+
     return pokemonToReturn;
+}
+
+CardPokemon* PacketPokemon::pokemonFighter()
+{
+    return pokemon(0);
 }
 
 AbstractPacket::TypeOfPacket PacketPokemon::type()
@@ -55,12 +67,15 @@ int PacketPokemon::countCard() const
 
 bool PacketPokemon::addNewCard(AbstractCard* newCard)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     if(newCard != nullptr)
     {
+        qDebug() << __PRETTY_FUNCTION__ << newCard->name();
         m_listCards.append(newCard);
 
         emit dataChanged(index(countCard()-1, 0), index(countCard()-1, 0));
         emit countChanged();
+        emit pokemonFighterChanged();
 
         return true;
     }
@@ -70,6 +85,7 @@ bool PacketPokemon::addNewCard(AbstractCard* newCard)
 
 AbstractCard* PacketPokemon::takeACard(int indexCard)
 {
+    qDebug() << __PRETTY_FUNCTION__ << indexCard;
     AbstractCard *cardToReturn = nullptr;
 
     if((indexCard >= 0) && (indexCard < countCard()))
@@ -85,10 +101,12 @@ AbstractCard* PacketPokemon::takeACard(int indexCard)
 
 bool PacketPokemon::remove(AbstractCard* card)
 {
+    qDebug() << __PRETTY_FUNCTION__;
     bool success = false;
 
     if(card != nullptr)
     {
+        qDebug() << __PRETTY_FUNCTION__ << card->name();
         if(m_listCards.contains(card))
         {
             int indexCard = m_listCards.indexOf(card);

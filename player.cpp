@@ -137,6 +137,7 @@ void Player::setCanPlay(bool status)
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index)
 {
+    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << index;
     bool moveSuccess = false;
     AbstractCard* cardToMove = source->takeACard(index);
 
@@ -147,6 +148,7 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, AbstractCard *cardToMove)
 {
+    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << cardToMove->name();
     bool moveSuccess = false;
 
     if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
@@ -186,6 +188,7 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index, AbstractCard *cardToMove)
 {
+    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << index << cardToMove->name();
     bool moveSuccess = false;
 
     if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))

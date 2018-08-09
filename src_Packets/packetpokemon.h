@@ -8,6 +8,7 @@ class CardPokemon;
 class PacketPokemon : public AbstractPacket
 {
     Q_OBJECT
+    Q_PROPERTY(CardPokemon* pokemonFighter READ pokemonFighter NOTIFY pokemonFighterChanged)
 public:
     enum Roles
     {
@@ -23,6 +24,7 @@ public:
     static void declareQML();
 
     Q_INVOKABLE CardPokemon* pokemon(int index);
+    CardPokemon* pokemonFighter();
 
     AbstractPacket::TypeOfPacket type() final;
 
@@ -36,6 +38,9 @@ public:
 
 protected:
     QHash<int, QByteArray> roleNames() const final;
+
+signals:
+    void pokemonFighterChanged();
 
 private:
 
