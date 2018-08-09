@@ -8,7 +8,7 @@ Item {
     height: 600
 
     property Player player
-    property CardPokemon cardPok: player.fight().pokemonFighter
+    property CardPokemon cardPok: player.fight().pokemon(0)
     property string pokemonName: cardPok.name
     property string pokemonImage: cardPok.image
     property int pokemonLifeTotal: cardPok.lifeTotal

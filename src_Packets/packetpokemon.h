@@ -3,6 +3,8 @@
 
 #include "abstractpacket.h"
 
+class CardPokemon;
+
 class PacketPokemon : public AbstractPacket
 {
     Q_OBJECT
@@ -19,6 +21,8 @@ public:
     virtual ~PacketPokemon() override;
 
     static void declareQML();
+
+    Q_INVOKABLE CardPokemon* pokemon(int index);
 
     AbstractPacket::TypeOfPacket type() final;
 

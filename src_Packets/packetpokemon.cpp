@@ -26,6 +26,23 @@ void PacketPokemon::declareQML()
 /************************************************************
 *****				FONCTIONS PUBLIQUES					*****
 ************************************************************/
+CardPokemon* PacketPokemon::pokemon(int index)
+{
+    CardPokemon* pokemonToReturn = nullptr;
+
+    if((index >= 0) && (index < countCard()))
+    {
+        AbstractCard* abCard = card(index);
+
+        if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+        {
+            pokemonToReturn = static_cast<CardPokemon*>(abCard);
+        }
+    }
+
+    return pokemonToReturn;
+}
+
 AbstractPacket::TypeOfPacket PacketPokemon::type()
 {
     return AbstractPacket::Packet_Pokemon;
