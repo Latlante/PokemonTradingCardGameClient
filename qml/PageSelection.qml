@@ -14,28 +14,37 @@ Item {
 
         color: "#2b95ff"
 
+        Text {
+            id: textTheme
+            height: 40
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+
+            font.bold: true
+            font.pixelSize: 29
+            font.letterSpacing: 0
+            text: "Charger votre paquet"
+        }
+
         Rectangle {
             id: rectangleContainerListView
             anchors.rightMargin: 10
             anchors.leftMargin: 10
             anchors.bottomMargin: 10
             anchors.topMargin: 10
-            anchors.fill: parent
-            anchors.margins: 0
-
-            Text {
-                id: textTheme
-                text: listViewSelection.model.nameSelection
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 20
-            }
+            anchors.top: textTheme.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            color: "transparent"
+            border.color: black
+            border.width: 1
 
             ListView {
                 id: listViewSelection
@@ -49,20 +58,34 @@ Item {
                 anchors.topMargin: 0
 
                 model: ctrlGameBoard.modelListSelect()
-                delegate: Rectangle {
+                delegate: Item {
                     width: parent.width
                     height: 30
-                    color: index == listViewSelection.currentIndex ? "lightgray" : "white"
 
-                    Text {
-                        id: textNameSelection
+                    Rectangle {
+                        id: rectangleContainerDelegate
                         anchors.fill: parent
-                        font.pixelSize: 20
-                        color: "black"
-                        text: model.name
+                        //color: "#ffc90e"
+                        color: listViewSelection.currentIndex == index ? "white" : "#60ffffff"
+                        //border.color: "#0000ff"
+                        border.color: "black"
+                        border.width: 2
+
+                        Text {
+                            id: textDelegateInfo
+                            //anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.right: parent.right
+                            font.pixelSize: 14
+                            font.bold: true
+                            color: "black"
+                            text: model.name;
+                        }
 
                         MouseArea {
-                            id: mouseAreaNameSelection
+                            id: mouseAreaDelegateNameGame
                             anchors.fill: parent
                             onClicked: listViewSelection.currentIndex = index
                         }

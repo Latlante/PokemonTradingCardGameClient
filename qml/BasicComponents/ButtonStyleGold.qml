@@ -16,13 +16,13 @@ Item {
         property string backgroundPressed: "#ffe63c"
         gradient: Gradient {
             GradientStop {
-                position: 0.671
-                color: "#ffc90e"
+                position: 0.355
+                color: buttonStyleGold.enabled === true ? "#ffc90e" : "#aaaaaa"
             }
 
             GradientStop {
                 position: 1
-                color: "#ffffff"
+                color: mouseAreaButton.pressed ? "#cccccc" : "#ffffff"
             }
         }
 
@@ -40,10 +40,11 @@ Item {
     }
 
     MouseArea {
+        id: mouseAreaButton
         anchors.fill: parent
 
-        onPressed: rectangleBackground.color = rectangleBackground.backgroundPressed
-        onReleased: rectangleBackground.color = rectangleBackground.backgroundNormal
+        //onPressed: rectangleBackground.color = rectangleBackground.backgroundPressed
+        //onReleased: rectangleBackground.color = rectangleBackground.backgroundNormal
 
         onClicked: buttonStyleGold.clicked();
     }
