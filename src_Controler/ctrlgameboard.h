@@ -62,6 +62,8 @@ public:
 
     Q_INVOKABLE void moveACard(int idPacketOrigin, int idCardOrigin, int idPacketDestination, int idCardDestination);
 
+    Q_INVOKABLE void attackRetreat(CardPokemon* pokemon);
+    Q_INVOKABLE void skipTheTurn();
 
     Q_INVOKABLE void testAnimation();
     Q_INVOKABLE void displayPageSelection();

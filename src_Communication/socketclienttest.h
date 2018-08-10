@@ -24,6 +24,9 @@ public:
 
     bool moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse) override;
 
+    bool attack(int idGame, int indexAttack, QJsonDocument &jsonResponse) override;
+    bool skipTheTurn(int idGame, QJsonDocument &jsonResponse) override;
+
 private:
     void waitForTimeOut();
 };

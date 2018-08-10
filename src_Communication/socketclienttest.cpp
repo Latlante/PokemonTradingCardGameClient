@@ -134,3 +134,13 @@ void SocketClientTest::waitForTimeOut()
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
     loop.exec();
 }
+
+bool SocketClientTest::attack(int idGame, int indexAttack, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
+bool SocketClientTest::skipTheTurn(int idGame, QJsonDocument &jsonResponse)
+{
+    return true;
+}

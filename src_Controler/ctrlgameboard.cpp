@@ -425,6 +425,70 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
     }
 }
 
+void CtrlGameBoard::attackRetreat(CardPokemon* pokemon)
+{
+    if(pokemon != nullptr)
+    {
+        qDebug() << __PRETTY_FUNCTION__ << pokemon->name();
+
+        int indexAttack = m_ctrlPopups.displayAttacks(pokemon, true);
+
+        if(indexAttack < 4)
+        {
+            QJsonDocument jsonResponse;
+            m_ctrlAnim.setStepInProgress(true);
+
+            if(m_socket->attack(m_gameManager->uidGame(), indexAttack, jsonResponse))
+            {
+                qDebug() << __PRETTY_FUNCTION__ << "request success";
+                QJsonObject obj = jsonResponse.object();
+
+                if(obj.contains("actions"))
+                    executeActions(obj["actions"].toObject());
+
+                if(obj["success"].toString() == "ok")
+                {
+                    m_ctrlAnim.setStepInProgress(false);
+                    //Nothing to do because changes are in actions
+                }
+                else
+                {
+                    qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+                }
+            }
+        }
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "pokemon is nullptr";
+
+}
+
+void CtrlGameBoard::skipTheTurn()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    QJsonDocument jsonResponse;
+    m_ctrlAnim.setStepInProgress(true);
+
+    if(m_socket->skipTheTurn(m_gameManager->uidGame(), jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
+
+        if(obj["success"].toString() == "ok")
+        {
+            m_ctrlAnim.setStepInProgress(false);
+            //Nothing to do because changes are in actions
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+        }
+    }
+}
+
 void CtrlGameBoard::testAnimation()
 {
     onMovingCardAnimationStart();

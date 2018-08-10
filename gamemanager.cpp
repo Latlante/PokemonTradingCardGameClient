@@ -67,6 +67,7 @@ void GameManager::setPlayerOpponent(unsigned int uid, const QString &name)
         delete m_playerOpponent;
 
     m_playerOpponent = new Player(uid, name, MAXCARDS_DECK);
+    m_playerOpponent->setCanPlay(false);
 }
 
 Player* GameManager::playerByName(const QString &name)

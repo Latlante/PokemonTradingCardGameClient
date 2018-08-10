@@ -30,6 +30,9 @@ public:
 
     virtual bool moveACard(int idGame, ConstantesShared::EnumPacket idPacketOrigin, int idCardOrigin, ConstantesShared::EnumPacket idPacketDestination, int idCardDestination, QJsonDocument &jsonResponse) = 0;
 
+    virtual bool attack(int idGame, int indexAttack, QJsonDocument &jsonResponse) = 0;
+    virtual bool skipTheTurn(int idGame, QJsonDocument &jsonResponse) = 0;
+
 signals:
 
 private:

@@ -274,6 +274,53 @@ bool SocketClient::moveACard(int idGame, ConstantesShared::EnumPacket idPacketOr
     return success;
 }
 
+bool SocketClient::attack(int idGame, int indexAttack, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_Attack_Retreat);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+    jsonRequest["indexAttack"] = indexAttack;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::skipTheTurn(int idGame, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_SkipTheTurn);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
 /************************************************************
 *****			  FONCTIONS SLOT PRIVEES				*****
 ************************************************************/

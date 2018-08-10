@@ -111,7 +111,7 @@ Item {
                                 (ctrlGameBoard.gameStatus === ConstantesQML.StepGameInProgress))
                         {
 
-                            ctrlGameBoard.actionAttack(cardPok);
+                            ctrlGameBoard.attack(cardPok);
                         }
 
                         mouse.accepted = true
@@ -237,6 +237,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                enabled: player.canPlay
                 visible: ((player.initReady === false) &&
                           (ctrlGameBoard.gameStatus === ConstantesQML.StepPreparation))
 
@@ -262,7 +263,7 @@ Item {
 
                 onClicked: {
                     console.log("buttonFinishYourTurn clicked")
-                    ctrlGameBoard.actionFinishYourTurn()
+                    ctrlGameBoard.skipTheTurn()
                 }
             }
 
