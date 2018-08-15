@@ -43,7 +43,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             color: "transparent"
-            border.color: black
+            border.color: "black"
             border.width: 1
 
             ListView {
@@ -54,7 +54,7 @@ Item {
                 anchors.leftMargin: 0
                 anchors.bottom: boutonOk.top
                 anchors.bottomMargin: 0
-                anchors.top: textTheme.bottom
+                anchors.top: parent.top
                 anchors.topMargin: 0
 
                 model: ctrlGameBoard.modelListSelect()

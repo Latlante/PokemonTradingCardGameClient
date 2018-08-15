@@ -41,7 +41,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             color: "transparent"
-            border.color: black
+            border.color: "black"
             border.width: 1
 
             ListView {

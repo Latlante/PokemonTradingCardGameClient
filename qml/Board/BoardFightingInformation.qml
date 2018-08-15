@@ -111,7 +111,7 @@ Item {
                                 (ctrlGameBoard.gameStatus === ConstantesQML.StepGameInProgress))
                         {
 
-                            ctrlGameBoard.attack(cardPok);
+                            ctrlGameBoard.attackRetreat(cardPok);
                         }
 
                         mouse.accepted = true

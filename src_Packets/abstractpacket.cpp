@@ -36,6 +36,7 @@ bool AbstractPacket::isEmpty()
 
 AbstractCard* AbstractPacket::card(int index)
 {
+    qDebug() << __PRETTY_FUNCTION__ << index << countCard() << m_listCards.count();
     AbstractCard* card = nullptr;
 
     if ((index >= 0) && (index < countCard()))

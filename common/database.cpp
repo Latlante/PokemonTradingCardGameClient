@@ -141,17 +141,25 @@ CardEnergy* Database::newCardEnergyFromElement(AbstractCard::Enum_element elemen
     QStringList contenuParLigne = contenuGeneral.split("\n");
 
     int indexLine = -1;
-    for(int i=INDEX_START_ENERGIES;i<INDEX_START_ACTION;++i)
+    for(int i=0;i<contenuParLigne.count();++i)
     //foreach(QString ligne, contenuParLigne)
     {
-        int elementCard = contenuParLigne[i].section(";", InfoDbNrj_Element, InfoDbNrj_Element).toInt();
-
-        if (elementCard == element)
+        int idCard = contenuParLigne[i].section(";", 0, 0).toInt();
+        if ((idCard >= INDEX_START_ENERGIES) && (idCard < INDEX_START_ACTION))
         {
-            indexLine = i;
-            break;
+            int elementCard = contenuParLigne[i].section(";", InfoDbNrj_Element, InfoDbNrj_Element).toInt();
+
+            if (elementCard == element)
+            {
+                indexLine = i;
+                break;
+            }
         }
+
     }
+
+    if(indexLine == -1)
+        return nullptr;
 
     return static_cast<CardEnergy*>(newCardEnergy(contenuParLigne[indexLine]));
 }
