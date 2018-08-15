@@ -705,40 +705,68 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifEnergyAdded:
                 {
-                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("elementEnergy")))
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacketOrigin")) && (objAction.contains("indexCardOrigin")) && (objAction.contains("idPacketDestination")) && (objAction.contains("indexCardDestination")) && (objAction.contains("elementEnergy")))
                     {
                         const QString namePlayer = objAction["namePlayer"].toString();
 
                         Player* play = m_gameManager->playerByName(namePlayer);
                         if(play != nullptr)
                         {
-                            const int idPacket = objAction["idPacket"].toInt();
-                            const ConstantesShared::EnumPacket ePacket = static_cast<ConstantesShared::EnumPacket>(idPacket);
-                            AbstractPacket* packet = play->packetFromEnumPacket(ePacket);
-                            if(packet != nullptr)
+                            const int idPacketOrigin = objAction["idPacketOrigin"].toInt();
+                            const int idPacketDestination = objAction["idPacketDestination"].toInt();
+                            const ConstantesShared::EnumPacket ePacketOrigin = static_cast<ConstantesShared::EnumPacket>(idPacketOrigin);
+                            const ConstantesShared::EnumPacket ePacketDestination = static_cast<ConstantesShared::EnumPacket>(idPacketDestination);
+                            const int indexCardOrigin = objAction["indexCardOrigin"].toInt();
+                            const int indexCardDestination = objAction["indexCardDestination"].toInt();
+                            AbstractPacket* packetOrigin = play->packetFromEnumPacket(ePacketOrigin);
+                            AbstractPacket* packetDestination = play->packetFromEnumPacket(ePacketDestination);
+                            if((packetOrigin != nullptr) && (packetDestination != nullptr))
                             {
-                                const int indexCard = objAction["indexCard"].toInt();
-                                AbstractCard* abCard = packet->card(indexCard);
-                                if(abCard != nullptr)
+                                //Add energy to the pokemon
+                                AbstractCard* abCardDestination = packetDestination->card(indexCardDestination);
+
+                                if(abCardDestination != nullptr)
                                 {
-                                    if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
+                                    if(abCardDestination->type() == AbstractCard::TypeOfCard_Pokemon)
                                     {
                                         Database db;
                                         const int elementEnergy = objAction["elementEnergy"].toInt();
-                                        CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+                                        CardPokemon* pokemon = static_cast<CardPokemon*>(abCardDestination);
 
-                                        pokemon->addEnergy(db.newCardEnergyFromElement(static_cast<AbstractCard::Enum_element>(elementEnergy)));
+                                        AbstractCard* abCardEnergy = db.cardById(static_cast<AbstractCard::Enum_element>(elementEnergy));
+                                        if(abCardEnergy->type() == AbstractCard::TypeOfCard_Energy)
+                                        {
+                                            pokemon->addEnergy(static_cast<CardEnergy*>(abCardEnergy));
+
+                                        }
                                     }
                                     else
-                                        qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
+                                        qWarning() << __PRETTY_FUNCTION__ << "abCardDestination is not a pokemon card " << abCardDestination->type();
 
                                 }
                                 else
-                                    qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
+                                    qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCardDestination << " is nullptr";
 
+                                //Remove in packet origin
+                                AbstractCard* abCardOrigin = packetOrigin->card(indexCardOrigin);
+
+                                if(abCardOrigin != nullptr)
+                                {
+                                    if(abCardOrigin->type() == AbstractCard::TypeOfCard_Energy)
+                                    {
+                                        if(!packetOrigin->remove(abCardOrigin))
+                                        {
+                                            qCritical() << __PRETTY_FUNCTION__ << "abCardOrigin cannot be deleted";
+                                        }
+                                    }
+                                    else
+                                        qWarning() << __PRETTY_FUNCTION__ << "abCardOrigin is not a energy card " << abCardOrigin->type();
+                                }
+                                else
+                                    packetOrigin->remove(nullptr);
                             }
                             else
-                                qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
+                                qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacketOrigin << "or" << idPacketDestination << " is nullptr";
 
                         }
                         else
@@ -746,6 +774,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
 
                     }
+                    else
+                        qWarning() << __PRETTY_FUNCTION__ << "PHASE_NotifEnergyAdded: an element is missing";
 
                 }
                     break;
