@@ -58,6 +58,7 @@ CardPokemon::CardPokemon(const CardPokemon &card) :
 				
 CardPokemon::~CardPokemon()
 {
+    qDebug() << "CardPokemon destroy";
     delete m_cardEvolution;
     delete m_modelListEnergies;
 }

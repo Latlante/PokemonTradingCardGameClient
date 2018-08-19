@@ -139,12 +139,12 @@ Item {
 
                             if(ctrlPopups.onePopupIsDisplayed === false)
                             {
-                                if((cardPok !== undefined) &&
+                                if((delegateFightingAreaContainerInformation.pokemon !== null) &&
                                         (player.canPlay) &&
                                         (ctrlGameBoard.gameStatus === ConstantesQML.StepGameInProgress))
                                 {
 
-                                    ctrlGameBoard.attackRetreat(cardPok);
+                                    ctrlGameBoard.attackRetreat(delegateFightingAreaContainerInformation.pokemon);
                                 }
 
                                 mouse.accepted = true
@@ -155,9 +155,9 @@ Item {
                         }
 
                         onPressAndHold: {
-                            if(cardPok !== undefined)
+                            if(delegateFightingAreaContainerInformation.pokemon !== undefined)
                             {
-                                popupCardDetailsComplete1.card = cardPok;
+                                popupCardDetailsComplete1.card = delegateFightingAreaContainerInformation.pokemon;
                                 popupCardDetailsComplete1.visible = true;
                             }
                         }

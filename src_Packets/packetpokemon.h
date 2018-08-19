@@ -34,7 +34,7 @@ public:
     bool addNewCard(AbstractCard* newCard = nullptr) final;
     AbstractCard* takeACard(int indexCard = -1) final;
     bool remove(AbstractCard* card = nullptr) final;
-    bool replacePokemon(CardPokemon* oldOne, CardPokemon* newOne);
+    bool replacePokemon(CardPokemon* oldOne, CardPokemon* newOne, bool transferEnergies = true);
 
     QVariant data(const QModelIndex &index, int role) const final;
     int rowCount(const QModelIndex& = QModelIndex()) const final;

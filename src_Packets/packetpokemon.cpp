@@ -123,7 +123,7 @@ bool PacketPokemon::remove(AbstractCard* card)
     return success;
 }
 
-bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne)
+bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne, bool transferEnergies)
 {
     bool success = false;
     int indexCard = m_listCards.indexOf(oldOne);
@@ -132,8 +132,20 @@ bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne)
 
     if(indexCard >= 0)
     {
+        //Take energies
+        QList<CardEnergy*> listEnergies;
+        while(oldOne->countEnergies() > 0)
+            listEnergies.append(oldOne->takeEnergy(0));
+
+        //Give energies
+        foreach(CardEnergy* energy, listEnergies)
+            newOne->addEnergy(energy);
+
+        //Replace pokemon
         m_listCards.replace(indexCard, newOne);
-        emit dataChanged(index(indexCard, 0), index(indexCard, 0), { PacketPokemon::ROLE_IMAGECARD, PacketPokemon::ROLE_NAME });
+
+        //Update UI
+        emit dataChanged(index(indexCard, 0), index(indexCard, 0), { PacketPokemon::ROLE_CARD, PacketPokemon::ROLE_IMAGECARD, PacketPokemon::ROLE_NAME });
         success = true;
     }
 

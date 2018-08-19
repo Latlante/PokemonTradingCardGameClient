@@ -18,7 +18,7 @@ CardEnergy::CardEnergy(const CardEnergy &card) :
 
 CardEnergy::~CardEnergy()
 {
-	
+    qDebug() << "CardEnergy destroy";
 }
 
 /************************************************************

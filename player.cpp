@@ -137,29 +137,27 @@ void Player::setCanPlay(bool status)
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index)
 {
-    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << index;
+    qDebug() << __PRETTY_FUNCTION__ << index;
     bool moveSuccess = false;
-    AbstractCard* cardToMove = source->takeACard(index);
 
-    moveSuccess = destination->addNewCard(cardToMove);
+    if(source != nullptr)
+    {
+        AbstractCard* cardToMove = source->card(index);
+        moveSuccess = moveCardFromPacketToAnother(source, destination, cardToMove);
+    }
 
     return moveSuccess;
 }
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, AbstractCard *cardToMove)
 {
-    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << cardToMove->name();
+    qDebug() << __PRETTY_FUNCTION__;// << source->name() << destination->name() << cardToMove->name();
     bool moveSuccess = false;
 
-    if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
+    if(source != nullptr)
     {
         //action
         moveSuccess = source->remove(cardToMove);
-
-        if(moveSuccess == true)
-        {
-            moveSuccess = destination->addNewCard(cardToMove);
-        }
     }
     else
     {
@@ -169,17 +167,23 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
         else
             messageError += "  - source is " + source->name();
 
+        qDebug() << __PRETTY_FUNCTION__ << messageError;
+
+    }
+
+    if(destination != nullptr)
+    {
+        moveSuccess = destination->addNewCard(cardToMove);
+    }
+    else
+    {
+        QString messageError = "Element(s) is/are nullptr:\n";
         if(destination == nullptr)
             messageError += "  - err: destination is nullptr";
         else
             messageError += "  - destination is " + destination->name();
 
-        if(cardToMove == nullptr)
-            messageError += "  - err: cardToMove is nullptr";
-        else
-            messageError += "  - source is " + cardToMove->name();
-
-        qCritical() << __PRETTY_FUNCTION__ << messageError;
+        qDebug() << __PRETTY_FUNCTION__ << messageError;
 
     }
 
@@ -188,10 +192,10 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index, AbstractCard *cardToMove)
 {
-    qDebug() << __PRETTY_FUNCTION__ << source->name() << destination->name() << index << cardToMove->name();
+    qDebug() << __PRETTY_FUNCTION__;// << source->name() << destination->name() << index << cardToMove->name();
     bool moveSuccess = false;
 
-    if((source != nullptr) && (destination != nullptr) && (cardToMove != nullptr))
+    if(source != nullptr)
     {
         AbstractCard* cardToDelete = source->takeACard(index);
 
@@ -201,9 +205,7 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
             cardToDelete = nullptr;
         }
 
-        destination->addNewCard(cardToMove);
         moveSuccess = true;
-
     }
     else
     {
@@ -213,17 +215,23 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
         else
             messageError += "  - source is " + source->name();
 
+        qDebug() << __PRETTY_FUNCTION__ << messageError;
+
+    }
+
+    if(destination != nullptr)
+    {
+        destination->addNewCard(cardToMove);
+    }
+    else
+    {
+        QString messageError = "Element(s) is/are nullptr:\n";
         if(destination == nullptr)
             messageError += "  - err: destination is nullptr";
         else
             messageError += "  - destination is " + destination->name();
 
-        if(cardToMove == nullptr)
-            messageError += "  - err: cardToMove is nullptr";
-        else
-            messageError += "  - source is " + cardToMove->name();
-
-        qCritical() << __PRETTY_FUNCTION__ << messageError;
+        qDebug() << __PRETTY_FUNCTION__ << messageError;
 
     }
 
