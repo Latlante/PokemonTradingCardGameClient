@@ -122,6 +122,23 @@ bool PacketPokemon::remove(AbstractCard* card)
     return success;
 }
 
+bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne)
+{
+    bool success = false;
+    int indexCard = m_listCards.indexOf(oldOne);
+
+    qDebug() << __PRETTY_FUNCTION__ << oldOne->name() << newOne->name() << indexCard;
+
+    if(indexCard >= 0)
+    {
+        m_listCards.replace(indexCard, newOne);
+        emit dataChanged(index(indexCard, 0), index(indexCard+1, 0), { PacketPokemon::ROLE_IMAGECARD, PacketPokemon::ROLE_NAME });
+        success = true;
+    }
+
+    return success;
+}
+
 QVariant PacketPokemon::data(const QModelIndex &index, int role) const
 {
     qDebug() << __PRETTY_FUNCTION__ << this->name() << index << rowCount() << countCard() << role;

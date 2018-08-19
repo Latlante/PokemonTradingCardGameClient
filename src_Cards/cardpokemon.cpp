@@ -25,7 +25,7 @@ CardPokemon::CardPokemon(unsigned short id,
     AbstractCard(id, name),
 	m_element(element),
 	m_lifeTotal(lifeTotal),
-    m_damage(0),
+    m_lifeLeft(lifeTotal),
     m_status(Status_Normal),
     m_protectedAgainstDamageForTheNextTurnThreshold(0),
     m_protectedAgainstEffectForTheNextTurn(false),
@@ -175,6 +175,19 @@ unsigned short CardPokemon::lifeTotal()
 	return m_lifeTotal;
 }
 
+void CardPokemon::setLifeTotal(unsigned short life)
+{
+    if(m_cardEvolution != nullptr)
+        m_cardEvolution->setLifeTotal(life);
+    else
+    {
+        if(lifeTotal() != life)
+        {
+            m_lifeTotal = life;
+        }
+    }
+}
+
 bool CardPokemon::isDied()
 {
 #ifdef TRACAGE_PRECIS
@@ -190,12 +203,16 @@ unsigned short CardPokemon::lifeLeft()
     qDebug() << __PRETTY_FUNCTION__;
 #endif
 
-    return lifeTotal() - currentDamage();
+    return m_lifeLeft;
 }
 
-void CardPokemon::setLifeLeft(unsigned short lifeLeft)
+void CardPokemon::setLifeLeft(unsigned short life)
 {
-    setDamage(lifeTotal() - lifeLeft);
+    if(lifeLeft() != life)
+    {
+        m_lifeLeft = life;
+        emit lifeLeftChanged();
+    }
 }
 
 unsigned short CardPokemon::damageMarker()
@@ -204,7 +221,7 @@ unsigned short CardPokemon::damageMarker()
     qDebug() << __PRETTY_FUNCTION__;
 #endif
 
-    return currentDamage() / DAMAGE_MARQUER_VALUE;
+    return (lifeTotal() - lifeLeft()) / DAMAGE_MARQUER_VALUE;
 }
 
 CardPokemon::Enum_statusOfPokemon CardPokemon::status()
@@ -647,7 +664,6 @@ CardPokemon& CardPokemon::operator =(const CardPokemon& source)
     m_owner = source.m_owner;
     m_element = source.m_element;
     m_lifeTotal = source.m_lifeTotal;
-    m_damage = 0;
     m_listAttacks = source.m_listAttacks;
     //m_modelListEnergies = source.m_modelListEnergies;     //Pas besoin
     m_cardEvolution = source.m_cardEvolution;
@@ -691,32 +707,6 @@ QList<AbstractCard*> CardPokemon::purge()
 /************************************************************
 *****				FONCTIONS PRIVEES					*****
 ************************************************************/
-unsigned short CardPokemon::currentDamage()
-{
-#ifdef TRACAGE_PRECIS
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    return m_damage;
-}
-
-void CardPokemon::setDamage(unsigned short damage)
-{
-#ifdef TRACAGE_PRECIS
-    qDebug() << __PRETTY_FUNCTION__;
-#endif
-
-    if(damage > lifeTotal())
-        damage = lifeTotal();
-
-    if(m_damage != damage)
-    {
-        m_damage = damage;
-        emit lifeLeftChanged();
-        emit dataChanged();
-    }
-}
-
 QString CardPokemon::statusToString(Enum_statusOfPokemon status)
 {
 #ifdef TRACAGE_PRECIS

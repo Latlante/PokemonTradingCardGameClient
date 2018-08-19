@@ -558,6 +558,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                 {
                 case ConstantesShared::PHASE_NotifNewGameCreated:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifNewGameCreated";
                     if((objAction.contains("uidGame")) && (objAction.contains("nameGame")) && (objAction.contains("opponent")))
                     {
                         const int uidGame = objAction["uidGame"].toInt();
@@ -570,6 +571,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifPlayerIsReady:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifPlayerIsReady";
                     if(objAction.contains("everyoneIsReady"))
                     {
                         const bool everyoneIsReady = objAction["everyoneIsReady"].toBool();
@@ -605,6 +607,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifEndOfTurn:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifEndOfTurn";
                     if((objAction.contains("endOfTurn")) && (objAction.contains("newTurn")))
                     {
                         const QString namePlayerEndOfTurn = objAction["endOfTurn"].toString();
@@ -624,6 +627,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifCardMoved:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifCardMoved";
                     Player* play = m_gameManager->playerByName(namePlayer);
 
                     if(play != nullptr)
@@ -656,7 +660,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifDataPokemonChanged:
                 {
-                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")))
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDataPokemonChanged";
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("lifeLeft")) && (objAction.contains("attacks")))
                     {
                         const QString namePlayer = objAction["namePlayer"].toString();
                         Player* play = m_gameManager->playerByName(namePlayer);
@@ -674,6 +679,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                     if(abCard->type() == AbstractCard::TypeOfCard_Pokemon)
                                     {
                                         CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+
                                         int lifeLeft = objAction["lifeLeft"].toInt();
                                         QJsonArray arrayAttacks = objAction["attacks"].toArray();
 
@@ -684,6 +690,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                             if(!objAttack.isEmpty())
                                                 pokemon->setAttackBlocked(objAttack["index"].toInt(), objAttack["available"].toBool());
                                         }
+
                                     }
                                     else
                                         qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
@@ -703,8 +710,70 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                 }
                     break;
 
+                case ConstantesShared::PHASE_NotifPokemonSwitched:
+                {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifPokemonSwitched";
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("newIdCard")))
+                    {
+                        const QString namePlayer = objAction["namePlayer"].toString();
+                        Player* play = m_gameManager->playerByName(namePlayer);
+                        if(play != nullptr)
+                        {
+                            int idPacket = objAction["idPacket"].toInt();
+                            ConstantesShared::EnumPacket ePacket = static_cast<ConstantesShared::EnumPacket>(idPacket);
+                            AbstractPacket* packet = play->packetFromEnumPacket(ePacket);
+                            if(packet != nullptr)
+                            {
+                                const int indexCard = objAction["indexCard"].toInt();
+                                AbstractCard* abCard = packet->card(indexCard);
+                                if(abCard != nullptr)
+                                {
+                                    if((abCard->type() == AbstractCard::TypeOfCard_Pokemon) && (packet->type() == AbstractPacket::Packet_Pokemon))
+                                    {
+                                        CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
+
+                                        Database db;
+                                        int newIdCard = objAction["newIdCard"].toInt();
+                                        PacketPokemon* packPokemon = static_cast<PacketPokemon*>(packet);
+
+                                        //Création of new card pokemon
+                                        AbstractCard* newCard = db.cardById(newIdCard);
+                                        if(newCard != nullptr)
+                                        {
+                                            CardPokemon* newPokemon = newCard->type() == AbstractCard::TypeOfCard_Pokemon ? static_cast<CardPokemon*>(newCard) : nullptr;
+
+                                            if(newPokemon != nullptr)
+                                            {
+                                                //Replace the pokemon
+                                                if(packPokemon->replacePokemon(pokemon, newPokemon))
+                                                    qDebug() << __PRETTY_FUNCTION__ << "replace OK";
+                                                else
+                                                    qWarning() << __PRETTY_FUNCTION__ << "unknown error during replacing";
+                                            }
+                                            else
+                                                qWarning() << __PRETTY_FUNCTION__ << "newPokemon is nullptr";
+                                        }
+                                        else
+                                            qWarning() << __PRETTY_FUNCTION__ << "newCard is nullptr";
+                                    }
+                                    else
+                                        qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
+                                }
+                                else
+                                    qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
+                            }
+                            else
+                                qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
+                        }
+                        else
+                            qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
+                    }
+                }
+                    break;
+
                 case ConstantesShared::PHASE_NotifEnergyAdded:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifEnergyAdded";
                     if((objAction.contains("namePlayer")) && (objAction.contains("idPacketOrigin")) && (objAction.contains("indexCardOrigin")) && (objAction.contains("idPacketDestination")) && (objAction.contains("indexCardDestination")) && (objAction.contains("elementEnergy")))
                     {
                         const QString namePlayer = objAction["namePlayer"].toString();
@@ -782,6 +851,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                 case ConstantesShared::PHASE_NotifEnergyRemoved:
                 {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifEnergyRemoved";
                     if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("indexEnergy")))
                     {
                         const QString namePlayer = objAction["namePlayer"].toString();

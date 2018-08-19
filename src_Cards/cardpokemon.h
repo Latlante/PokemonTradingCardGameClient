@@ -89,9 +89,10 @@ public:
     Q_INVOKABLE AbstractCard::Enum_element element();
     Q_INVOKABLE QString elementFormatString();
     unsigned short lifeTotal();
+    void setLifeTotal(unsigned short life);
     bool isDied();
     unsigned short lifeLeft();
-    void setLifeLeft(unsigned short lifeLeft);
+    void setLifeLeft(unsigned short life);
     unsigned short damageMarker();
     Enum_statusOfPokemon status();
     Q_INVOKABLE QString statusFormatString();
@@ -155,7 +156,7 @@ signals:
 private:
 	AbstractCard::Enum_element m_element;
 	unsigned short m_lifeTotal;
-    unsigned short m_damage;
+    unsigned short m_lifeLeft;
     CardPokemon::Enum_statusOfPokemon m_status;
     unsigned short m_protectedAgainstDamageForTheNextTurnThreshold;
     bool m_protectedAgainstEffectForTheNextTurn;
@@ -174,8 +175,6 @@ private:
     AttackData m_lastAttackUsed;
     unsigned short m_lastDamageReceived;
 	
-    unsigned short currentDamage();
-    void setDamage(unsigned short damage);
     QString statusToString(Enum_statusOfPokemon status);
 };
 
