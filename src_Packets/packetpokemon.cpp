@@ -1,18 +1,19 @@
 #include "packetpokemon.h"
 #include <QDebug>
+#include <QQmlEngine>
 
 #include "src_Cards/cardpokemon.h"
 
-PacketPokemon::PacketPokemon(const QString &namePacket, QList<AbstractCard *> listCards) :
-    AbstractPacket(namePacket)/*,
-    m_listCards(listCards)*/
+PacketPokemon::PacketPokemon(const QString &namePacket, unsigned int maxCard, QList<AbstractCard *> listCards) :
+    AbstractPacket(namePacket),
+    m_maxCard(maxCard)
 {
     m_listCards = listCards;
 }
 
 PacketPokemon::~PacketPokemon()
 {
-
+    qDebug() << "PacketPokemon destroy";
 }
 
 /************************************************************
@@ -132,7 +133,7 @@ bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne)
     if(indexCard >= 0)
     {
         m_listCards.replace(indexCard, newOne);
-        emit dataChanged(index(indexCard, 0), index(indexCard+1, 0), { PacketPokemon::ROLE_IMAGECARD, PacketPokemon::ROLE_NAME });
+        emit dataChanged(index(indexCard, 0), index(indexCard, 0), { PacketPokemon::ROLE_IMAGECARD, PacketPokemon::ROLE_NAME });
         success = true;
     }
 
@@ -159,10 +160,12 @@ QVariant PacketPokemon::data(const QModelIndex &index, int role) const
         {
             switch(role)
             {
-            case PacketPokemon::ROLE_CARD:            return QVariant::fromValue<AbstractCard*>(m_listCards[iRow]);
-            case PacketPokemon::ROLE_ISCARD:          return true;
-            case PacketPokemon::ROLE_NAME:            return m_listCards[iRow]->name();
-            case PacketPokemon::ROLE_IMAGECARD:       return m_listCards[iRow]->image();
+            case PacketPokemon::ROLE_CARD:
+                QQmlEngine::setObjectOwnership(cardPok, QQmlEngine::CppOwnership);
+                return QVariant::fromValue<CardPokemon*>(cardPok);
+            case PacketPokemon::ROLE_ISCARD:            return true;
+            case PacketPokemon::ROLE_NAME:              return m_listCards[iRow]->name();
+            case PacketPokemon::ROLE_IMAGECARD:         return m_listCards[iRow]->image();
             }
         }
         else
@@ -176,10 +179,10 @@ QVariant PacketPokemon::data(const QModelIndex &index, int role) const
     {
         switch(role)
         {
-        case PacketPokemon::ROLE_CARD:            return QVariant();
-        case PacketPokemon::ROLE_ISCARD:          return false;
-        case PacketPokemon::ROLE_NAME:            return "";
-        case PacketPokemon::ROLE_IMAGECARD:       return AbstractCard::imageByDefault();
+        case PacketPokemon::ROLE_CARD:          return QVariant();
+        case PacketPokemon::ROLE_ISCARD:        return false;
+        case PacketPokemon::ROLE_NAME:          return "";
+        case PacketPokemon::ROLE_IMAGECARD:     return AbstractCard::imageByDefault();
         }
     }
 
@@ -188,7 +191,7 @@ QVariant PacketPokemon::data(const QModelIndex &index, int role) const
 
 int PacketPokemon::rowCount(const QModelIndex&) const
 {
-    return MAXCARDS_BENCH;
+    return m_maxCard;
 }
 
 /************************************************************

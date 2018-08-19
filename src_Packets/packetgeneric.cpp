@@ -13,7 +13,7 @@ PacketGeneric::PacketGeneric(const QString &namePacket, int quantityOfCards) :
 
 PacketGeneric::~PacketGeneric()
 {
-
+    qDebug() << "PacketPokemon destroy";
 }
 
 /************************************************************
@@ -57,10 +57,10 @@ void PacketGeneric::setCountCard(int count)
 
 bool PacketGeneric::addNewCard(AbstractCard* newCard)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    /*qDebug() << __PRETTY_FUNCTION__;
 
     if(newCard != nullptr)
-        qDebug() << __PRETTY_FUNCTION__ << newCard->name();
+        qDebug() << __PRETTY_FUNCTION__ << newCard->name();*/
 
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_listCards.append(newCard);

@@ -15,10 +15,12 @@ public:
         ROLE_CARD = Qt::UserRole,
         ROLE_ISCARD,
         ROLE_NAME,
-        ROLE_IMAGECARD
+        ROLE_STATUS,
+        ROLE_IMAGECARD,
+        ROLE_MODEL_ENERGIES
     };
 
-    explicit PacketPokemon(const QString &namePacket, QList<AbstractCard*> listCards = {});
+    explicit PacketPokemon(const QString &namePacket, unsigned int maxCard, QList<AbstractCard*> listCards = {});
     virtual ~PacketPokemon() override;
 
     static void declareQML();
@@ -44,6 +46,7 @@ signals:
     void pokemonFighterChanged();
 
 private:
+    unsigned int m_maxCard;
 
 };
 
