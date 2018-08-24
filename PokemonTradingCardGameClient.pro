@@ -12,6 +12,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+Debug:OBJECTS_DIR = debug/obj/
+Debug:MOC_DIR = debug/moc/
+
+Release:OBJECTS_DIR = release/obj/
+Release:MOC_DIR = release/moc/
+
 SOURCES += \
         main.cpp \
     common/constantesqml.cpp \
@@ -45,7 +51,8 @@ SOURCES += \
     src_Models/modellistfiltersselectingcards.cpp \
     src_Packets/packethiddencards.cpp \
     src_Packets/packetpokemon.cpp \
-    src_Packets/packetgeneric.cpp
+    src_Packets/packetgeneric.cpp \
+    src_Models/modellisttestanimations.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -93,4 +100,5 @@ HEADERS += \
     src_Models/modellistfiltersselectingcards.h \
     src_Packets/packethiddencards.h \
     src_Packets/packetpokemon.h \
-    src_Packets/packetgeneric.h
+    src_Packets/packetgeneric.h \
+    src_Models/modellisttestanimations.h

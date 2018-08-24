@@ -20,6 +20,7 @@
 #include "src_Models/modellistallplayers.h"
 #include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistselection.h"
+#include "src_Models/modellisttestanimations.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Packets/packetgeneric.h"
 #include "src_Packets/packethiddencards.h"
@@ -112,6 +113,11 @@ ModelListSelection* CtrlGameBoard::modelListSelect()
 FactoryMainPageLoader* CtrlGameBoard::factory()
 {
     return m_factoryMainPageLoader;
+}
+
+ModelListTestAnimations* CtrlGameBoard::modelTestAnimation()
+{
+    return new ModelListTestAnimations();
 }
 
 Player* CtrlGameBoard::playerYou()

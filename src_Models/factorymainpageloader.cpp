@@ -5,7 +5,8 @@ FactoryMainPageLoader::FactoryMainPageLoader(QObject *parent) :
     QObject(parent),
     m_link("")
 {
-    displayLogin();
+    //displayLogin();
+    displayMenuTest();
 }
 
 /************************************************************
@@ -62,6 +63,16 @@ void FactoryMainPageLoader::displayBoard()
 void FactoryMainPageLoader::displayPageSelection()
 {
     setLink("qrc:/PageSelection.qml");
+}
+
+void FactoryMainPageLoader::displayMenuTest()
+{
+    setLink("qrc:/qml/Tests/MenuTest.qml");
+}
+
+void FactoryMainPageLoader::displayCustomLink(const QString& link)
+{
+    setLink(link);
 }
 
 /************************************************************
