@@ -19,11 +19,15 @@
         <file alias="PopupSelectHiddenCard.qml">qml/Popups/PopupSelectHiddenCard.qml</file>
         <file alias="MovingCard.qml">qml/BasicComponents/MovingCard.qml</file>
         <file alias="Login.qml">qml/Login.qml</file>
-        <file alias="Loading_P.qml">qml/BasicComponents/Loading_P.qml</file>
+        <file>qml/BasicComponents/Loading_P.qml</file>
         <file alias="CreateChooseGame.qml">qml/CreateChooseGame.qml</file>
         <file alias="PageListPlayers.qml">qml/PageListPlayers.qml</file>
         <file alias="PageSelectionExistingGame.qml">qml/PageSelectionExistingGame.qml</file>
         <file alias="PopupLineEdit.qml">qml/Popups/PopupLineEdit.qml</file>
         <file alias="PageSelection.qml">qml/PageSelection.qml</file>
+        <file>qml/BasicComponents/RotationCoin.qml</file>
+        <file>qml/Tests/MenuTest.qml</file>
+        <file>qml/Tests/Test_P_Loader.qml</file>
+        <file>qml/Tests/Test_RotationCoin.qml</file>
     </qresource>
 </RCC>
