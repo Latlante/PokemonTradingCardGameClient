@@ -37,6 +37,33 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlSelectingCards(ctrlSelectCards),
     m_gameStatus(ConstantesQML::StepPreparation)
 {
+
+    ///////////////////////////////////
+    ///         FOR TESTS           ///
+    ///////////////////////////////////
+    /*m_gameManager->setPlayerYou(1, "corentin");
+    m_gameManager->setPlayerOpponent(2, "alice");
+    m_gameManager->setUidGame(1);
+
+    Database db;
+    QList<int> listIdCards = { 4, 4, 1010, 1010, 1005, 1005, 5 };
+    CardPokemon* pokemonFighting = static_cast<CardPokemon*>(db.cardById(4));
+    pokemonFighting->setStatus(CardPokemon::Status_Paralyzed);
+    pokemonFighting->addEnergy(static_cast<CardEnergy*>(db.cardById(1005)));
+    pokemonFighting->addEnergy(static_cast<CardEnergy*>(db.cardById(1010)));
+    m_gameManager->playerYou()->fight()->addNewCard(pokemonFighting);
+    m_gameManager->playerYou()->deck()->setCountCard(10);
+    m_gameManager->playerYou()->rewards()->setCountCard(4);
+    m_gameManager->playerOpponent()->fight()->addNewCard(db.cardById(4));
+    m_gameManager->playerOpponent()->deck()->setCountCard(10);
+    m_gameManager->playerOpponent()->rewards()->setCountCard(4);
+    foreach(int id, listIdCards)
+    {
+        m_gameManager->playerYou()->hand()->addNewCard(db.cardById(id));
+        m_gameManager->playerOpponent()->hand()->addNewCard(db.cardById(id));
+    }*/
+    ///////////////////////////////////
+
     connect(m_socket, &SocketClient::newNotification, this, &CtrlGameBoard::onNewNotification);
 }
 
@@ -352,22 +379,17 @@ void CtrlGameBoard::sendCardsSelected()
     {
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
-        qDebug() << __PRETTY_FUNCTION__ << "1";
 
         if(obj.contains("actions"))
             executeActions(obj["actions"].toObject());
 
-        qDebug() << __PRETTY_FUNCTION__ << "2";
-
         if(obj["success"].toString() == "ok")
         {
-            qDebug() << __PRETTY_FUNCTION__ << "3";
             m_factoryMainPageLoader->displayBoard();
-            qDebug() << __PRETTY_FUNCTION__ << "4";
         }
         else
         {
-            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse;
         }
     }
     qDebug() << __PRETTY_FUNCTION__ << "5";
@@ -644,10 +666,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                             const int idCard = objAction["idCard"].toInt();
                             AbstractCard* abCard = db.cardById(idCard);
 
-                            if(abCard != nullptr)
-                                play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
-                            else
-                                qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
+                            play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
+
                         }
                         else
                             play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
