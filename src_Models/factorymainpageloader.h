@@ -24,6 +24,9 @@ public:
     void displayBoard();
     void displayPageSelection();
 
+    Q_INVOKABLE void displayMenuTest();
+    Q_INVOKABLE void displayCustomLink(const QString& link);
+
 signals:
     void linkChanged();
 

@@ -12,6 +12,7 @@
 #include "src_Models/modellistfiltersselectingcards.h"
 #include "src_Models/modellistofgamesavailable.h"
 #include "src_Models/modellistselection.h"
+#include "src_Models/modellisttestanimations.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
 #include "src_Models/modelselectingcards.h"
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
     ModelListFiltersSelectingCards::declareQML();
     ModelListOfGamesAvailable::declareQML();
     ModelListSelection::declareQML();
+    ModelListTestAnimations::declareQML();
     ModelPopupSelectCardInPacket::declareQML();
     ModelPopupSelectEnergyInPokemon::declareQML();
     ModelSelectingCards::declareQML();

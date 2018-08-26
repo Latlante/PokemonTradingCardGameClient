@@ -18,6 +18,7 @@ class CtrlSelectingCards;
 class ModelListAllPlayers;
 class ModelListOfGamesAvailable;
 class ModelListSelection;
+class ModelListTestAnimations;
 class ModelPopupSelectCardInPacket;
 class BenchArea;
 class PacketDeck;
@@ -41,6 +42,7 @@ public:
     Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
     Q_INVOKABLE ModelListSelection* modelListSelect();
     Q_INVOKABLE FactoryMainPageLoader* factory();
+    Q_INVOKABLE ModelListTestAnimations* modelTestAnimation();
     Q_INVOKABLE Player* playerYou();
     Q_INVOKABLE Player* playerOpponent();
 
