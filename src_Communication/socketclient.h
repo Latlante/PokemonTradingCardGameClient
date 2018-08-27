@@ -30,6 +30,11 @@ public:
     bool attack(int idGame, int indexAttack, QJsonDocument &jsonResponse) override;
     bool skipTheTurn(int idGame, QJsonDocument &jsonResponse) override;
 
+    bool responseDisplayPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) override;
+    bool responseDisplayAllElements(int idGame, QList<int> listIdElements, QJsonDocument &jsonResponse) override;
+    bool responseDisplayHiddenPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) override;
+    bool responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse) override;
+
 signals:
     void connected();
     void newNotification(QJsonDocument);

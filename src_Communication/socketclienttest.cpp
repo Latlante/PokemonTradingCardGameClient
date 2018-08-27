@@ -144,3 +144,23 @@ bool SocketClientTest::skipTheTurn(int idGame, QJsonDocument &jsonResponse)
 {
     return true;
 }
+
+bool SocketClientTest::responseDisplayPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
+bool SocketClientTest::responseDisplayAllElements(int idGame, QList<int> listIdElements, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
+bool SocketClientTest::responseDisplayHiddenPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
+bool SocketClientTest::responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse)
+{
+    return true;
+}

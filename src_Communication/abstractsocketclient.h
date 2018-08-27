@@ -33,6 +33,11 @@ public:
     virtual bool attack(int idGame, int indexAttack, QJsonDocument &jsonResponse) = 0;
     virtual bool skipTheTurn(int idGame, QJsonDocument &jsonResponse) = 0;
 
+    virtual bool responseDisplayPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) = 0;
+    virtual bool responseDisplayAllElements(int idGame, QList<int> listIdElements, QJsonDocument &jsonResponse) = 0;
+    virtual bool responseDisplayHiddenPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) = 0;
+    virtual bool responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse) = 0;
+
 signals:
 
 private:
