@@ -73,6 +73,15 @@ void ModelPopupSelectCardInPacket::addPacketFromModelListEnergies(ModelListEnerg
     }
 }
 
+void ModelPopupSelectCardInPacket::replaceCard(int indexSelection, AbstractCard* newCard)
+{
+    SelectionCards selection = m_listCards[indexSelection];
+    selection.card = newCard;
+    m_listCards.replace(indexSelection, selection);
+
+    emit dataChanged(index(indexSelection, 0), index(indexSelection, 0), { SelectCardsRole_ImageCard });
+}
+
 unsigned short ModelPopupSelectCardInPacket::numberOfCardsToSelect()
 {
     return m_numberOfCardsToSelect;
@@ -113,6 +122,21 @@ QList<AbstractCard *> ModelPopupSelectCardInPacket::listCardsSelected()
     }
 
     return listCards;
+}
+
+QList<int> ModelPopupSelectCardInPacket::listIndexSelected()
+{
+    QList<int> listIndex;
+
+    for(int i=0;i<m_listCards.count();++i)
+    {
+        if(m_listCards.at(i).selected == true)
+        {
+            listIndex.append(i);
+        }
+    }
+
+    return listIndex;
 }
 
 void ModelPopupSelectCardInPacket::flipIfSelected()

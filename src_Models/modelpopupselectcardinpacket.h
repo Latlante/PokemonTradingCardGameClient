@@ -37,6 +37,7 @@ public:
 
     void addPacketFromAbstractPacket(AbstractPacket* packet);
     void addPacketFromModelListEnergies(ModelListEnergies* model);
+    void replaceCard(int indexSelection, AbstractCard* newCard);
 
     Q_INVOKABLE unsigned short numberOfCardsToSelect();
     void setNumberOfCardsToSelect(unsigned short numberToSelect);
@@ -44,6 +45,7 @@ public:
     bool isMaximumCardsSelected();
 
     QList<AbstractCard*> listCardsSelected();
+    QList<int> listIndexSelected();
 
     Q_INVOKABLE void flipIfSelected();
 

@@ -93,6 +93,7 @@ private:
     ConstantesQML::StepGame m_gameStatus;
 
     void executeActions(QJsonObject objActions);
+    void executeDisplay(QJsonObject objDisplay);
     void fillBoardPlayerYou(QJsonObject objYou);
     void fillBoardPlayerOpponent(QJsonObject objEnemy);
 };

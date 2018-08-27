@@ -60,7 +60,8 @@ public:
     void setSelectCardInPacketVisible(bool state);
 
     //SELECT HIDDEN CARD
-    QList<AbstractCard *> displaySelectHiddenCard(PacketGeneric *packet, unsigned short quantity);
+    QList<int> displaySelectHiddenCard(int numberOfCards, unsigned short quantity);
+    void selectHiddenCardShowCardsSelected(QList<AbstractCard*> listCards);
     bool selectHiddenCardVisible();
     void setSelectHiddenCardVisible(bool state);
 

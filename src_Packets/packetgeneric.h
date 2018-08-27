@@ -23,8 +23,11 @@ public:
     int countCard() const final;
     void setCountCard(int count);
     bool addNewCard(AbstractCard* newCard = nullptr) final;
+    void insertNewCard(int index, AbstractCard* newCard);
     AbstractCard* takeACard(int indexCard = -1) final;
     bool remove(AbstractCard* card = nullptr) final;
+
+    int indexOf(AbstractCard* card);
 
     QVariant data(const QModelIndex &index, int role) const final;
     int rowCount(const QModelIndex& = QModelIndex()) const final;
