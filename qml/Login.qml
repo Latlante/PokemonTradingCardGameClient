@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import model 1.0
+import "qml/BasicComponents"
 
 Item {
     height: 600
@@ -106,12 +107,13 @@ Item {
                     height: 30
                     color: "#ffffff"
                     border.width: 1
-                    TextEdit {
-                        id: textEditPassword
-                        text: qsTr("")
+                    TextInput {
+                        id: textInputPassword
+                        text: qsTr("hello")
                         anchors.fill: parent
                         font.pixelSize: 20
                         horizontalAlignment: Text.AlignHCenter
+                        echoMode: TextInput.Password
                     }
                 }
 
@@ -143,8 +145,8 @@ Item {
 
                             onClicked: {
                                 console.log("bouton Authentification cliqué")
-                                if((textEditName.text != "") && (textEditPassword.text != ""))
-                                    ctrlGameBoard.authentificate(textEditName.text, textEditPassword.text)
+                                if((textEditName.text != "") && (textInputPassword.text != ""))
+                                    ctrlGameBoard.authentificate(textEditName.text, textInputPassword.text)
                                 else
                                     console.log("Error: login and/or password is empty");
                             }
