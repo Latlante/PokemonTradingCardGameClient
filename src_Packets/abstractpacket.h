@@ -17,7 +17,8 @@ public:
     {
         Packet_HiddenCard = 0,
         Packet_Generic,
-        Packet_Pokemon
+        Packet_Pokemon,
+        Packet_CardsWithIndex
     };
 
     AbstractPacket(const QString& namePacket);

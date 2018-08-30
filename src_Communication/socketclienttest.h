@@ -30,6 +30,7 @@ public:
     bool responseDisplayPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) override;
     bool responseDisplayAllElements(int idGame, QList<int> listIdElements, QJsonDocument &jsonResponse) override;
     bool responseDisplayHiddenPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) override;
+    bool responseDisplayEnergiesForAPokemon(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse) override;
     bool responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse) override;
 
 private:

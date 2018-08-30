@@ -160,6 +160,11 @@ bool SocketClientTest::responseDisplayHiddenPacket(int idGame, QList<int> listIn
     return true;
 }
 
+bool SocketClientTest::responseDisplayEnergiesForAPokemon(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    return true;
+}
+
 bool SocketClientTest::responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse)
 {
     return true;

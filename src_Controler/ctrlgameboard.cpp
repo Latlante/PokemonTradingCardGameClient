@@ -22,6 +22,7 @@
 #include "src_Models/modellistselection.h"
 #include "src_Models/modellisttestanimations.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
+#include "src_Packets/packetcardswithindex.h"
 #include "src_Packets/packetgeneric.h"
 #include "src_Packets/packethiddencards.h"
 #include "src_Packets/packetpokemon.h"
@@ -1061,6 +1062,50 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                         }
                         else
                             qCritical() << __PRETTY_FUNCTION__ << "response display hidden packet does not contains idCards";
+                    }
+                    else
+                    {
+                        qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+                    }
+                }
+            }
+            break;
+
+        case ConstantesShared::PHASE_NotifDisplayEnergiesForAPokemon:
+            if((objDisplay.contains("quantity")) && (objDisplay.contains("packet")))
+            {
+                //Initialization of data received
+                Database db;
+                int quantity = objDisplay["quantity"].toInt();
+                QJsonArray arrayPacket = objDisplay["packet"].toArray();
+                PacketCardsWithIndex* packet = new PacketCardsWithIndex("displayEnergies");
+                for(int i=0;i<arrayPacket.count();++i)
+                {
+                    QJsonObject objCard = arrayPacket[i].toObject();
+                    packet->addNewCard(db.cardById(objCard["idEnergy"].toInt()), objCard["indexPacket"].toInt());
+                }
+
+                //Display packet
+                QList<AbstractCard*> listCardsSelected = m_ctrlPopups.displayPacket(packet, quantity);
+
+                //Initialization of data to send back
+                QList<int> listIndexPacket;
+                foreach(AbstractCard* card, listCardsSelected)
+                    listIndexPacket.append(packet->indexFromCard(card));
+
+                //Send data
+                QJsonDocument jsonResponse;
+                if(m_socket->responseDisplayEnergiesForAPokemon(m_gameManager->uidGame(), listIndexPacket, jsonResponse))
+                {
+                    qDebug() << __PRETTY_FUNCTION__ << "request success";
+                    QJsonObject obj = jsonResponse.object();
+
+                    if(obj.contains("actions"))
+                        executeActions(obj["actions"].toObject());
+
+                    if(obj["success"].toString() == "ok")
+                    {
+                        m_ctrlAnim.setStepInProgress(false);
                     }
                     else
                     {

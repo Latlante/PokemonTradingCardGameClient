@@ -35,6 +35,8 @@ public:
         PHASE_DisplayAllElementsResponse,
         PHASE_NotifDisplayHiddenPacket = 124,
         PHASE_DisplayHiddenPacketResponse,
+        PHASE_NotifDisplayEnergiesForAPokemon = 126,
+        PHASE_DisplayEnergiesForAPokemonResponse,
         PHASE_NotifDisplayAttacksPokemon = 128,
         PHASE_DisplayAttacksPokemonResponse
     };
