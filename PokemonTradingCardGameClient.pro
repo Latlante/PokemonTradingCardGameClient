@@ -52,7 +52,8 @@ SOURCES += \
     src_Packets/packethiddencards.cpp \
     src_Packets/packetpokemon.cpp \
     src_Packets/packetgeneric.cpp \
-    src_Models/modellisttestanimations.cpp
+    src_Models/modellisttestanimations.cpp \
+    src_Packets/packetcardswithindex.cpp
 
 RESOURCES += qml.qrc \
     img.qrc
@@ -101,4 +102,5 @@ HEADERS += \
     src_Packets/packethiddencards.h \
     src_Packets/packetpokemon.h \
     src_Packets/packetgeneric.h \
-    src_Models/modellisttestanimations.h
+    src_Models/modellisttestanimations.h \
+    src_Packets/packetcardswithindex.h
