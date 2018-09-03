@@ -107,8 +107,80 @@ Item {
 
         MovingCard {
             id: movingCard1
+
+            property bool animationStatus: ctrlAnimation.movingCardStarted
+
             sourceImage: "back.png"
             visible: false
+
+            onAnimationStatusChanged: {
+                if(animationStatus == true)
+                {
+                    switch(ctrlAnimation.movingCardLocationStart)
+                    {
+                    case CtrlAnimation.Location_Bench:
+                        movingCard1.x = boardPlayer1.listViewPacketBench.x
+                        movingCard1.y = boardPlayer1.listViewPacketBench.y
+                        break;
+                    case CtrlAnimation.Location_Deck:
+                        movingCard1.x = boardPlayer1.textDeck.x
+                        movingCard1.y = boardPlayer1.textDeck.y
+                        break;
+                    case CtrlAnimation.Location_Fight:
+                        movingCard1.x = boardPlayer1.boardFightingArea1.boardFightingInformation_P1.x
+                        movingCard1.y = boardPlayer1.boardFightingArea1.boardFightingInformation_P1.y
+                        break;
+                    case CtrlAnimation.Location_Hand:
+                        movingCard1.x = boardPlayer1.listViewPacketHand.x
+                        movingCard1.y = boardPlayer1.listViewPacketHand.y
+                        break;
+                    case CtrlAnimation.Location_Reward:
+                        movingCard1.x = boardPlayer1.textRewards.x
+                        movingCard1.y = boardPlayer1.textRewards.y
+                        break;
+                    case CtrlAnimation.Location_Trash:
+                        movingCard1.x = boardPlayer1.textTrash.x
+                        movingCard1.y = boardPlayer1.textTrash.y
+                        break;
+                    }
+
+                    switch(ctrlAnimation.movingCardLocationEnd)
+                    {
+                    case CtrlAnimation.Location_Bench:
+                        movingCard1.positionXEnd = boardPlayer1.listViewPacketBench.x
+                        movingCard1.positionYEnd = boardPlayer1.listViewPacketBench.y
+                        break;
+                    case CtrlAnimation.Location_Deck:
+                        movingCard1.positionXEnd = boardPlayer1.textDeck.x
+                        movingCard1.positionYEnd = boardPlayer1.textDeck.y
+                        break;
+                    case CtrlAnimation.Location_Fight:
+                        movingCard1.positionXEnd = boardPlayer1.boardFightingArea1.boardFightingInformation_P1.x
+                        movingCard1.positionYEnd = boardPlayer1.boardFightingArea1.boardFightingInformation_P1.y
+                        break;
+                    case CtrlAnimation.Location_Hand:
+                        movingCard1.positionXEnd = boardPlayer1.listViewPacketHand.x
+                        movingCard1.positionYEnd = boardPlayer1.listViewPacketHand.y
+                        break;
+                    case CtrlAnimation.Location_Reward:
+                        movingCard1.positionXEnd = boardPlayer1.textRewards.x
+                        movingCard1.positionYEnd = boardPlayer1.textRewards.y
+                        break;
+                    case CtrlAnimation.Location_Trash:
+                        movingCard1.positionXEnd = boardPlayer1.textTrash.x
+                        movingCard1.positionYEnd = boardPlayer1.textTrash.y
+                        break;
+                    }
+
+                    startAnimation = animationStatus
+                }
+
+            }
+
+            onAnimationRunningChanged: {
+                if(running == false)
+                    ctrlAnimation.animationMovingCardFinished()
+            }
         }
     }
 }

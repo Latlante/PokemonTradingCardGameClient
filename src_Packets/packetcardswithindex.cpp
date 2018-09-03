@@ -31,7 +31,7 @@ AbstractPacket::TypeOfPacket PacketCardsWithIndex::type()
 
 bool PacketCardsWithIndex::addNewCard(AbstractCard* newCard, int index)
 {
-    if(addNewCard(newCard))
+    if(PacketGeneric::addNewCard(newCard))
     {
         m_listIndexByCard.insert(newCard, index);
         return true;

@@ -2,6 +2,7 @@
 #define CTRLANIMATION_H
 
 #include <QObject>
+#include "Share/constantesshared.h"
 
 class QQmlEngine;
 class QQmlApplicationEngine;
@@ -20,12 +21,12 @@ class CtrlAnimation : public QObject
 public:
     enum LocationAnimation
     {
-        Location_Bench = 0,
-        Location_Deck,
-        Location_Hand,
-        Location_Fight,
-        Location_Reward,
-        Location_Trash
+        Location_Bench = ConstantesShared::PACKET_Bench,
+        Location_Deck = ConstantesShared::PACKET_Deck,
+        Location_Hand = ConstantesShared::PACKET_Hand,
+        Location_Fight = ConstantesShared::PACKET_Fight,
+        Location_Reward = ConstantesShared::PACKET_Rewards,
+        Location_Trash = ConstantesShared::PACKET_Trash
     };
     Q_ENUMS(LocationAnimation)
 
@@ -34,7 +35,35 @@ public:
     static void declareQML();
     bool install(QQmlApplicationEngine *pEngine);
 
-    void startAnimationMovingCard(LocationAnimation start, LocationAnimation end);
+
+    //ANIMATION MOVING CARD
+    bool startAnimationMovingCard(LocationAnimation start, LocationAnimation end);
+    Q_INVOKABLE void animationMovingCardFinished();
+
+    //ANIMATION P_LOADER
+    bool stepInProgress();
+    void setStepInProgress(bool inProgress);
+
+signals:
+    void movingCardStartedChanged();
+    void movingCardPlayerChanged();
+    void movingCardLocationStartChanged();
+    void movingCardLocationEndChanged();
+    void movingCardFinished();
+
+    void stepInProgressChanged();
+
+private:
+    //ANIMATION MOVING CARD
+    bool m_movingCardStarted;
+    Player* m_movingCardPlayer;
+    LocationAnimation m_movingCardLocationStart;
+    LocationAnimation m_movingCardLocationEnd;
+
+    //ANIMATION P_LOADER
+    bool m_stepInProgress;
+
+    //ANIMATION MOVING CARD
     bool movingCardStarted();
     void setMovingCardStarted(bool start);
     Player* movingCardPlayer();
@@ -44,24 +73,6 @@ public:
     CtrlAnimation::LocationAnimation movingCardLocationEnd();
     void setMovingCardLocationEnd(CtrlAnimation::LocationAnimation location);
 
-    bool stepInProgress();
-    void setStepInProgress(bool inProgress);
-
-signals:
-    void movingCardStartedChanged();
-    void movingCardPlayerChanged();
-    void movingCardLocationStartChanged();
-    void movingCardLocationEndChanged();
-
-    void stepInProgressChanged();
-
-private:
-    bool m_movingCardStarted;
-    Player* m_movingCardPlayer;
-    LocationAnimation m_movingCardLocationStart;
-    LocationAnimation m_movingCardLocationEnd;
-
-    bool m_stepInProgress;
 };
 
 #endif // CTRLANIMATION_H

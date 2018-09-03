@@ -654,12 +654,18 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                             AbstractCard* abCard = db.cardById(idCard);
 
                             if(abCard != nullptr)
+                            {
                                 play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
+                                m_ctrlAnim.startAnimationMovingCard(static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
+                            }
                             else
                                 qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
                         }
                         else
+                        {
                             play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
+                            m_ctrlAnim.startAnimationMovingCard(static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
+                        }
                     }
                     else
                         qWarning() << "player (" << namePlayer << ") is nullptr for phase: " << phase;

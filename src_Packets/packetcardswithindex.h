@@ -21,7 +21,7 @@ protected:
     QMap<AbstractCard*, int> m_listIndexByCard;
 
 private:
-    bool addNewCard(AbstractCard* newCard = nullptr) override;
+    //bool addNewCard(AbstractCard* newCard = nullptr) override;
 };
 
 #endif // PACKETCARDSWITHINDEX_H

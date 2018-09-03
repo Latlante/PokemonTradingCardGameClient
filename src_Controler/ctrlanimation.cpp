@@ -1,9 +1,11 @@
 #include "ctrlanimation.h"
 
 #include <QDebug>
+#include <QEventLoop>
 #include <QQmlEngine>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QTimer>
 #include <QtQml/qqml.h>
 
 #include "player.h"
@@ -54,13 +56,56 @@ bool CtrlAnimation::install(QQmlApplicationEngine *pEngine)
     return bInstalled;
 }
 
-void CtrlAnimation::startAnimationMovingCard(LocationAnimation start, LocationAnimation end)
+bool CtrlAnimation::startAnimationMovingCard(LocationAnimation start, LocationAnimation end)
 {
     setMovingCardLocationStart(start);
     setMovingCardLocationEnd(end);
     setMovingCardStarted(true);
+
+    //Add timer in case where animation bug
+    QTimer timerTimeOutAnimation;
+    timerTimeOutAnimation.setSingleShot(true);
+    timerTimeOutAnimation.start(2000);
+
+    QEventLoop loop;
+    connect(&timerTimeOutAnimation, &QTimer::timeout, &loop, &QEventLoop::quit);
+    connect(this, &CtrlAnimation::movingCardFinished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if(timerTimeOutAnimation.isActive())
+    {
+        timerTimeOutAnimation.stop();
+        qCritical() << __PRETTY_FUNCTION__ << "timer reaches timeOut";
+
+        return false;
+    }
+
+    return true;
 }
 
+void CtrlAnimation::animationMovingCardFinished()
+{
+    setMovingCardStarted(false);
+    emit movingCardFinished();
+}
+
+bool CtrlAnimation::stepInProgress()
+{
+    return m_stepInProgress;
+}
+
+void CtrlAnimation::setStepInProgress(bool inProgress)
+{
+    if(m_stepInProgress != inProgress)
+    {
+        m_stepInProgress = inProgress;
+        emit stepInProgressChanged();
+    }
+}
+
+/************************************************************
+*****				FONCTIONS PRIVEES					*****
+************************************************************/
 bool CtrlAnimation::movingCardStarted()
 {
     return m_movingCardStarted;
@@ -114,19 +159,5 @@ void CtrlAnimation::setMovingCardLocationEnd(CtrlAnimation::LocationAnimation lo
     {
         m_movingCardLocationEnd = location;
         emit movingCardLocationEndChanged();
-    }
-}
-
-bool CtrlAnimation::stepInProgress()
-{
-    return m_stepInProgress;
-}
-
-void CtrlAnimation::setStepInProgress(bool inProgress)
-{
-    if(m_stepInProgress != inProgress)
-    {
-        m_stepInProgress = inProgress;
-        emit stepInProgressChanged();
     }
 }

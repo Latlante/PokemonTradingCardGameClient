@@ -9,7 +9,7 @@ Item {
     property int positionXEnd: 0
     property int positionYEnd: 0
     property int delay: 0
-    property bool startAnimation: ctrlAnimation.movingCardStarted
+    property bool startAnimation: false
     signal animationRunningChanged(bool running)
 
     onStartAnimationChanged:
@@ -18,7 +18,7 @@ Item {
 
         if(startAnimation == true)
         {
-            var player = ctrlAnimation.movingCardPlayer;
+            /*var player = ctrlAnimation.movingCardPlayer;
 
             if(player === player1)
             {
@@ -33,7 +33,7 @@ Item {
                 movingCard.y = boardPlayer2.textDeck.y
                 movingCard.positionXEnd = boardPlayer2.listViewPacketHand.x + 50
                 movingCard.positionYEnd = boardPlayer2.listViewPacketHand.y + 50
-            }
+            }*/
 
             console.log("PositionStart:" + movingCard.x + "." + movingCard.y)
             console.log("PositionEnd:" + movingCard.positionXEnd + "." + movingCard.positionYEnd)
@@ -67,7 +67,7 @@ Item {
                 ParallelAnimation {
                     PropertyAnimation {
                         target: movingCard
-                        easing.type: Easing.InQuad
+                        //easing.type: Easing.InQuad
                         properties: "x"
                         to: positionXEnd
                         duration: 1000
@@ -98,7 +98,9 @@ Item {
                 movingCard.animationRunningChanged(running)
 
                 if(running == false)
-                   ctrlAnimation.movingCardStarted = false
+                {
+                    movingCard1.startAnimation = false
+                }
             }
 
         }
