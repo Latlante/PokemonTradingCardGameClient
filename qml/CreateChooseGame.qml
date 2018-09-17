@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import model 1.0
+import "qml/BasicComponents"
 
 Item {
     height: 600

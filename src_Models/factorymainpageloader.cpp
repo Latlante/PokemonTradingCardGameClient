@@ -5,8 +5,8 @@ FactoryMainPageLoader::FactoryMainPageLoader(QObject *parent) :
     QObject(parent),
     m_link("")
 {
-    //displayLogin();
-    displayMenuTest();
+    displayLogin();
+    //displayMenuTest();
 }
 
 /************************************************************

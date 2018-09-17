@@ -549,8 +549,8 @@ void CtrlGameBoard::onNewNotification(QJsonDocument docActions)
 {
     qDebug() << __PRETTY_FUNCTION__ << docActions.toJson(QJsonDocument::Compact);
     QJsonObject objActions = docActions.object();
-    if((objActions.contains("indexBegin")) && (objActions.contains("indexEnd")))
-        executeActions(objActions);
+    if(objActions.contains("actions"))
+        executeActions(objActions["actions"].toObject());
 }
 
 /************************************************************
