@@ -17,7 +17,7 @@
         <file alias="PopupSelectCardsInPacket.qml">qml/Popups/PopupSelectCardsInPacket.qml</file>
         <file alias="PopupSelectEnergiesInPokemon.qml">qml/Popups/PopupSelectEnergiesInPokemon.qml</file>
         <file alias="PopupSelectHiddenCard.qml">qml/Popups/PopupSelectHiddenCard.qml</file>
-        <file alias="MovingCard.qml">qml/BasicComponents/MovingCard.qml</file>
+        <file>qml/BasicComponents/MovingCard.qml</file>
         <file alias="Login.qml">qml/Login.qml</file>
         <file>qml/BasicComponents/Loading_P.qml</file>
         <file alias="CreateChooseGame.qml">qml/CreateChooseGame.qml</file>
@@ -29,5 +29,6 @@
         <file>qml/Tests/MenuTest.qml</file>
         <file>qml/Tests/Test_P_Loader.qml</file>
         <file>qml/Tests/Test_RotationCoin.qml</file>
+        <file>qml/Tests/Test_MovingCard.qml</file>
     </qresource>
 </RCC>

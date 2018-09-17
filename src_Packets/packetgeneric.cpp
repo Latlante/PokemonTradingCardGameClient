@@ -71,6 +71,24 @@ bool PacketGeneric::addNewCard(AbstractCard* newCard)
     return true;
 }
 
+void PacketGeneric::insertNewCard(int index, AbstractCard* newCard)
+{
+    if(index < rowCount())
+    {
+        beginInsertRows(QModelIndex(), index, index);
+        m_listCards.insert(index, newCard);
+        endInsertRows();
+    }
+    else
+    {
+        beginInsertRows(QModelIndex(), rowCount(), index);
+        m_listCards.resize(index + 1);
+        endInsertRows();
+    }
+
+    emit countChanged();
+}
+
 AbstractCard* PacketGeneric::takeACard(int indexCard)
 {
     AbstractCard *cardToReturn = nullptr;
@@ -104,6 +122,11 @@ bool PacketGeneric::remove(AbstractCard* card)
     }
 
     return success;
+}
+
+int PacketGeneric::indexOf(AbstractCard* card)
+{
+    return m_listCards.indexOf(card);
 }
 
 QVariant PacketGeneric::data(const QModelIndex &index, int role) const

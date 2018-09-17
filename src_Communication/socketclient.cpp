@@ -321,6 +321,143 @@ bool SocketClient::skipTheTurn(int idGame, QJsonDocument &jsonResponse)
     return success;
 }
 
+bool SocketClient::responseDisplayPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_DisplayPacketResponse);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    QJsonArray arrayIndex;
+    foreach(int index, listIndex)
+        arrayIndex.append(index);
+    jsonRequest["indexPacket"] = arrayIndex;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::responseDisplayAllElements(int idGame, QList<int> listIdElements, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_DisplayAllElementsResponse);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    QJsonArray arrayIndex;
+    foreach(int index, listIdElements)
+        arrayIndex.append(index);
+    jsonRequest["elements"] = arrayIndex;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::responseDisplayHiddenPacket(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_DisplayHiddenPacketResponse);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    QJsonArray arrayIndex;
+    foreach(int index, listIndex)
+        arrayIndex.append(index);
+    jsonRequest["indexPacket"] = arrayIndex;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::responseDisplayEnergiesForAPokemon(int idGame, QList<int> listIndex, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_DisplayPacketResponse);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+
+    QJsonArray arrayIndex;
+    foreach(int index, listIndex)
+        arrayIndex.append(index);
+    jsonRequest["indexPacket"] = arrayIndex;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+bool SocketClient::responseDisplayAttacksPokemon(int idGame, int indexAttack, QJsonDocument &jsonResponse)
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    bool success = false;
+    QJsonDocument response;
+    QJsonObject jsonRequest;
+    jsonRequest["phase"] = static_cast<int>(ConstantesShared::PHASE_DisplayAttacksPokemonResponse);
+    jsonRequest["token"] = m_token;
+    jsonRequest["uidGame"] = idGame;
+    jsonRequest["indexPacket"] = indexAttack;
+
+    if(sendMessage(QJsonDocument(jsonRequest), response))
+    {
+        if(!response.isNull())
+        {
+            success = true;
+            jsonResponse = response;
+        }
+    }
+
+    return success;
+}
+
+
 /************************************************************
 *****			  FONCTIONS SLOT PRIVEES				*****
 ************************************************************/

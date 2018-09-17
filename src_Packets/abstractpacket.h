@@ -17,7 +17,8 @@ public:
     {
         Packet_HiddenCard = 0,
         Packet_Generic,
-        Packet_Pokemon
+        Packet_Pokemon,
+        Packet_CardsWithIndex
     };
 
     AbstractPacket(const QString& namePacket);
@@ -43,7 +44,7 @@ signals:
     void countChanged();
 
 protected:
-    QList<AbstractCard*> m_listCards;
+    QVector<AbstractCard*> m_listCards;
 
 protected slots:
     void updateAllData();

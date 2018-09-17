@@ -7,6 +7,7 @@ ModelListTestAnimations::ModelListTestAnimations(QObject *parent) :
 {
     addAnimation("P Rotatif", "qrc:/qml/Tests/Test_P_Loader.qml");
     addAnimation("Pièce", "qrc:/qml/Tests/Test_RotationCoin.qml");
+    addAnimation("Déplacement de carte", "qrc:/qml/Tests/Test_MovingCard.qml");
     addAnimation("Paquet simple", "");
 }
 

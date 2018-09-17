@@ -8,7 +8,7 @@ PacketPokemon::PacketPokemon(const QString &namePacket, unsigned int maxCard, QL
     AbstractPacket(namePacket),
     m_maxCard(maxCard)
 {
-    m_listCards = listCards;
+    m_listCards = listCards.toVector();
 }
 
 PacketPokemon::~PacketPokemon()

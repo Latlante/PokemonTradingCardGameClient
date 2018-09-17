@@ -153,15 +153,12 @@ void CtrlPopups::setSelectCardInPacketVisible(bool state)
 //**************************************
 //          SELECT HIDDEN CARD
 //**************************************
-QList<AbstractCard *> CtrlPopups::displaySelectHiddenCard(PacketGeneric* packet, unsigned short quantity)
+QList<int> CtrlPopups::displaySelectHiddenCard(int numberOfCards, unsigned short quantity)
 {
-    //Vérification
-    unsigned short newQuantity = quantity;
-    if(newQuantity > packet->countCard())
-        newQuantity = packet->countCard();
+    PacketGeneric* packet = new PacketGeneric("hiddenCards", numberOfCards);
 
     //Initialisation
-    m_modelSelectCardInPacket->setNumberOfCardsToSelect(newQuantity);
+    m_modelSelectCardInPacket->setNumberOfCardsToSelect(quantity);
     m_modelSelectCardInPacket->addPacketFromAbstractPacket(packet);
     setSelectHiddenCardVisible(true);
 
@@ -171,9 +168,30 @@ QList<AbstractCard *> CtrlPopups::displaySelectHiddenCard(PacketGeneric* packet,
     loop.exec();
 
     //Configuration de fin
-    setSelectHiddenCardVisible(false);
+    //setSelectHiddenCardVisible(false);
 
-    return m_modelSelectCardInPacket->listCardsSelected();
+    return m_modelSelectCardInPacket->listIndexSelected();
+}
+
+void CtrlPopups::selectHiddenCardShowCardsSelected(QList<AbstractCard*> listCards)
+{
+    int indexLoop = 0;
+    int indexListCards = 0;
+
+    while((indexLoop < m_modelSelectCardInPacket->rowCount()) && (indexListCards < listCards.count()))
+    {
+        if(m_modelSelectCardInPacket->data(m_modelSelectCardInPacket->index(indexLoop, 0), ModelPopupSelectCardInPacket::SelectCardsRole_Selected).toBool() == true)
+        {
+            m_modelSelectCardInPacket->replaceCard(indexLoop, listCards[indexListCards]);
+            indexListCards++;
+        }
+        indexLoop++;
+    }
+
+    //En attente
+    QEventLoop loop;
+    connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
+    loop.exec();
 }
 
 bool CtrlPopups::selectHiddenCardVisible()
