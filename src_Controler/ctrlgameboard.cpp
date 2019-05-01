@@ -184,23 +184,31 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
         QJsonDocument jsonResponse;
         if(m_socket->authentificate(name, password, jsonResponse))
         {
-            qDebug() << __PRETTY_FUNCTION__ << "Authentification success";
-
             QJsonObject obj = jsonResponse.object();
-            m_socket->setToken(obj["token"].toString());
-
-            QJsonArray arrayGames = obj["games"].toArray();
-            for(int i=0;i<arrayGames.count();++i)
+            if(obj["success"] == "ok")
             {
-                QJsonObject objGame = arrayGames[i].toObject();
-                m_listOfGamesAvailable->addNewGame(objGame["uid"].toInt(),
-                                                   objGame["name"].toString(),
-                                                   objGame["opponent"].toString());
+                qDebug() << __PRETTY_FUNCTION__ << "Authentification success";
+
+                m_socket->setToken(obj["token"].toString());
+
+                QJsonArray arrayGames = obj["games"].toArray();
+                for(int i=0;i<arrayGames.count();++i)
+                {
+                    QJsonObject objGame = arrayGames[i].toObject();
+                    m_listOfGamesAvailable->addNewGame(objGame["uid"].toInt(),
+                                                       objGame["name"].toString(),
+                                                       objGame["opponent"].toString());
+                }
+
+                m_gameManager->setPlayerYou(0, name);
+                m_ctrlSelectingCards.setName(name);
+                m_factoryMainPageLoader->displayCreateChooseGame();
+            }
+            else
+            {
+                qWarning() << __PRETTY_FUNCTION__ << "Authentification failed";
             }
 
-            m_gameManager->setPlayerYou(0, name);
-            m_ctrlSelectingCards.setName(name);
-            m_factoryMainPageLoader->displayCreateChooseGame();
         }
         else
         {
