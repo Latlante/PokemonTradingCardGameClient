@@ -165,7 +165,8 @@ void CtrlSelectingCards::fillARandomList()
     for(int i=0;i<m_modelSelectingCards->maxCards();++i)
     {
         int randomId = Utils::randomValue(0, rowCount-1);
-        m_modelSelectingCards->setQuantity(randomId, m_modelSelectingCards->quantity(randomId)+1);
+        int idCard = m_modelSelectingCards->idFromIndex(randomId);
+        m_modelSelectingCards->setQuantity(idCard, m_modelSelectingCards->quantity(idCard)+1);
     }
 }
 

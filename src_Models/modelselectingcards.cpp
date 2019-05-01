@@ -190,6 +190,19 @@ void ModelSelectingCards::setQuantity(int id, int quantity)
     }
 }
 
+int ModelSelectingCards::idFromIndex(int index)
+{
+    int id = -1;
+    if((index >= 0) && (index < rowCount()))
+    {
+        AbstractCard* card = m_listCards.at(index).card;
+        if(card)
+            id = card->id();
+    }
+
+    return id;
+}
+
 QVariant ModelSelectingCards::data(const QModelIndex &index, int role) const
 {
     //qDebug() << __PRETTY_FUNCTION__ << index << role;

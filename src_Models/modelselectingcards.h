@@ -45,6 +45,8 @@ public:
     int quantity(int id);
     void setQuantity(int id, int quantity);
 
+    int idFromIndex(int index);
+
     virtual QVariant data(const QModelIndex &index, int role) const override;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     virtual int rowCount(const QModelIndex & = QModelIndex()) const override;
