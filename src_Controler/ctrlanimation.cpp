@@ -56,8 +56,9 @@ bool CtrlAnimation::install(QQmlApplicationEngine *pEngine)
     return bInstalled;
 }
 
-bool CtrlAnimation::startAnimationMovingCard(LocationAnimation start, LocationAnimation end)
+bool CtrlAnimation::startAnimationMovingCard(Player *currentPlayer, LocationAnimation start, LocationAnimation end)
 {
+    setMovingCardPlayer(currentPlayer);
     setMovingCardLocationStart(start);
     setMovingCardLocationEnd(end);
     setMovingCardStarted(true);
@@ -72,7 +73,7 @@ bool CtrlAnimation::startAnimationMovingCard(LocationAnimation start, LocationAn
     connect(this, &CtrlAnimation::movingCardFinished, &loop, &QEventLoop::quit);
     loop.exec();
 
-    if(timerTimeOutAnimation.isActive())
+    if(timerTimeOutAnimation.isActive() == false)
     {
         timerTimeOutAnimation.stop();
         qCritical() << __PRETTY_FUNCTION__ << "timer reaches timeOut";

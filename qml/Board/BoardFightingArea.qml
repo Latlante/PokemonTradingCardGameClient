@@ -11,6 +11,8 @@ Item {
 
     property Player play1
     property Player play2
+    property int posFightX: boardFightingInformation_P1.x
+    property int posFightY: boardFightingInformation_P1.y
 
     Image {
         id: imageBackgroundFighting

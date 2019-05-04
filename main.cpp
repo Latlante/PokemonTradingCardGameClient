@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 
     ConstantesQML::declareQML();
     FactoryMainPageLoader::declareQML();
+    CtrlAnimation::declareQML();
     CtrlGameBoard::declareQML();
     CtrlPopups::declareQML();
     CtrlSelectingCards::declareQML();

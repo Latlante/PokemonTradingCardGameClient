@@ -8,6 +8,16 @@ Item {
     height: 600
 
     property Player player
+    property int posBenchX: listViewPacketBench.x
+    property int posBenchY: listViewPacketBench.y
+    property int posDeckX: textDeck.x
+    property int posDeckY: textDeck.y
+    property int posHandX: listViewPacketHand.x
+    property int posHandY: listViewPacketHand.y
+    property int posRewardX: textRewards.x
+    property int posRewardY: textRewards.y
+    property int posTrashX: textTrash.x
+    property int posTrashY: textTrash.y
 
     enabled: player.canPlay
 

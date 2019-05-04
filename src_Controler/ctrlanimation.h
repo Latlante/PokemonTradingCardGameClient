@@ -37,7 +37,7 @@ public:
 
 
     //ANIMATION MOVING CARD
-    bool startAnimationMovingCard(LocationAnimation start, LocationAnimation end);
+    bool startAnimationMovingCard(Player* currentPlayer, LocationAnimation start, LocationAnimation end);
     Q_INVOKABLE void animationMovingCardFinished();
 
     //ANIMATION P_LOADER

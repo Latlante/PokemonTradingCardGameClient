@@ -154,7 +154,7 @@ bool PacketPokemon::replacePokemon(CardPokemon *oldOne, CardPokemon *newOne, boo
 
 QVariant PacketPokemon::data(const QModelIndex &index, int role) const
 {
-    qDebug() << __PRETTY_FUNCTION__ << this->name() << index << rowCount() << countCard() << role;
+    //qDebug() << __PRETTY_FUNCTION__ << this->name() << index << rowCount() << countCard() << role;
 
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))

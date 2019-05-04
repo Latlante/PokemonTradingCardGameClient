@@ -9,6 +9,7 @@ Item {
     property int positionXEnd: 0
     property int positionYEnd: 0
     property int delay: 0
+    property int timeToMoved: 1000
     property bool startAnimation: false
     signal animationRunningChanged(bool running)
 
@@ -35,8 +36,8 @@ Item {
                 movingCard.positionYEnd = boardPlayer2.listViewPacketHand.y + 50
             }*/
 
-            console.log("PositionStart:" + movingCard.x + "." + movingCard.y)
-            console.log("PositionEnd:" + movingCard.positionXEnd + "." + movingCard.positionYEnd)
+            console.log("PositionStart:" + movingCard.x + "x" + movingCard.y)
+            console.log("PositionEnd:" + movingCard.positionXEnd + "x" + movingCard.positionYEnd)
 
             movingCard.state = "start"
         }
@@ -70,13 +71,13 @@ Item {
                         //easing.type: Easing.InQuad
                         properties: "x"
                         to: positionXEnd
-                        duration: 1000
+                        duration: timeToMoved
                     }
                     PropertyAnimation {
                         target: movingCard
                         properties: "y"
                         to: positionYEnd
-                        duration: 1000
+                        duration: timeToMoved
                     }
                 }
 

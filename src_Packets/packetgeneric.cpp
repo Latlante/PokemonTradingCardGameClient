@@ -131,7 +131,7 @@ int PacketGeneric::indexOf(AbstractCard* card)
 
 QVariant PacketGeneric::data(const QModelIndex &index, int role) const
 {
-    qDebug() << __PRETTY_FUNCTION__ << name() << index << rowCount() << role;
+    //qDebug() << __PRETTY_FUNCTION__ << name() << index << rowCount() << role;
     int iRow = index.row();
     if ((iRow < 0) || (iRow >= rowCount()))
     {

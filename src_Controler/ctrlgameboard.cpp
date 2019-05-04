@@ -395,12 +395,12 @@ void CtrlGameBoard::sendCardsSelected()
         qDebug() << __PRETTY_FUNCTION__ << "request success";
         QJsonObject obj = jsonResponse.object();
 
-        if(obj.contains("actions"))
-            executeActions(obj["actions"].toObject());
-
         if(obj["success"].toString() == "ok")
         {
             m_factoryMainPageLoader->displayBoard();
+
+            if(obj.contains("actions"))
+                executeActions(obj["actions"].toObject());
         }
         else
         {
@@ -551,7 +551,7 @@ void CtrlGameBoard::onMovingCardAnimationStart()
     qDebug() << __PRETTY_FUNCTION__;
 #endif
 
-    m_ctrlAnim.startAnimationMovingCard(CtrlAnimation::Location_Deck, CtrlAnimation::Location_Hand);
+    m_ctrlAnim.startAnimationMovingCard(m_gameManager->playerYou(), CtrlAnimation::Location_Deck, CtrlAnimation::Location_Hand);
 }
 
 void CtrlGameBoard::onNewNotification(QJsonDocument docActions)
@@ -686,7 +686,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                             if(abCard != nullptr)
                             {
                                 play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin, abCard);
-                                m_ctrlAnim.startAnimationMovingCard(static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
+                                m_ctrlAnim.startAnimationMovingCard(play, static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
                             }
                             else
                                 qCritical() << __PRETTY_FUNCTION__ << "abCard id nullptr for " << idCard;
@@ -694,7 +694,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         else
                         {
                             play->moveCardFromPacketToAnother(packetOrigin, packetDestination, indexCardOrigin);
-                            m_ctrlAnim.startAnimationMovingCard(static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
+                            m_ctrlAnim.startAnimationMovingCard(play, static_cast<CtrlAnimation::LocationAnimation>(idPacketOrigin), static_cast<CtrlAnimation::LocationAnimation>(idPacketDestination));
                         }
                     }
                     else
