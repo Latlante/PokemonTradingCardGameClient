@@ -605,6 +605,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         const QString opponent = objAction["opponent"].toString();
                         m_listOfGamesAvailable->addNewGame(uidGame, nameGame, opponent);
                     }
+                    else
+                        qWarning() << __PRETTY_FUNCTION__ << "PHASE_NotifPlayerIsReady does not contain \"uidGame\" and/or \"nameGame\" and/or \"opponent\"";
                 }
                     break;
 
