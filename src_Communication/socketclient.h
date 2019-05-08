@@ -38,7 +38,8 @@ public:
 
 signals:
     void connected();
-    void newNotification(QJsonDocument);
+    void newMessage();
+    void newNotification(const QJsonDocument&);
 
 private slots:
     void onConnected_Socket();
@@ -49,6 +50,7 @@ private:
 
     QString m_token;
     quint16 m_sizeAnswerAsynchrone;
+    QJsonDocument m_documentBufferNewMessage;
 
     bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
 };

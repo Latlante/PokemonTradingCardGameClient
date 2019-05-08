@@ -17,7 +17,8 @@ SocketClient::SocketClient(QObject *parent) :
     AbstractSocketClient(parent),
     m_socket(new QTcpSocket(this)),
     m_token(""),
-    m_sizeAnswerAsynchrone(0)
+    m_sizeAnswerAsynchrone(0),
+    m_documentBufferNewMessage()
 {
     connect(m_socket, &QTcpSocket::connected, this, &SocketClient::onConnected_Socket);
     connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
@@ -494,7 +495,28 @@ void SocketClient::onReadyRead_Socket()
 
     if(jsonError.error == QJsonParseError::NoError)
     {
-        emit newNotification(docNotif);
+        //get Phase to know the kind of message
+        if(docNotif.isObject())
+        {
+            QJsonObject obj = docNotif.object();
+
+            //All message must contain "phase" except for the authentification
+            if(obj.contains("phase"))
+            {
+                int phase = obj["phase"].toInt();
+
+                if(phase < static_cast<int>(ConstantesShared::PHASE_NotifNewGameCreated))
+                {
+                    m_documentBufferNewMessage = docNotif;
+                    emit newMessage();
+                }
+                else
+                    emit newNotification(docNotif);
+            }
+            else
+                emit newNotification(docNotif);
+        }
+
         m_sizeAnswerAsynchrone = 0;
     }
     else
@@ -526,9 +548,7 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
 
     //init loop to synchronize with the answer
     QEventLoop loop;
-        //disconnect private slot to get message here
-    disconnect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
-    connect(m_socket, &QTcpSocket::readyRead, &loop, &QEventLoop::quit);
+    connect(this, &SocketClient::newMessage, &loop, &QEventLoop::quit);
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
 
     //send the request
@@ -540,35 +560,9 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
     //Check we not pass because the timer time out
     if(timerTimeOut.isActive())
     {
-        //Check we have the minimum to start reading
-        while(m_socket->bytesAvailable() < sizeof(quint16))
-            loop.exec();
-    }
-
-    if(timerTimeOut.isActive())
-    {
-        //init the answer
-        QByteArray responseSerialize;
-        QDataStream requestToRead(m_socket);
-        quint16 sizeAnswer = 0;
-
-        requestToRead >> sizeAnswer;
-
-        //Check we have all the answer
-        while(m_socket->bytesAvailable() < sizeAnswer)
-            loop.exec();
-
-        //From here, we have everything, so we are not listening anymore, we can reconnect the slot and stop the timer
-        connect(m_socket, &QTcpSocket::readyRead, this, &SocketClient::onReadyRead_Socket);
-        if(timerTimeOut.isActive())
-        {
-            timerTimeOut.stop();
-            requestToRead >> responseSerialize;
-            jsonResponse = QJsonDocument::fromJson(responseSerialize);
-            success = true;
-        }
-        else
-            qDebug() << __PRETTY_FUNCTION__ << "Time out";
+        timerTimeOut.stop();
+        jsonResponse = m_documentBufferNewMessage;
+        success = true;
     }
     else
         qDebug() << __PRETTY_FUNCTION__ << "Time out";
