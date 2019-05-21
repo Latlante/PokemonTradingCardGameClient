@@ -1397,7 +1397,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
                     }
                 }
 
-                playerOpponent->bench()->addNewCard(pokemon);
+                playerOpponent->fight()->addNewCard(pokemon);
             }
 
         }
