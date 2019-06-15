@@ -637,9 +637,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                     }
                                 }
                             }
-
                         }
-
                     }
                     else
                         qWarning() << __PRETTY_FUNCTION__ << "PHASE_NotifPlayerIsReady does not contain \"everyoneIsReady\"";
@@ -968,6 +966,7 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
         switch(phase)
         {
         case ConstantesShared::PHASE_NotifDisplayPacket:
+            qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayPacket";
             if((objDisplay.contains("quantity")) && (objDisplay.contains("packet")))
             {
                 //Initialization of data received
@@ -1010,10 +1009,15 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                         qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
                     }
                 }
+                else
+                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayPacket: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayPacket: object does not contain \"quantity\" and/or \"packet\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
             break;
 
         case ConstantesShared::PHASE_NotifDisplayAllElements:
+            qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayAllElements";
             if((objDisplay.contains("quantity")) && (objDisplay.contains("elements")))
             {
                 //Initialization of data received
@@ -1060,10 +1064,15 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                         qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
                     }
                 }
+                else
+                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: object does not contain \"quantity\" and/or \"elements\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
             break;
 
         case ConstantesShared::PHASE_NotifDisplayHiddenPacket:
+            qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayHiddenPacket";
             if((objDisplay.contains("quantity")) && (objDisplay.contains("numberOfCards")))
             {
                 //Initialization of data received
@@ -1106,10 +1115,15 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                         qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
                     }
                 }
+                else
+                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayHiddenPacket: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayHiddenPacket: object does not contain \"quantity\" and/or \"numberOfCards\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
             break;
 
         case ConstantesShared::PHASE_NotifDisplayEnergiesForAPokemon:
+            qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayEnergiesForAPokemon";
             if((objDisplay.contains("quantity")) && (objDisplay.contains("packet")))
             {
                 //Initialization of data received
@@ -1150,10 +1164,15 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                         qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
                     }
                 }
+                else
+                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: object does not contain \"quantity\" and/or \"packet\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
             break;
 
         case ConstantesShared::PHASE_NotifDisplayAttacksPokemon:
+            qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayAttacksPokemon";
             if((objDisplay.contains("quantity")) && (objDisplay.contains("numberOfCards")))
             {
                 //Initialization of data received
@@ -1191,9 +1210,17 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                                 qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
                             }
                         }
+                        else
+                            qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
                     }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: abCard is not a pokemon card";
                 }
+                else
+                    qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: abCard is nullptr";
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: object does not contain \"quantity\" and/or \"numberOfCards\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
             break;
 
         default:
@@ -1332,6 +1359,7 @@ void CtrlGameBoard::fillBoardPlayerOpponent(QJsonObject objEnemy)
         if(objEnemy.contains("bench"))
         {
             QJsonArray arrayBench = objEnemy["bench"].toArray();
+            qDebug() << __PRETTY_FUNCTION__ << arrayBench.count() << "pokemons find in bench";
             for(int indexBench=0;indexBench<arrayBench.count();++indexBench)
             {
                 QJsonObject objPokemon = arrayBench[indexBench].toObject();
