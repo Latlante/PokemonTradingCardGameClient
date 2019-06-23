@@ -38,19 +38,26 @@ void ModelPopupSelectCardInPacket::addPacketFromAbstractPacket(AbstractPacket *p
         for(int i=0;i<packet->countCard();++i)
         {
             AbstractCard *abCard = packet->card(i);
-            if((abCard->type() == m_typeOfCardFilter) || (m_typeOfCardFilter == AbstractCard::TypeOfCard_Whatever))
+            if(abCard != nullptr)
             {
-                SelectionCards selection;
-                selection.card = packet->card(i);
-                selection.selected = false;
-                selection.flipped = false;
+                if((abCard->type() == m_typeOfCardFilter) || (m_typeOfCardFilter == AbstractCard::TypeOfCard_Whatever))
+                {
+                    SelectionCards selection;
+                    selection.card = packet->card(i);
+                    selection.selected = false;
+                    selection.flipped = false;
 
-                beginInsertRows(QModelIndex(), rowCount(), rowCount());
-                m_listCards.append(selection);
-                endInsertRows();
+                    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+                    m_listCards.append(selection);
+                    endInsertRows();
+                }
             }
+            else
+                qCritical() << __PRETTY_FUNCTION__ << "abCard is nullptr";
         }
     }
+    else
+        qCritical() << __PRETTY_FUNCTION__ << "packet is nullptr";
 }
 
 void ModelPopupSelectCardInPacket::addPacketFromModelListEnergies(ModelListEnergies *model)
@@ -237,9 +244,13 @@ QHash<int, QByteArray> ModelPopupSelectCardInPacket::roleNames() const
 ************************************************************/
 void ModelPopupSelectCardInPacket::cleanPacket()
 {
-    beginRemoveRows(QModelIndex(), 0, rowCount());
-    m_listCards.clear();
-    endRemoveRows();
+    qDebug() << __PRETTY_FUNCTION__ << "rowCount" << rowCount();
+    if(rowCount() > 0)
+    {
+        beginRemoveRows(QModelIndex(), 0, rowCount());
+        m_listCards.clear();
+        endRemoveRows();
 
-    emit numberOfCardsSelectedChanged();
+        emit numberOfCardsSelectedChanged();
+    }
 }
