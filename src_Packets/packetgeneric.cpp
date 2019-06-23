@@ -82,7 +82,8 @@ void PacketGeneric::insertNewCard(int index, AbstractCard* newCard)
     else
     {
         beginInsertRows(QModelIndex(), rowCount(), index);
-        m_listCards.resize(index + 1);
+        m_listCards.resize(index);
+        m_listCards.push_back(newCard);
         endInsertRows();
     }
 
