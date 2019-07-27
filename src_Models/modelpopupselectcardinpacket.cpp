@@ -80,6 +80,23 @@ void ModelPopupSelectCardInPacket::addPacketFromModelListEnergies(ModelListEnerg
     }
 }
 
+void ModelPopupSelectCardInPacket::addNumberOfCards(int count)
+{
+    cleanPacket();
+
+    for(int i=0;i<count;++i)
+    {
+        SelectionCards selection;
+        selection.card = nullptr;
+        selection.selected = false;
+        selection.flipped = false;
+
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+        m_listCards.append(selection);
+        endInsertRows();
+    }
+}
+
 void ModelPopupSelectCardInPacket::replaceCard(int indexSelection, AbstractCard* newCard)
 {
     SelectionCards selection = m_listCards[indexSelection];
@@ -175,7 +192,14 @@ QVariant ModelPopupSelectCardInPacket::data(const QModelIndex &index, int role) 
 
     switch(role)
     {
-    case SelectCardsRole_ImageCard:     return m_listCards[iRow].card->image();
+    case SelectCardsRole_ImageCard:
+    {
+        AbstractCard* abCard = m_listCards[iRow].card;
+        if(abCard != nullptr)
+            return abCard->image();
+
+        return AbstractCard::imageByDefault();
+    }
     case SelectCardsRole_Selected:      return m_listCards[iRow].selected;
     case SelectCardsRole_Flip:          return m_listCards[iRow].flipped;
     }

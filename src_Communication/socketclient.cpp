@@ -505,7 +505,9 @@ void SocketClient::onReadyRead_Socket()
             {
                 int phase = obj["phase"].toInt();
 
-                if(phase < static_cast<int>(ConstantesShared::PHASE_NotifNewGameCreated))
+                if((phase < static_cast<int>(ConstantesShared::PHASE_NotifNewGameCreated)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayPacketResponse)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayHiddenPacketResponse)))
                 {
                     m_documentBufferNewMessage = docNotif;
                     emit newMessage();

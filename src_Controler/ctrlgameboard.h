@@ -79,6 +79,8 @@ signals:
 private slots:
     void onMovingCardAnimationStart();
     void onNewNotification(QJsonDocument docActions);
+    void onSelectionCardsFinished_CtrlPopup();
+    void onSelectionHiddenCardFinished_CtrPopup();
 
 private:
     SocketClient* m_socket;

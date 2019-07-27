@@ -6,6 +6,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QtQml/qqml.h>
+#include <QTimer>
 
 #include "common/database.h"
 #include "src_Cards/cardpokemon.h"
@@ -20,6 +21,7 @@ CtrlPopups::CtrlPopups(QObject *parent) :
     m_modelSelectCardInPacket(new ModelPopupSelectCardInPacket()),
     m_selectCardInPacketVisible(false),
     m_selectHiddenCardVisible(false),
+    m_animationFlippedCards(false),
     m_popupSelectingAttacks_Visible(false),
     m_popupSelectingAttacks_Card(nullptr),
     m_popupSelectingAttacks_IndexAttack(-1),
@@ -97,7 +99,7 @@ ModelPopupSelectCardInPacket* CtrlPopups::modelSelectCardInPacket()
     return m_modelSelectCardInPacket;
 }
 
-QList<AbstractCard *> CtrlPopups::displayPacket(AbstractPacket *packet, unsigned short quantity, AbstractCard::Enum_typeOfCard typeOfCard)
+void CtrlPopups::displayPacket(AbstractPacket *packet, unsigned short quantity, AbstractCard::Enum_typeOfCard typeOfCard)
 {
     //Vérification
     unsigned short newQuantity = quantity;
@@ -111,7 +113,7 @@ QList<AbstractCard *> CtrlPopups::displayPacket(AbstractPacket *packet, unsigned
     setSelectCardInPacketVisible(true);
 
     //En attente
-    QEventLoop loop;
+    /*QEventLoop loop;
     connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
     loop.exec();
 
@@ -119,7 +121,7 @@ QList<AbstractCard *> CtrlPopups::displayPacket(AbstractPacket *packet, unsigned
     setSelectCardInPacketVisible(false);
 
     //Renvoi de l'information
-    return m_modelSelectCardInPacket->listCardsSelected();
+    return m_modelSelectCardInPacket->listCardsSelected();*/
 }
 
 QList<AbstractCard *> CtrlPopups::displayAllElements(unsigned short quantity)
@@ -133,6 +135,21 @@ QList<AbstractCard *> CtrlPopups::displayAllElements(unsigned short quantity)
     PacketDynamicCustom* packetAllEnergies = new PacketDynamicCustom("all Energies", listCards);
 
     return displayPacket(packetAllEnergies, quantity);*/
+}
+
+void CtrlPopups::closeDisplayPacket()
+{
+    setSelectCardInPacketVisible(false);
+}
+
+QList<AbstractCard*> CtrlPopups::listCardsSelected()
+{
+    return m_modelSelectCardInPacket->listCardsSelected();
+}
+
+QList<int> CtrlPopups::listIndexCardsSelected()
+{
+    return m_modelSelectCardInPacket->listIndexSelected();
 }
 
 bool CtrlPopups::selectCardInPacketVisible()
@@ -153,23 +170,28 @@ void CtrlPopups::setSelectCardInPacketVisible(bool state)
 //**************************************
 //          SELECT HIDDEN CARD
 //**************************************
-QList<int> CtrlPopups::displaySelectHiddenCard(int numberOfCards, unsigned short quantity)
+void CtrlPopups::displaySelectHiddenCard(int numberOfCards, unsigned short quantity)
 {
-    PacketGeneric* packet = new PacketGeneric("hiddenCards", numberOfCards);
+    //PacketGeneric* packet = new PacketGeneric("hiddenCards", numberOfCards);
 
     //Initialisation
     m_modelSelectCardInPacket->setNumberOfCardsToSelect(quantity);
-    m_modelSelectCardInPacket->addPacketFromAbstractPacket(packet);
+    m_modelSelectCardInPacket->addNumberOfCards(numberOfCards);
     setSelectHiddenCardVisible(true);
 
     //En attente
-    QEventLoop loop;
-    connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
-    loop.exec();
+//    QEventLoop loop;
+//    connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
+//    loop.exec();
 
-    //Configuration de fin
-    //setSelectHiddenCardVisible(false);
+//    //Configuration de fin
+//    setSelectHiddenCardVisible(false);
 
+//    return m_modelSelectCardInPacket->listIndexSelected();
+}
+
+QList<int> CtrlPopups::listHiddenCardSelected()
+{
     return m_modelSelectCardInPacket->listIndexSelected();
 }
 
@@ -189,9 +211,9 @@ void CtrlPopups::selectHiddenCardShowCardsSelected(QList<AbstractCard*> listCard
     }
 
     //En attente
-    QEventLoop loop;
+    /*QEventLoop loop;
     connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
-    loop.exec();
+    loop.exec();*/
 }
 
 bool CtrlPopups::selectHiddenCardVisible()
@@ -208,6 +230,38 @@ void CtrlPopups::setSelectHiddenCardVisible(bool state)
         emit selectHiddenCardVisibleChanged();
     }
 }
+
+bool CtrlPopups::animationFlippedCards()
+{
+    return m_animationFlippedCards;
+}
+
+void CtrlPopups::startAnimationFlippedCards()
+{
+    if(m_animationFlippedCards != true)
+    {
+        //Création d'un effet de "Trigger"
+        m_animationFlippedCards = true;
+        emit animationFlippedCardsChanged();
+
+        QEventLoop loop;
+        QTimer timer;
+        connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+        timer.start(3000);
+        loop.exec();
+
+        m_animationFlippedCards = false;
+        emit animationFlippedCardsChanged();
+
+        //Configuration de fin
+        setSelectHiddenCardVisible(false);
+    }
+}
+
+/*void CtrlPopups::selectHiddenCardDone()
+{
+    emit selectionHiddenCardFinished();
+}*/
 
 //**************************************
 //            SELECT ATTACK

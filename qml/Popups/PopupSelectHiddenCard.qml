@@ -11,9 +11,25 @@ Item {
     property int space: 4   //PAS DE NOMBRE IMPAIRE
 
     property int numberOfCardsSelected: viewCards.model.numberOfCardsSelected
+    property bool animationFlippedCards: ctrlPopups.animationFlippedCards
+
 
     onNumberOfCardsSelectedChanged: {
         title.text = "Sélection (" + viewCards.model.numberOfCardsSelected + "/" + viewCards.model.numberOfCardsToSelect() + ")";
+    }
+
+    onAnimationFlippedCardsChanged: {
+        if(animationFlippedCards === true)
+            showCardsSelected();
+    }
+
+    function showCardsSelected()
+    {
+        //On lance l'animation pour retourner la carte
+        viewCards.model.flipIfSelected()
+
+        //On lance le timer avant que la page se ferme
+        //timerBeforeClosing.start()
     }
 
     Rectangle {
@@ -100,11 +116,16 @@ Item {
                 //On bloque l'affiche pour que l'utilisateur ne clique pas partout
                 popupSelectHiddenCard1.enabled = false
 
+                //On renvoie les cartes sélectionnées
+                ctrlPopups.selectionCardsFinished()
+
+                /*popupSelectHiddenCard1.enabled = false
+
                 //On lance l'animation pour retourner la carte
                 viewCards.model.flipIfSelected()
 
                 //On lance le timer avant que la page se ferme
-                timerBeforeClosing.start()
+                timerBeforeClosing.start()*/
             }
         }
 

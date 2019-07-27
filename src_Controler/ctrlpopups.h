@@ -24,6 +24,7 @@ class CtrlPopups : public QObject
 
     //SELECT HIDDEN CARD
     Q_PROPERTY(bool selectHiddenCardVisible READ selectHiddenCardVisible WRITE setSelectHiddenCardVisible NOTIFY selectHiddenCardVisibleChanged)
+    Q_PROPERTY(bool animationFlippedCards READ animationFlippedCards NOTIFY animationFlippedCardsChanged)
 
     //SELECT ATTACK
     Q_PROPERTY(bool popupSelectingAttacks_Visible READ popupSelectingAttacks_Visible WRITE setPopupSelectingAttacks_Visible NOTIFY popupSelectingAttacks_VisibleChanged)
@@ -54,16 +55,23 @@ public:
 
     //SELECT CARD IN PACKET
     Q_INVOKABLE ModelPopupSelectCardInPacket* modelSelectCardInPacket();
-    QList<AbstractCard *> displayPacket(AbstractPacket* packet, unsigned short quantity = 1, AbstractCard::Enum_typeOfCard typeOfCard = AbstractCard::TypeOfCard_Whatever);
+    void displayPacket(AbstractPacket* packet, unsigned short quantity = 1, AbstractCard::Enum_typeOfCard typeOfCard = AbstractCard::TypeOfCard_Whatever);
     QList<AbstractCard *> displayAllElements(unsigned short quantity = 1);
+    void closeDisplayPacket();
+    QList<AbstractCard*> listCardsSelected();
+    QList<int> listIndexCardsSelected();
     bool selectCardInPacketVisible();
     void setSelectCardInPacketVisible(bool state);
 
     //SELECT HIDDEN CARD
-    QList<int> displaySelectHiddenCard(int numberOfCards, unsigned short quantity);
+    void displaySelectHiddenCard(int numberOfCards, unsigned short quantity);
+    QList<int> listHiddenCardSelected();
     void selectHiddenCardShowCardsSelected(QList<AbstractCard*> listCards);
     bool selectHiddenCardVisible();
     void setSelectHiddenCardVisible(bool state);
+    bool animationFlippedCards();
+    void startAnimationFlippedCards();
+    //Q_INVOKABLE void selectHiddenCardDone();
 
     //SELECT ATTACK
     int displayAttacks(CardPokemon* card, bool authorizeRetreat);
@@ -106,6 +114,8 @@ signals:
 
     //SELECT HIDDEN CARD
     void selectHiddenCardVisibleChanged();
+    void animationFlippedCardsChanged();
+    void selectionHiddenCardFinished();
 
     //SELECT ATTACK
     void popupSelectingAttacks_VisibleChanged();
@@ -135,6 +145,7 @@ private:
 
     //SELECT HIDDEN CARD
     bool m_selectHiddenCardVisible;
+    bool m_animationFlippedCards;
 
     //SELECT ATTACK
     bool m_popupSelectingAttacks_Visible;

@@ -37,6 +37,7 @@ public:
 
     void addPacketFromAbstractPacket(AbstractPacket* packet);
     void addPacketFromModelListEnergies(ModelListEnergies* model);
+    void addNumberOfCards(int count);
     void replaceCard(int indexSelection, AbstractCard* newCard);
 
     Q_INVOKABLE unsigned short numberOfCardsToSelect();
