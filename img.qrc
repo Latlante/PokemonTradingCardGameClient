@@ -9,6 +9,7 @@
     <qresource prefix="/">
         <file>Images/logo.png</file>
         <file>Images/P_Loader.png</file>
+        <file>Images/refresh-arrows.png</file>
     </qresource>
     <qresource prefix="/status">
         <file alias="confused.png">Images/status/confused.png</file>

@@ -150,7 +150,22 @@ Item {
                         font.bold: true
                     }
 
-                    Rectangle {
+                    Image {
+                        id: imageButtonRefresh
+                        width: parent.height
+                        height: parent.height
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        source: "qrc:/Images/refresh-arrows.png"
+
+                        MouseArea {
+                            id: mouseAreaButtonRefresh
+                            anchors.fill: parent
+                            onClicked: ctrlGameBoard.listOfGamesAlreadyExisting()
+                        }
+                    }
+
+                    /*Rectangle {
                         id: rectangleContainerButtonRefresh
                         width: parent.height
                         height: parent.height
@@ -163,7 +178,7 @@ Item {
                             anchors.fill: parent
                             onClicked: ctrlGameBoard.listOfGamesAlreadyExisting()
                         }
-                    }
+                    }*/
                 }
 
 
