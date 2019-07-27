@@ -271,7 +271,7 @@ void ModelPopupSelectCardInPacket::cleanPacket()
     qDebug() << __PRETTY_FUNCTION__ << "rowCount" << rowCount();
     if(rowCount() > 0)
     {
-        beginRemoveRows(QModelIndex(), 0, rowCount());
+        beginRemoveRows(QModelIndex(), 0, rowCount()-1);
         m_listCards.clear();
         endRemoveRows();
 
