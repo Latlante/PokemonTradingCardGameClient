@@ -784,7 +784,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                 case ConstantesShared::PHASE_NotifDataPokemonChanged:
                 {
                     qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDataPokemonChanged";
-                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) && (objAction.contains("lifeLeft")) && (objAction.contains("attacks")))
+                    if((objAction.contains("namePlayer")) && (objAction.contains("idPacket")) && (objAction.contains("indexCard")) &&
+                            (objAction.contains("lifeLeft")) && (objAction.contains("attacks")) && (objAction.contains("status")))
                     {
                         const QString namePlayer = objAction["namePlayer"].toString();
                         Player* play = m_gameManager->playerByName(namePlayer);
@@ -804,9 +805,11 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                         CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
 
                                         int lifeLeft = objAction["lifeLeft"].toInt();
+                                        int status = objAction["status"].toInt();
                                         QJsonArray arrayAttacks = objAction["attacks"].toArray();
 
                                         pokemon->setLifeLeft(static_cast<unsigned short>(lifeLeft));
+                                        pokemon->setStatus(static_cast<CardPokemon::Enum_statusOfPokemon>(status));
                                         for(int i=0;i<arrayAttacks.count();++i)
                                         {
                                             QJsonObject objAttack = arrayAttacks[i].toObject();
