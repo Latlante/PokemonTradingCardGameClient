@@ -401,6 +401,8 @@ bool SocketClient::responseDisplayHiddenPacket(int idGame, QList<int> listIndex,
             success = true;
             jsonResponse = response;
         }
+        else
+            qWarning() << __PRETTY_FUNCTION__ << "response is empty";
     }
 
     return success;
@@ -490,6 +492,7 @@ void SocketClient::onReadyRead_Socket()
 
     //From here, we have everything, so we can get all the message
     requestToRead >> responseSerialize;
+    qDebug() << __PRETTY_FUNCTION__ << "response serialize:" << responseSerialize;
     QJsonParseError jsonError;
     QJsonDocument docNotif = QJsonDocument::fromJson(responseSerialize, &jsonError);
 
@@ -520,6 +523,7 @@ void SocketClient::onReadyRead_Socket()
         }
 
         m_sizeAnswerAsynchrone = 0;
+        qDebug() << __PRETTY_FUNCTION__ << "end of the function";
     }
     else
     {
