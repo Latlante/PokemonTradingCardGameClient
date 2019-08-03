@@ -201,6 +201,19 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
         if (cardToDelete != nullptr)
         {
+            //move energies if the card is a pokemon
+            if((cardToDelete->type() == AbstractCard::TypeOfCard_Pokemon) && (cardToMove->type() == AbstractCard::TypeOfCard_Pokemon))
+            {
+                CardPokemon* cardPokToDelete = dynamic_cast<CardPokemon*>(cardToDelete);
+                CardPokemon* cardPokToMove = dynamic_cast<CardPokemon*>(cardToMove);
+                if((cardPokToDelete != nullptr) && (cardPokToMove != nullptr))
+                {
+                    QList<CardEnergy*> listAllEnergies = cardPokToDelete->takeAllEnergies();
+                    foreach(CardEnergy* energy, listAllEnergies)
+                        cardPokToMove->addEnergy(energy);
+                }
+            }
+
             delete cardToDelete;
             cardToDelete = nullptr;
         }
