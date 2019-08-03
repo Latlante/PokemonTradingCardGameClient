@@ -367,8 +367,6 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
                 m_ctrlPopups.displayMessage("Victoire de " + obj["winner"].toString());
                 break;
             }
-
-
         }
         else
         {
@@ -468,7 +466,7 @@ void CtrlGameBoard::attackRetreat(CardPokemon* pokemon)
     {
         qDebug() << __PRETTY_FUNCTION__ << pokemon->name();
 
-        int indexAttack = m_ctrlPopups.displayAttacks(pokemon, true);
+        int indexAttack = m_ctrlPopups.displayAttacksWithLoopEvent(pokemon, true);
 
         if(indexAttack < 4)
         {
@@ -597,6 +595,47 @@ void CtrlGameBoard::onSelectionCardsFinished_CtrlPopup()
         qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayPacket: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
 }
 
+void CtrlGameBoard::onSelectionAllElements_CtrlPopup()
+{
+    disconnect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionAllElements_CtrlPopup);
+    qDebug() << __PRETTY_FUNCTION__;
+
+    //Initialization of data to send back
+    QList<AbstractCard*> listCardsSelected = m_ctrlPopups.listCardsSelected();
+    QList<int> listElements;
+    foreach(AbstractCard* card, listCardsSelected)
+    {
+        if(card != nullptr)
+        {
+            if(card->type() == AbstractCard::TypeOfCard_Energy)
+                listElements.append(static_cast<CardEnergy*>(card)->element());
+        }
+    }
+
+    //Send data
+    QJsonDocument jsonResponse;
+    if(m_socket->responseDisplayAllElements(m_gameManager->uidGame(), listElements, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
+
+        if(obj["success"].toString() == "ok")
+        {
+            m_ctrlAnim.setStepInProgress(false);
+            //Nothing to do because changes are in actions
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+        }
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+}
+
 void CtrlGameBoard::onSelectionHiddenCardFinished_CtrPopup()
 {
     disconnect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionHiddenCardFinished_CtrPopup);
@@ -640,6 +679,66 @@ void CtrlGameBoard::onSelectionHiddenCardFinished_CtrPopup()
     }
     else
         qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayHiddenPacket: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+}
+
+void CtrlGameBoard::onSelectionEnergiesForAPokemon_CtrlPopup()
+{
+    disconnect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionEnergiesForAPokemon_CtrlPopup);
+    qDebug() << __PRETTY_FUNCTION__;
+
+    //Initialization of data to send back
+    QList<int> listIndexSelected = m_ctrlPopups.listIndexCardsSelected();
+
+    //Send data
+    QJsonDocument jsonResponse;
+    if(m_socket->responseDisplayEnergiesForAPokemon(m_gameManager->uidGame(), listIndexSelected, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
+
+        if(obj["success"].toString() == "ok")
+        {
+            m_ctrlAnim.setStepInProgress(false);
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+        }
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+}
+
+void CtrlGameBoard::onSelectionAttacksPokemon_CtrlPopup()
+{
+    disconnect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionAttacksPokemon_CtrlPopup);
+    qDebug() << __PRETTY_FUNCTION__;
+
+    int indexAttackSelected = m_ctrlPopups.popupSelectingAttacks_IndexAttack();
+    QJsonDocument jsonResponse;
+    if(m_socket->responseDisplayAttacksPokemon(m_gameManager->uidGame(), indexAttackSelected, jsonResponse))
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "request success";
+        QJsonObject obj = jsonResponse.object();
+
+        if(obj.contains("actions"))
+            executeActions(obj["actions"].toObject());
+
+        if(obj["success"].toString() == "ok")
+        {
+            m_ctrlAnim.setStepInProgress(false);
+            //Nothing to do because changes are in actions
+        }
+        else
+        {
+            qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+        }
+    }
+    else
+        qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
 }
 
 /************************************************************
@@ -1016,8 +1115,6 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         }
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
-
-
                     }
 
                 }
@@ -1029,7 +1126,6 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
             }
             else
                 qWarning() << __PRETTY_FUNCTION__ << "objAction is empty";
-
         }
     }
     else
@@ -1112,43 +1208,44 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                     packet->addNewCard(db.cardById(arrayPacket[i].toInt()));
                 }
 
+                connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionAllElements_CtrlPopup, Qt::UniqueConnection);
+
                 //Display elements
-                QList<AbstractCard*> listCardsSelected;
                 m_ctrlPopups.displayPacket(packet, quantity);
 
-                //Initialization of data to send back
-                QList<int> listElements;
-                foreach(AbstractCard* card, listCardsSelected)
-                {
-                    if(card != nullptr)
-                    {
-                        if(card->type() == AbstractCard::TypeOfCard_Energy)
-                            listElements.append(static_cast<CardEnergy*>(card)->element());
-                    }
-                }
+//                //Initialization of data to send back
+//                QList<int> listElements;
+//                foreach(AbstractCard* card, listCardsSelected)
+//                {
+//                    if(card != nullptr)
+//                    {
+//                        if(card->type() == AbstractCard::TypeOfCard_Energy)
+//                            listElements.append(static_cast<CardEnergy*>(card)->element());
+//                    }
+//                }
 
-                //Send data
-                QJsonDocument jsonResponse;
-                if(m_socket->responseDisplayAllElements(m_gameManager->uidGame(), listElements, jsonResponse))
-                {
-                    qDebug() << __PRETTY_FUNCTION__ << "request success";
-                    QJsonObject obj = jsonResponse.object();
+//                //Send data
+//                QJsonDocument jsonResponse;
+//                if(m_socket->responseDisplayAllElements(m_gameManager->uidGame(), listElements, jsonResponse))
+//                {
+//                    qDebug() << __PRETTY_FUNCTION__ << "request success";
+//                    QJsonObject obj = jsonResponse.object();
 
-                    if(obj.contains("actions"))
-                        executeActions(obj["actions"].toObject());
+//                    if(obj.contains("actions"))
+//                        executeActions(obj["actions"].toObject());
 
-                    if(obj["success"].toString() == "ok")
-                    {
-                        m_ctrlAnim.setStepInProgress(false);
-                        //Nothing to do because changes are in actions
-                    }
-                    else
-                    {
-                        qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
-                    }
-                }
-                else
-                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+//                    if(obj["success"].toString() == "ok")
+//                    {
+//                        m_ctrlAnim.setStepInProgress(false);
+//                        //Nothing to do because changes are in actions
+//                    }
+//                    else
+//                    {
+//                        qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+//                    }
+//                }
+//                else
+//                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
             else
                 qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAllElements: object does not contain \"quantity\" and/or \"elements\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
@@ -1164,6 +1261,7 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                 int numberOfCards = objDisplay["numberOfCards"].toInt();
 
                 connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionHiddenCardFinished_CtrPopup, Qt::UniqueConnection);
+
                 //Display packet
                 m_ctrlPopups.displaySelectHiddenCard(numberOfCards, quantity);
 //                QList<int> listIndexSelected = m_ctrlPopups.displaySelectHiddenCard(numberOfCards, quantity);
@@ -1209,12 +1307,12 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
 
         case ConstantesShared::PHASE_NotifDisplayEnergiesForAPokemon:
             qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifDisplayEnergiesForAPokemon";
-            if((objDisplay.contains("quantity")) && (objDisplay.contains("packet")))
+            if((objDisplay.contains("quantity")) && (objDisplay.contains("elements")))
             {
                 //Initialization of data received
                 Database db;
                 int quantity = objDisplay["quantity"].toInt();
-                QJsonArray arrayPacket = objDisplay["packet"].toArray();
+                QJsonArray arrayPacket = objDisplay["elements"].toArray();
                 PacketCardsWithIndex* packet = new PacketCardsWithIndex("displayEnergies");
                 for(int i=0;i<arrayPacket.count();++i)
                 {
@@ -1222,36 +1320,37 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                     packet->addNewCard(db.cardById(objCard["idEnergy"].toInt()), objCard["indexPacket"].toInt());
                 }
 
+                connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionEnergiesForAPokemon_CtrlPopup, Qt::UniqueConnection);
+
                 //Display packet
-                QList<AbstractCard*> listCardsSelected;
                 m_ctrlPopups.displayPacket(packet, quantity);
 
-                //Initialization of data to send back
-                QList<int> listIndexPacket;
-                foreach(AbstractCard* card, listCardsSelected)
-                    listIndexPacket.append(packet->indexFromCard(card));
+//                //Initialization of data to send back
+//                QList<int> listIndexPacket;
+//                foreach(AbstractCard* card, listCardsSelected)
+//                    listIndexPacket.append(packet->indexFromCard(card));
 
-                //Send data
-                QJsonDocument jsonResponse;
-                if(m_socket->responseDisplayEnergiesForAPokemon(m_gameManager->uidGame(), listIndexPacket, jsonResponse))
-                {
-                    qDebug() << __PRETTY_FUNCTION__ << "request success";
-                    QJsonObject obj = jsonResponse.object();
+//                //Send data
+//                QJsonDocument jsonResponse;
+//                if(m_socket->responseDisplayEnergiesForAPokemon(m_gameManager->uidGame(), listIndexPacket, jsonResponse))
+//                {
+//                    qDebug() << __PRETTY_FUNCTION__ << "request success";
+//                    QJsonObject obj = jsonResponse.object();
 
-                    if(obj.contains("actions"))
-                        executeActions(obj["actions"].toObject());
+//                    if(obj.contains("actions"))
+//                        executeActions(obj["actions"].toObject());
 
-                    if(obj["success"].toString() == "ok")
-                    {
-                        m_ctrlAnim.setStepInProgress(false);
-                    }
-                    else
-                    {
-                        qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
-                    }
-                }
-                else
-                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+//                    if(obj["success"].toString() == "ok")
+//                    {
+//                        m_ctrlAnim.setStepInProgress(false);
+//                    }
+//                    else
+//                    {
+//                        qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+//                    }
+//                }
+//                else
+//                    qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
             }
             else
                 qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayEnergiesForAPokemon: object does not contain \"quantity\" and/or \"packet\":" << QJsonDocument(objDisplay).toJson(QJsonDocument::Compact);
@@ -1273,31 +1372,33 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                     {
                         CardPokemon* pokemon = static_cast<CardPokemon*>(abCard);
 
+                        connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionAttacksPokemon_CtrlPopup, Qt::UniqueConnection);
+
                         //Display packet
-                        int indexAttack = m_ctrlPopups.displayAttacks(pokemon, retreatEnable);
+                        /*int indexAttack = */m_ctrlPopups.displayAttacks(pokemon, retreatEnable);
 
                         //Send data
-                        QJsonDocument jsonResponse;
-                        if(m_socket->responseDisplayAttacksPokemon(m_gameManager->uidGame(), indexAttack, jsonResponse))
-                        {
-                            qDebug() << __PRETTY_FUNCTION__ << "request success";
-                            QJsonObject obj = jsonResponse.object();
+//                        QJsonDocument jsonResponse;
+//                        if(m_socket->responseDisplayAttacksPokemon(m_gameManager->uidGame(), indexAttack, jsonResponse))
+//                        {
+//                            qDebug() << __PRETTY_FUNCTION__ << "request success";
+//                            QJsonObject obj = jsonResponse.object();
 
-                            if(obj.contains("actions"))
-                                executeActions(obj["actions"].toObject());
+//                            if(obj.contains("actions"))
+//                                executeActions(obj["actions"].toObject());
 
-                            if(obj["success"].toString() == "ok")
-                            {
-                                m_ctrlAnim.setStepInProgress(false);
-                                //Nothing to do because changes are in actions
-                            }
-                            else
-                            {
-                                qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
-                            }
-                        }
-                        else
-                            qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
+//                            if(obj["success"].toString() == "ok")
+//                            {
+//                                m_ctrlAnim.setStepInProgress(false);
+//                                //Nothing to do because changes are in actions
+//                            }
+//                            else
+//                            {
+//                                qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+//                            }
+//                        }
+//                        else
+//                            qWarning() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: error in response:" << jsonResponse.toJson(QJsonDocument::Compact);
                     }
                     else
                         qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDisplayAttacksPokemon: abCard is not a pokemon card";

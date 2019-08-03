@@ -549,6 +549,11 @@ CardEnergy* CardPokemon::takeEnergy(int index)
     return m_modelListEnergies->takeEnergy(index);
 }
 
+QList<CardEnergy*> CardPokemon::takeAllEnergies()
+{
+    return m_modelListEnergies->takeAllEnergies();
+}
+
 void CardPokemon::moveEnergiesInTrash(QList<CardEnergy*> listEnergies)
 {
 #ifdef TRACAGE_PRECIS

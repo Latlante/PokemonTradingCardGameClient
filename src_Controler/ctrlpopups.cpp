@@ -18,6 +18,7 @@
 CtrlPopups::CtrlPopups(QObject *parent) :
     QObject(parent),
     m_onePopupIsDisplayed(false),
+    m_popupIsEnabled(true),
     m_modelSelectCardInPacket(new ModelPopupSelectCardInPacket()),
     m_selectCardInPacketVisible(false),
     m_selectHiddenCardVisible(false),
@@ -91,6 +92,20 @@ void CtrlPopups::setOnePopupIsDisplayed(bool visible)
     }
 }
 
+bool CtrlPopups::popupIsEnabled()
+{
+    return m_popupIsEnabled;
+}
+
+void CtrlPopups::setPopupIsEnabled(bool enable)
+{
+    if(m_popupIsEnabled != enable)
+    {
+        m_popupIsEnabled = enable;
+        emit popupIsEnabledChanged();
+    }
+}
+
 //**************************************
 //      SELECT CARD IN PACKET
 //**************************************
@@ -105,6 +120,9 @@ void CtrlPopups::displayPacket(AbstractPacket *packet, unsigned short quantity, 
     unsigned short newQuantity = quantity;
     if(newQuantity > packet->countCard())
         newQuantity = packet->countCard();
+
+    //enable UI
+    setPopupIsEnabled(true);
 
     //Initialisation
     m_modelSelectCardInPacket->setTypeOfCardFilter(typeOfCard);
@@ -173,6 +191,9 @@ void CtrlPopups::setSelectCardInPacketVisible(bool state)
 void CtrlPopups::displaySelectHiddenCard(int numberOfCards, unsigned short quantity)
 {
     //PacketGeneric* packet = new PacketGeneric("hiddenCards", numberOfCards);
+
+    //enable UI
+    setPopupIsEnabled(true);
 
     //Initialisation
     m_modelSelectCardInPacket->setNumberOfCardsToSelect(quantity);
@@ -266,7 +287,38 @@ void CtrlPopups::startAnimationFlippedCards()
 //**************************************
 //            SELECT ATTACK
 //**************************************
-int CtrlPopups::displayAttacks(CardPokemon* card, bool authorizeRetreat)
+void CtrlPopups::displayAttacks(CardPokemon* card, bool authorizeRetreat)
+{
+#ifdef TRACAGE_PRECIS
+    qDebug() << __PRETTY_FUNCTION__;
+#endif
+
+    //enable UI
+    setPopupIsEnabled(true);
+
+    //Initialisation
+    setPopupSelectingAttacks_IndexAttack(-1);
+    setPopupSelectingAttacks_AuthorizeRetreat(authorizeRetreat);
+    setPopupSelectingAttacks_Card(card);
+    setPopupSelectingAttacks_Visible(true);
+
+    /*qDebug() << __PRETTY_FUNCTION__ << "En attente";
+
+    //En attente
+    QEventLoop loop;
+    connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    qDebug() << __PRETTY_FUNCTION__ << "Passé";
+
+    //Configuration de fin
+    setPopupSelectingAttacks_Visible(false);
+
+    //Renvoi de l'information
+    return m_popupSelectingAttacks_IndexAttack;*/
+}
+
+int CtrlPopups::displayAttacksWithLoopEvent(CardPokemon* card, bool authorizeRetreat)
 {
 #ifdef TRACAGE_PRECIS
     qDebug() << __PRETTY_FUNCTION__;
@@ -367,6 +419,9 @@ QList<AbstractCard *> CtrlPopups::displayEnergiesForAPokemon(CardPokemon *pokemo
     if(newQuantity > pokemon->countEnergies())
         newQuantity = pokemon->countEnergies();
 
+    //enable UI
+    setPopupIsEnabled(true);
+
     //Initialisation
     m_modelSelectEnergyInPokemon->setElementFilter(element);
     m_modelSelectEnergyInPokemon->addListEnergyFromPokemon(pokemon);
@@ -402,6 +457,7 @@ void CtrlPopups::setSelectEnergiesInPokemonVisible(bool state)
 
 void CtrlPopups::selectionCardsFinished()
 {
+    setPopupIsEnabled(false);
     emit selectionFinished();
 }
 

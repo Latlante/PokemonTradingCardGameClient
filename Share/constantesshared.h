@@ -20,6 +20,7 @@ public:
         PHASE_MoveACard = 40,
         PHASE_Attack_Retreat = 41,
         PHASE_SkipTheTurn = 42,
+
         PHASE_NotifNewGameCreated = 100,
         PHASE_NotifPlayerIsReady,
         PHASE_NotifEndOfTurn,
@@ -28,6 +29,7 @@ public:
         PHASE_NotifPokemonSwitched,
         PHASE_NotifEnergyAdded,
         PHASE_NotifEnergyRemoved,
+        PHASE_NotifHeadOrTail,
 
         PHASE_NotifDisplayPacket = 120,
         PHASE_DisplayPacketResponse,

@@ -80,7 +80,10 @@ private slots:
     void onMovingCardAnimationStart();
     void onNewNotification(QJsonDocument docActions);
     void onSelectionCardsFinished_CtrlPopup();
+    void onSelectionAllElements_CtrlPopup();
     void onSelectionHiddenCardFinished_CtrPopup();
+    void onSelectionEnergiesForAPokemon_CtrlPopup();
+    void onSelectionAttacksPokemon_CtrlPopup();
 
 private:
     SocketClient* m_socket;

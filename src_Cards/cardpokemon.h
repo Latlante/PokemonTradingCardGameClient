@@ -130,6 +130,7 @@ public:
 	
     void addEnergy(CardEnergy* energy);
     CardEnergy* takeEnergy(int index);
+    QList<CardEnergy*> takeAllEnergies();
     void moveEnergiesInTrash(QList<CardEnergy *> listEnergies);
     void moveAllEnergiesInTrash();
 	unsigned short countEnergies();

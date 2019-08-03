@@ -18,6 +18,7 @@ class CtrlPopups : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool onePopupIsDisplayed READ onePopupIsDisplayed NOTIFY onePopupIsDisplayedChanged)
+    Q_PROPERTY(bool popupIsEnabled READ popupIsEnabled WRITE setPopupIsEnabled NOTIFY popupIsEnabledChanged)
 
     //SELECT CARD IN PACKET
     Q_PROPERTY(bool selectCardInPacketVisible READ selectCardInPacketVisible WRITE setSelectCardInPacketVisible NOTIFY selectCardInPacketVisibleChanged)
@@ -53,6 +54,9 @@ public:
     bool onePopupIsDisplayed();
     void setOnePopupIsDisplayed(bool visible);
 
+    bool popupIsEnabled();
+    void setPopupIsEnabled(bool enable);
+
     //SELECT CARD IN PACKET
     Q_INVOKABLE ModelPopupSelectCardInPacket* modelSelectCardInPacket();
     void displayPacket(AbstractPacket* packet, unsigned short quantity = 1, AbstractCard::Enum_typeOfCard typeOfCard = AbstractCard::TypeOfCard_Whatever);
@@ -74,7 +78,8 @@ public:
     //Q_INVOKABLE void selectHiddenCardDone();
 
     //SELECT ATTACK
-    int displayAttacks(CardPokemon* card, bool authorizeRetreat);
+    void displayAttacks(CardPokemon* card, bool authorizeRetreat);
+    int displayAttacksWithLoopEvent(CardPokemon* card, bool authorizeRetreat);
     bool popupSelectingAttacks_Visible();
     void setPopupSelectingAttacks_Visible(bool state);
     CardPokemon* popupSelectingAttacks_Card();
@@ -108,6 +113,7 @@ public:
 
 signals:
     void onePopupIsDisplayedChanged();
+    void popupIsEnabledChanged();
 
     //SELECT CARD IN PACKET
     void selectCardInPacketVisibleChanged();
@@ -138,6 +144,7 @@ signals:
 
 private:
     bool m_onePopupIsDisplayed;
+    bool m_popupIsEnabled;
 
     //SELECT CARD IN PACKET
     ModelPopupSelectCardInPacket* m_modelSelectCardInPacket;

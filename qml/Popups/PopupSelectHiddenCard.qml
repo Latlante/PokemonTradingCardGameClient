@@ -6,6 +6,7 @@ Item {
     id: popupSelectHiddenCard1
     width: 500
     height: 900
+    enabled: ctrlPopups.popupIsEnabled
 
     property int colCount: 4
     property int space: 4   //PAS DE NOMBRE IMPAIRE
@@ -114,7 +115,8 @@ Item {
 
             onClicked: {
                 //On bloque l'affiche pour que l'utilisateur ne clique pas partout
-                popupSelectHiddenCard1.enabled = false
+                //popupSelectHiddenCard1.enabled = false
+                //ctrlPopups.popupIsEnabled = false
 
                 //On renvoie les cartes sélectionnées
                 ctrlPopups.selectionCardsFinished()
@@ -135,8 +137,8 @@ Item {
             running: false;
             repeat: false
             onTriggered: {
-                ctrlPopups.selectionCardsFinished()
                 popupSelectHiddenCard1.enabled = true
+                ctrlPopups.selectionCardsFinished()
             }
         }
     }
