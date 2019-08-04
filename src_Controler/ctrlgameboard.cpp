@@ -837,6 +837,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         if(playerNewTurn != nullptr)
                             playerNewTurn->setCanPlay(true);
                     }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"endOfTurn\" and/or \"newTurn\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
 
                 }
                     break;
@@ -932,6 +934,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
                     }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifDataPokemonChanged: object does not contain \"namePlayer\" and/or \"idPacket\" and/or \"indexCard\" and/or \"lifeLeft\" and/or \"attacks\" and/or \"status\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
                 }
                     break;
 
@@ -993,6 +997,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
                     }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"namePlayer\" and/or \"idPacket\" and/or \"indexCard\" and/or \"newIdCard\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
                 }
                     break;
 
@@ -1069,7 +1075,7 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                     }
                     else
-                        qWarning() << __PRETTY_FUNCTION__ << "PHASE_NotifEnergyAdded: an element is missing";
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"namePlayer\" and/or \"idPacketOrigin\" and/or \"indexCardOrigin\" and/or \"idPacketDestination\" and/or \"indexCardDestination\" and/or \"elementEnergy\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
 
                 }
                     break;
@@ -1116,6 +1122,8 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
                     }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"namePlayer\" and/or \"idPacket\" and/or \"indexCard\" and/or \"indexEnergy\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
 
                 }
                     break;

@@ -151,7 +151,13 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, AbstractCard *cardToMove)
 {
-    qDebug() << __PRETTY_FUNCTION__;// << source->name() << destination->name() << cardToMove->name();
+    QString strDebug = "";
+    strDebug += "source: ";
+    strDebug += source != nullptr ? "source: " + source->name() : "source: nullptr";
+    strDebug += destination != nullptr ? ", destination: " + destination->name() : ", destination: nullptr";
+    strDebug += cardToMove != nullptr ? ", card: " + cardToMove->name() + " (" + QString::number(cardToMove->id()) + ")" : ", card: nullptr";
+    qDebug() << __PRETTY_FUNCTION__ << strDebug;
+
     bool moveSuccess = false;
 
     if(source != nullptr)
@@ -192,7 +198,14 @@ bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket 
 
 bool Player::moveCardFromPacketToAnother(AbstractPacket *source, AbstractPacket *destination, int index, AbstractCard *cardToMove)
 {
-    qDebug() << __PRETTY_FUNCTION__;// << source->name() << destination->name() << index << cardToMove->name();
+    QString strDebug = "";
+    strDebug += "source: ";
+    strDebug += source != nullptr ? "source: " + source->name() : "source: nullptr";
+    strDebug += destination != nullptr ? ", destination: " + destination->name() : ", destination: nullptr";
+    strDebug += ", index: " + QString::number(index);
+    strDebug += cardToMove != nullptr ? ", card: " + cardToMove->name() + " (" + QString::number(cardToMove->id()) + ")" : ", card: nullptr";
+    qDebug() << __PRETTY_FUNCTION__ << strDebug;
+
     bool moveSuccess = false;
 
     if(source != nullptr)
