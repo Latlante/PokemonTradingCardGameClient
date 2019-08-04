@@ -412,7 +412,7 @@ ModelPopupSelectEnergyInPokemon* CtrlPopups::modelSelectEnergyInPokemon()
     return m_modelSelectEnergyInPokemon;
 }
 
-QList<AbstractCard *> CtrlPopups::displayEnergiesForAPokemon(CardPokemon *pokemon, unsigned short quantity, AbstractCard::Enum_element element)
+void CtrlPopups::displayEnergiesForAPokemon(CardPokemon *pokemon, unsigned short quantity, AbstractCard::Enum_element element)
 {
     //Vérification
     unsigned short newQuantity = quantity;
@@ -429,7 +429,7 @@ QList<AbstractCard *> CtrlPopups::displayEnergiesForAPokemon(CardPokemon *pokemo
     setSelectEnergiesInPokemonVisible(true);
 
     //En attente
-    QEventLoop loop;
+    /*QEventLoop loop;
     connect(this, &CtrlPopups::selectionFinished, &loop, &QEventLoop::quit);
     loop.exec();
 
@@ -437,7 +437,12 @@ QList<AbstractCard *> CtrlPopups::displayEnergiesForAPokemon(CardPokemon *pokemo
     setSelectEnergiesInPokemonVisible(false);
 
     //Renvoi de l'information
-    return m_modelSelectEnergyInPokemon->listIndexEnergiesSelected();
+    return m_modelSelectEnergyInPokemon->listIndexEnergiesSelected();*/
+}
+
+void CtrlPopups::hideDisplayEnergiesForAPokemon()
+{
+    setSelectEnergiesInPokemonVisible(false);
 }
 
 bool CtrlPopups::selectEnergiesInPokemonVisible()

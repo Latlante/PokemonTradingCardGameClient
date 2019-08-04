@@ -39,6 +39,7 @@ public:
 signals:
     void connected();
     void newMessage();
+    void newMessageDisplay();
     void newNotification(const QJsonDocument&);
 
 private slots:
@@ -53,6 +54,7 @@ private:
     QJsonDocument m_documentBufferNewMessage;
 
     bool sendMessage(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
+    bool sendMessageDisplay(QJsonDocument jsonSender, QJsonDocument& jsonResponse);
 };
 
 #endif // SOCKETCLIENT_H

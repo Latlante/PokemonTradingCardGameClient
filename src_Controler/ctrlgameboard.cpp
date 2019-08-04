@@ -702,6 +702,8 @@ void CtrlGameBoard::onSelectionEnergiesForAPokemon_CtrlPopup()
         if(obj["success"].toString() == "ok")
         {
             m_ctrlAnim.setStepInProgress(false);
+            //m_ctrlPopups.hideDisplayEnergiesForAPokemon();
+            m_ctrlPopups.closeDisplayPacket();
         }
         else
         {
@@ -917,19 +919,15 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                             if(!objAttack.isEmpty())
                                                 pokemon->setAttackBlocked(objAttack["index"].toInt(), objAttack["available"].toBool());
                                         }
-
                                     }
                                     else
                                         qWarning() << __PRETTY_FUNCTION__ << "abCard is not a pokemon card " << abCard->type();
-
                                 }
                                 else
                                     qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
-
                             }
                             else
                                 qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
-
                         }
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";
@@ -1113,11 +1111,9 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                                 }
                                 else
                                     qWarning() << __PRETTY_FUNCTION__ << "abCard " << indexCard << " is nullptr";
-
                             }
                             else
                                 qWarning() << __PRETTY_FUNCTION__ << "packet " << idPacket << " is nullptr";
-
                         }
                         else
                             qWarning() << __PRETTY_FUNCTION__ << "player " << namePlayer << " is nullptr";

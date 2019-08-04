@@ -338,7 +338,7 @@ bool SocketClient::responseDisplayPacket(int idGame, QList<int> listIndex, QJson
         arrayIndex.append(index);
     jsonRequest["indexPacket"] = arrayIndex;
 
-    if(sendMessage(QJsonDocument(jsonRequest), response))
+    if(sendMessageDisplay(QJsonDocument(jsonRequest), response))
     {
         if(!response.isNull())
         {
@@ -366,7 +366,7 @@ bool SocketClient::responseDisplayAllElements(int idGame, QList<int> listIdEleme
         arrayIndex.append(index);
     jsonRequest["elements"] = arrayIndex;
 
-    if(sendMessage(QJsonDocument(jsonRequest), response))
+    if(sendMessageDisplay(QJsonDocument(jsonRequest), response))
     {
         if(!response.isNull())
         {
@@ -394,7 +394,7 @@ bool SocketClient::responseDisplayHiddenPacket(int idGame, QList<int> listIndex,
         arrayIndex.append(index);
     jsonRequest["indexPacket"] = arrayIndex;
 
-    if(sendMessage(QJsonDocument(jsonRequest), response))
+    if(sendMessageDisplay(QJsonDocument(jsonRequest), response))
     {
         if(!response.isNull())
         {
@@ -424,7 +424,7 @@ bool SocketClient::responseDisplayEnergiesForAPokemon(int idGame, QList<int> lis
         arrayIndex.append(index);
     jsonRequest["indexPacket"] = arrayIndex;
 
-    if(sendMessage(QJsonDocument(jsonRequest), response))
+    if(sendMessageDisplay(QJsonDocument(jsonRequest), response))
     {
         if(!response.isNull())
         {
@@ -448,7 +448,7 @@ bool SocketClient::responseDisplayAttacksPokemon(int idGame, int indexAttack, QJ
     jsonRequest["uidGame"] = idGame;
     jsonRequest["indexPacket"] = indexAttack;
 
-    if(sendMessage(QJsonDocument(jsonRequest), response))
+    if(sendMessageDisplay(QJsonDocument(jsonRequest), response))
     {
         if(!response.isNull())
         {
@@ -508,12 +508,19 @@ void SocketClient::onReadyRead_Socket()
             {
                 int phase = obj["phase"].toInt();
 
-                if((phase < static_cast<int>(ConstantesShared::PHASE_NotifNewGameCreated)) ||
-                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayPacketResponse)) ||
-                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayHiddenPacketResponse)))
+                if(phase < static_cast<int>(ConstantesShared::PHASE_NotifNewGameCreated))
                 {
                     m_documentBufferNewMessage = docNotif;
                     emit newMessage();
+                }
+                else if((phase == static_cast<int>(ConstantesShared::PHASE_DisplayPacketResponse)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayAllElementsResponse)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayHiddenPacketResponse)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayEnergiesForAPokemonResponse)) ||
+                        (phase == static_cast<int>(ConstantesShared::PHASE_DisplayAttacksPokemonResponse)))
+                {
+                    m_documentBufferNewMessage = docNotif;
+                    emit newMessageDisplay();
                 }
                 else
                     emit newNotification(docNotif);
@@ -555,6 +562,50 @@ bool SocketClient::sendMessage(QJsonDocument jsonSender, QJsonDocument &jsonResp
     //init loop to synchronize with the answer
     QEventLoop loop;
     connect(this, &SocketClient::newMessage, &loop, &QEventLoop::quit);
+    connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    //send the request
+    m_socket->write(requestToSend);
+
+    //wait the answer
+    loop.exec();
+
+    //Check we not pass because the timer time out
+    if(timerTimeOut.isActive())
+    {
+        timerTimeOut.stop();
+        jsonResponse = m_documentBufferNewMessage;
+        success = true;
+    }
+    else
+        qDebug() << __PRETTY_FUNCTION__ << "Time out";
+
+    qDebug() << __PRETTY_FUNCTION__ << "response:" << jsonResponse;
+
+    return success;
+}
+
+bool SocketClient::sendMessageDisplay(QJsonDocument jsonSender, QJsonDocument &jsonResponse)
+{
+    bool success = false;
+
+    qDebug() << __PRETTY_FUNCTION__ << "jsonSender: " << jsonSender;
+
+    //init timer time out
+    QTimer timerTimeOut;
+    timerTimeOut.setSingleShot(true);
+    timerTimeOut.start(timeOut());
+
+    //init request
+    QByteArray jsonSerialize = jsonSender.toJson(QJsonDocument::Compact);
+    QByteArray requestToSend;
+    QDataStream dataToSend(&requestToSend, QIODevice::WriteOnly);
+    dataToSend << static_cast<quint16>(jsonSerialize.length());
+    dataToSend << jsonSerialize;
+
+    //init loop to synchronize with the answer
+    QEventLoop loop;
+    connect(this, &SocketClient::newMessageDisplay, &loop, &QEventLoop::quit);
     connect(&timerTimeOut, &QTimer::timeout, &loop, &QEventLoop::quit);
 
     //send the request

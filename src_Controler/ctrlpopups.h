@@ -91,7 +91,8 @@ public:
 
     //SELECT ENERGY IN POKEMON
     Q_INVOKABLE ModelPopupSelectEnergyInPokemon* modelSelectEnergyInPokemon();
-    QList<AbstractCard *> displayEnergiesForAPokemon(CardPokemon* pokemon, unsigned short quantity, AbstractCard::Enum_element element);
+    void displayEnergiesForAPokemon(CardPokemon* pokemon, unsigned short quantity, AbstractCard::Enum_element element);
+    void hideDisplayEnergiesForAPokemon();
     bool selectEnergiesInPokemonVisible();
     void setSelectEnergiesInPokemonVisible(bool state);
 
