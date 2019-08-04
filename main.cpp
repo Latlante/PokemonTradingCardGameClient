@@ -16,6 +16,7 @@
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
 #include "src_Models/modelselectingcards.h"
+#include "src_Models/proxymodellistallplayers.h"
 #include "src_Models/proxymodelselectingcards.h"
 #include "player.h"
 #include "src_Cards/abstractcard.h"
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     ModelPopupSelectCardInPacket::declareQML();
     ModelPopupSelectEnergyInPokemon::declareQML();
     ModelSelectingCards::declareQML();
+    ProxyModelListAllPlayers::declareQML();
     ProxyModelSelectingCards::declareQML();
     Player::declareQML();
     AbstractCard::declareQML();

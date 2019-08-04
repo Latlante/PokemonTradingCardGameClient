@@ -23,6 +23,7 @@ class ModelPopupSelectCardInPacket;
 class BenchArea;
 class PacketDeck;
 class PacketRewards;
+class ProxyModelListAllPlayers;
 class SocketClient;
 
 class CtrlGameBoard : public QObject
@@ -39,6 +40,7 @@ public:
     bool install(QQmlApplicationEngine *pEngine);
 
     Q_INVOKABLE ModelListAllPlayers* modelAllPlayers();
+    Q_INVOKABLE ProxyModelListAllPlayers* modelAllPlayersWithoutCurrentPlayer();
     Q_INVOKABLE ModelListOfGamesAvailable* modelAllOfGamesAvailable();
     Q_INVOKABLE ModelListSelection* modelListSelect();
     Q_INVOKABLE FactoryMainPageLoader* factory();

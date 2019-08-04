@@ -35,6 +35,7 @@ SOURCES += \
     src_Models/modelpopupselectcardinpacket.cpp \
     src_Models/modelpopupselectenergyinpokemon.cpp \
     src_Models/modelselectingcards.cpp \
+    src_Models/proxymodellistallplayers.cpp \
     src_Packets/abstractpacket.cpp \
     gamemanager.cpp \
     player.cpp \
@@ -85,6 +86,7 @@ HEADERS += \
     src_Models/modelpopupselectcardinpacket.h \
     src_Models/modelpopupselectenergyinpokemon.h \
     src_Models/modelselectingcards.h \
+    src_Models/proxymodellistallplayers.h \
     src_Packets/abstractpacket.h \
     gamemanager.h \
     player.h \

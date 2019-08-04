@@ -88,7 +88,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 0
 
-                model: ctrlGameBoard.modelAllPlayers()
+                model: ctrlGameBoard.modelAllPlayersWithoutCurrentPlayer()
                 delegate: Item {
                     width: parent.width
                     height: 30

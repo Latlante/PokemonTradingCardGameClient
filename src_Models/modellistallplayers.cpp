@@ -3,7 +3,9 @@
 #include <QtQml/qqml.h>
 
 ModelListAllPlayers::ModelListAllPlayers(QObject *parent) :
-    QAbstractListModel(parent)
+    QAbstractListModel(parent),
+    m_listOfPlayers(),
+    m_currentPlayer("")
 {
 
 }
@@ -49,6 +51,20 @@ unsigned int ModelListAllPlayers::uidFromNamePlayer(const QString &name)
     }
 
     return uidPlayer;
+}
+
+QString ModelListAllPlayers::currentPlayer() const
+{
+    return m_currentPlayer;
+}
+
+void ModelListAllPlayers::setCurrentPlayer(const QString &currentPlayer)
+{
+    if(m_currentPlayer != currentPlayer)
+    {
+        m_currentPlayer = currentPlayer;
+        emit currentPlayerChanged();
+    }
 }
 
 void ModelListAllPlayers::addNewPlayer(unsigned int idPlayer, const QString &name)

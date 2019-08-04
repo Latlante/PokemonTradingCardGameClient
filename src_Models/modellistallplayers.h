@@ -7,6 +7,8 @@
 class ModelListAllPlayers : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(QString currentPlayer READ currentPlayer NOTIFY currentPlayerChanged)
+
 public:
     explicit ModelListAllPlayers(QObject *parent = nullptr);
 
@@ -14,6 +16,8 @@ public:
 
     QString namePlayerFromId(unsigned int uid) const;
     unsigned int uidFromNamePlayer(const QString &name);
+    QString currentPlayer() const;
+    void setCurrentPlayer(const QString& currentPlayer);
 
     void addNewPlayer(unsigned int idPlayer, const QString& name);
     void removeOnePlayer(int index);
@@ -26,6 +30,9 @@ public:
 protected:
     QHash<int, QByteArray> roleNames() const override;
 
+signals:
+    void currentPlayerChanged();
+
 private:
     struct InfoPlayer
     {
@@ -33,6 +40,7 @@ private:
         QString name;
     };
     QList<InfoPlayer> m_listOfPlayers;
+    QString m_currentPlayer;
 };
 
 #endif // MODELLISTALLPLAYERS_H

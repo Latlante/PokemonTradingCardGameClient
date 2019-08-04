@@ -22,6 +22,7 @@
 #include "src_Models/modellistselection.h"
 #include "src_Models/modellisttestanimations.h"
 #include "src_Models/modelpopupselectcardinpacket.h"
+#include "src_Models/proxymodellistallplayers.h"
 #include "src_Packets/packetcardswithindex.h"
 #include "src_Packets/packetgeneric.h"
 #include "src_Packets/packethiddencards.h"
@@ -118,6 +119,14 @@ ModelListAllPlayers* CtrlGameBoard::modelAllPlayers()
     return m_listAllPlayers;
 }
 
+ProxyModelListAllPlayers* CtrlGameBoard::modelAllPlayersWithoutCurrentPlayer()
+{
+    ProxyModelListAllPlayers* proxy = new ProxyModelListAllPlayers();
+    proxy->setSourceModel(m_listAllPlayers);
+
+    return proxy;
+}
+
 ModelListOfGamesAvailable* CtrlGameBoard::modelAllOfGamesAvailable()
 {
     return m_listOfGamesAvailable;
@@ -200,6 +209,7 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
                                                        objGame["opponent"].toString());
                 }
 
+                m_listAllPlayers->setCurrentPlayer(name);
                 m_gameManager->setPlayerYou(0, name);
                 m_ctrlSelectingCards.setName(name);
                 m_factoryMainPageLoader->displayCreateChooseGame();

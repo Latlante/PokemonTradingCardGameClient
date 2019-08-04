@@ -29,13 +29,26 @@ Item {
 
         Image {
             id: imageLogo
-            x: 0
-            y: 0
-            width: parent.width
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
             height: 0.3 * parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.horizontalCenter: parent.horizontalCenter
             fillMode: Image.PreserveAspectFit
             source: "Images/logo.png"
+        }
+
+        Text {
+            id: textWelcome
+            anchors.top: imageLogo.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            color: "#ffffff"
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: 28
+            text: "Bienvenue " + ctrlGameBoard.modelAllPlayers().currentPlayer
         }
 
         Rectangle {
@@ -140,7 +153,7 @@ Item {
                         id: textGameInProgress
                         anchors.top: parent.top
                         anchors.left: parent.left
-                        anchors.right: rectangleContainerButtonRefresh.left
+                        anchors.right: imageButtonRefresh.left
                         anchors.bottom: parent.bottom
                         color: "#ffffff"
                         text: qsTr("Parties en cours: ") + numberOfGamesAvailable
@@ -180,8 +193,6 @@ Item {
                         }
                     }*/
                 }
-
-
             }
 
             Loading_P {
