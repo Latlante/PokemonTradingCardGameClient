@@ -30,7 +30,7 @@ class CtrlGameBoard : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(ConstantesQML::StepGame gameStatus READ gameStatus NOTIFY gameStatusChanged)
-
+    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
 
 public:
     explicit CtrlGameBoard(CtrlSelectingCards& ctrlSelectCards, CtrlPopups& ctrlPopups, CtrlAnimation& ctrlAnim, QObject *parent = nullptr);
@@ -50,6 +50,9 @@ public:
 
     ConstantesQML::StepGame gameStatus();
     void setGameStatus(ConstantesQML::StepGame status);
+    QString error();
+    void setError(const QString& error);
+    void resetError();
 
     //Actions
     Q_INVOKABLE void authentificate(const QString& name, const QString& password);
@@ -77,6 +80,7 @@ signals:
     void nextPlayer();
     void currentPlayerChanged();
     void gameStatusChanged();
+    void errorChanged();
 
 private slots:
     void onMovingCardAnimationStart();
@@ -98,6 +102,7 @@ private:
     CtrlSelectingCards& m_ctrlSelectingCards;
 
     ConstantesQML::StepGame m_gameStatus;
+    QString m_error;
 
     void executeActions(QJsonObject objActions);
     void executeDisplay(QJsonObject objDisplay);

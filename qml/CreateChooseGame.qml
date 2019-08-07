@@ -204,6 +204,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
+
+        Text {
+            id: textError
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: rectangleContainerCreateChooseGame.bottom
+            wrapMode: Text.WordWrap
+            color: "#ff0000"
+            font.pixelSize: 20
+            text: ctrlGameBoard.error
+        }
     }
 
 }

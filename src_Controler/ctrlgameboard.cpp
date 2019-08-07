@@ -38,7 +38,8 @@ CtrlGameBoard::CtrlGameBoard(CtrlSelectingCards &ctrlSelectCards, CtrlPopups &ct
     m_ctrlAnim(ctrlAnim),
     m_ctrlPopups(ctrlPopups),
     m_ctrlSelectingCards(ctrlSelectCards),
-    m_gameStatus(ConstantesQML::StepPreparation)
+    m_gameStatus(ConstantesQML::StepPreparation),
+    m_error("")
 {
 
     ///////////////////////////////////
@@ -181,9 +182,29 @@ void CtrlGameBoard::setGameStatus(ConstantesQML::StepGame status)
     }
 }
 
+QString CtrlGameBoard::error()
+{
+    return m_error;
+}
+
+void CtrlGameBoard::setError(const QString &error)
+{
+    if(m_error != error)
+    {
+        m_error = error;
+        emit errorChanged();
+    }
+}
+
+void CtrlGameBoard::resetError()
+{
+    setError("");
+}
+
 void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 {
     qDebug() << __PRETTY_FUNCTION__;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->tryToConnect())
@@ -217,17 +238,20 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
             else
             {
                 qWarning() << __PRETTY_FUNCTION__ << "Authentification failed";
+                setError("Echec de l'autentification:" + obj["error"].toString());
             }
 
         }
         else
         {
             qDebug() << __PRETTY_FUNCTION__ << "Error during the authentification";
+            setError("Aucune réponse de la part du serveur");
         }
     }
     else
     {
         qDebug() << __PRETTY_FUNCTION__ << "Error during the connection";
+        setError("Echec de connexion au serveur");
     }
 
     m_ctrlAnim.setStepInProgress(false);
@@ -238,6 +262,7 @@ void CtrlGameBoard::authentificate(const QString &name, const QString &password)
 void CtrlGameBoard::listOfAllPlayers()
 {
     qDebug() << __PRETTY_FUNCTION__;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     //Get list of all players
@@ -264,12 +289,18 @@ void CtrlGameBoard::listOfAllPlayers()
             m_factoryMainPageLoader->displayAllPlayers();
         }
     }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request list of all players";
+        setError("Aucune réponse de la part du serveur");
+    }
     m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::listOfGamesAlreadyExisting()
 {
     qDebug() << __PRETTY_FUNCTION__;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     QJsonDocument jsonResponse;
@@ -291,12 +322,18 @@ void CtrlGameBoard::listOfGamesAlreadyExisting()
             }
         }
     }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request list of all games existingz";
+        setError("Aucune réponse de la part du serveur");
+    }
     m_ctrlAnim.setStepInProgress(false);
 }
 
 void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
 {
     qDebug() << __PRETTY_FUNCTION__ << nameGame << idOpponent;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     QJsonDocument jsonResponse;
@@ -318,6 +355,11 @@ void CtrlGameBoard::createANewGame(const QString& nameGame, int idOpponent)
             m_factoryMainPageLoader->displaySelectCards();
         }
     }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request to create a new game";
+        setError("Aucune réponse de la part du serveur");
+    }
     m_ctrlAnim.setStepInProgress(false);
 }
 
@@ -338,6 +380,7 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
 {
     qDebug() << __PRETTY_FUNCTION__ << idGame;
     QJsonDocument jsonResponse;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->getAllInfoOnTheGame(idGame, jsonResponse))
@@ -381,7 +424,13 @@ void CtrlGameBoard::joinAGame(int idGame, const QString& nameGame, const QString
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+            setError("Echec de récupération des informations:" + obj["error"].toString());
         }
+    }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request all info on the game";
+        setError("Aucune réponse de la part du serveur");
     }
     m_ctrlAnim.setStepInProgress(false);
 }
@@ -396,6 +445,7 @@ void CtrlGameBoard::sendCardsSelected()
     qDebug() << __PRETTY_FUNCTION__;
     QList<InfoCard> listCards = m_ctrlSelectingCards.listCards();
     QJsonDocument jsonResponse;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->sendCardsSelected(m_gameManager->uidGame(), listCards, jsonResponse))
@@ -413,9 +463,14 @@ void CtrlGameBoard::sendCardsSelected()
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse;
+            setError("Echec d'envoi des cartes sélectionnées:" + obj["error"].toString());
         }
     }
-    qDebug() << __PRETTY_FUNCTION__ << "5";
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request send cards selected";
+        setError("Aucune réponse de la part du serveur");
+    }
     m_ctrlAnim.setStepInProgress(false);
 }
 
@@ -423,6 +478,7 @@ void CtrlGameBoard::initReady()
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->initIsReady(m_gameManager->uidGame(), jsonResponse))
@@ -441,7 +497,13 @@ void CtrlGameBoard::initReady()
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+            setError("Echec de l'initialisation:" + obj["error"].toString());
         }
+    }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request for initialization";
+        setError("Aucune réponse de la part du serveur");
     }
 }
 
@@ -449,6 +511,7 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->moveACard(m_gameManager->uidGame(), static_cast<ConstantesShared::EnumPacket>(idPacketOrigin), idCardOrigin, static_cast<ConstantesShared::EnumPacket>(idPacketDestination), idCardDestination, jsonResponse))
@@ -466,12 +529,20 @@ void CtrlGameBoard::moveACard(int idPacketOrigin, int idCardOrigin, int idPacket
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+            setError("Echec de déplacement de carte:" + obj["error"].toString());
         }
+    }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request for move a card";
+        setError("Aucune réponse de la part du serveur");
     }
 }
 
 void CtrlGameBoard::attackRetreat(CardPokemon* pokemon)
 {
+    resetError();
+
     if(pokemon != nullptr)
     {
         qDebug() << __PRETTY_FUNCTION__ << pokemon->name();
@@ -499,7 +570,13 @@ void CtrlGameBoard::attackRetreat(CardPokemon* pokemon)
                 else
                 {
                     qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+                    setError("Echec de l'attaque:" + obj["error"].toString());
                 }
+            }
+            else
+            {
+                qDebug() << __PRETTY_FUNCTION__ << "Error during the request attack";
+                setError("Aucune réponse de la part du serveur");
             }
         }
     }
@@ -512,6 +589,7 @@ void CtrlGameBoard::skipTheTurn()
 {
     qDebug() << __PRETTY_FUNCTION__;
     QJsonDocument jsonResponse;
+    resetError();
     m_ctrlAnim.setStepInProgress(true);
 
     if(m_socket->skipTheTurn(m_gameManager->uidGame(), jsonResponse))
@@ -530,7 +608,13 @@ void CtrlGameBoard::skipTheTurn()
         else
         {
             qWarning() << __PRETTY_FUNCTION__ << "no success:" << jsonResponse.toJson();
+            setError("Echec du saut de tour:" + obj["error"].toString());
         }
+    }
+    else
+    {
+        qDebug() << __PRETTY_FUNCTION__ << "Error during the request to skip the turn";
+        setError("Aucune réponse de la part du serveur");
     }
 }
 
