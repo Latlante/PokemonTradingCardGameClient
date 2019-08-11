@@ -33,14 +33,40 @@ bool PacketCardsWithIndex::addNewCard(AbstractCard* newCard, int index)
 {
     if(PacketGeneric::addNewCard(newCard))
     {
-        m_listIndexByCard.insert(newCard, index);
+        m_listIndexByCard.insert(indexOf(newCard), index);
         return true;
     }
 
     return false;
 }
 
-int PacketCardsWithIndex::indexFromCard(AbstractCard* card)
+int PacketCardsWithIndex::indexCard(int index)
 {
-    return m_listIndexByCard.value(card, -1);
+    return m_listIndexByCard.value(index);
+}
+
+int PacketCardsWithIndex::indexCard(AbstractCard *abCard)
+{
+    return indexCard(indexOf(abCard));
+}
+
+QList<AbstractCard*> PacketCardsWithIndex::listCards()
+{
+    QList<AbstractCard*> listCards;
+
+    for(int i=0;i<countCard();++i)
+        listCards.push_back(card(i));
+
+    return listCards;
+}
+
+QList<int> PacketCardsWithIndex::listIndexCards()
+{
+    QList<int> listIndex;
+    QList<int> listKeys = m_listIndexByCard.keys();
+
+    foreach(int key, listKeys)
+        listIndex.push_back(m_listIndexByCard.value(key));
+
+    return listIndex;
 }

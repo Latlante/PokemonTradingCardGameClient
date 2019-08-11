@@ -13,6 +13,7 @@
 #include "src_Models/modelpopupselectcardinpacket.h"
 #include "src_Models/modelpopupselectenergyinpokemon.h"
 #include "src_Packets/abstractpacket.h"
+#include "src_Packets/packetcardswithindex.h"
 #include "src_Packets/packetgeneric.h"
 
 CtrlPopups::CtrlPopups(QObject *parent) :
@@ -114,7 +115,7 @@ ModelPopupSelectCardInPacket* CtrlPopups::modelSelectCardInPacket()
     return m_modelSelectCardInPacket;
 }
 
-void CtrlPopups::displayPacket(AbstractPacket *packet, unsigned short quantity, AbstractCard::Enum_typeOfCard typeOfCard)
+void CtrlPopups::displayPacket(PacketCardsWithIndex *packet, unsigned short quantity, AbstractCard::Enum_typeOfCard typeOfCard)
 {
     //Vérification
     unsigned short newQuantity = quantity;

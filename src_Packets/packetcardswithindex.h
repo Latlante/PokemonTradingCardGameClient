@@ -15,10 +15,14 @@ public:
     AbstractPacket::TypeOfPacket type() final;
 
     bool addNewCard(AbstractCard* newCard, int index);
-    int indexFromCard(AbstractCard* card);
+
+    int indexCard(int index);
+    int indexCard(AbstractCard* abCard);
+    QList<AbstractCard*> listCards();
+    QList<int> listIndexCards();
 
 protected:
-    QMap<AbstractCard*, int> m_listIndexByCard;
+    QMap<int /*index in the list*/, int /*index of the card*/> m_listIndexByCard;
 
 private:
     //bool addNewCard(AbstractCard* newCard = nullptr) override;

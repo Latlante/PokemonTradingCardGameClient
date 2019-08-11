@@ -6,6 +6,7 @@
 #include "src_Cards/abstractcard.h"
 
 class AbstractPacket;
+class PacketCardsWithIndex;
 class ModelListEnergies;
 
 class ModelPopupSelectCardInPacket : public QAbstractListModel
@@ -18,6 +19,7 @@ public:
     struct SelectionCards
     {
         AbstractCard* card;
+        int index;
         bool selected;
         bool flipped;
     };
@@ -35,7 +37,7 @@ public:
 
     void setTypeOfCardFilter(AbstractCard::Enum_typeOfCard typeOfCard);
 
-    void addPacketFromAbstractPacket(AbstractPacket* packet);
+    void addPacketFromAbstractPacket(PacketCardsWithIndex* packet);
     void addPacketFromModelListEnergies(ModelListEnergies* model);
     void addNumberOfCards(int count);
     void replaceCard(int indexSelection, AbstractCard* newCard);

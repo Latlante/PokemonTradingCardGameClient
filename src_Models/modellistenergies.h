@@ -41,6 +41,8 @@ protected:
 
 private:
     QList<CardEnergy*> m_listEnergies;
+
+    int quantityToIndex(int index);
 };
 
 #endif // MODELLISTENERGIES_H

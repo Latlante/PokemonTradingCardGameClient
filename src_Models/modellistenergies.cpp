@@ -48,10 +48,13 @@ CardEnergy* ModelListEnergies::takeEnergy(int index)
 
     CardEnergy* energyToReturn = nullptr;
 
-    if((index >= 0) && (index < rowCount()))
+    if((index >= 0) && (index < countCard()))
     {
         energyToReturn = energy(index);
-        beginRemoveRows(QModelIndex(), index, index+(energyToReturn->quantity()-1));
+        int quantityThisEnergy = quantityToIndex(index);
+        int quantityNextEnergy = quantityThisEnergy + energyToReturn->quantity() - 1;
+
+        beginRemoveRows(QModelIndex(), quantityThisEnergy, quantityNextEnergy);
         m_listEnergies.removeOne(energyToReturn);
         endRemoveRows();
     }
@@ -67,7 +70,7 @@ CardEnergy* ModelListEnergies::energy(int index)
 
     CardEnergy* energyToReturn = nullptr;
 
-    if((index >= 0) && (index < rowCount()))
+    if((index >= 0) && (index < countCard()))
     {
         energyToReturn = m_listEnergies[index];
     }
@@ -262,4 +265,17 @@ QHash<int, QByteArray> ModelListEnergies::roleNames() const
     roles[ListEnergiesRole_Icon] = "icon";
 
     return roles;
+}
+
+/************************************************************
+*****				FONCTIONS PRIVEES					*****
+************************************************************/
+int ModelListEnergies::quantityToIndex(int index)
+{
+    int quantity = 0;
+
+    for(int i=0;i<index;++i)
+        quantity += m_listEnergies.value(i)->quantity();
+
+    return quantity;
 }

@@ -8,6 +8,7 @@
 class CardEnergy;
 class CardPokemon;
 class AbstractPacket;
+class PacketCardsWithIndex;
 class PacketGeneric;
 class ModelPopupSelectCardInPacket;
 class ModelPopupSelectEnergyInPokemon;
@@ -59,7 +60,7 @@ public:
 
     //SELECT CARD IN PACKET
     Q_INVOKABLE ModelPopupSelectCardInPacket* modelSelectCardInPacket();
-    void displayPacket(AbstractPacket* packet, unsigned short quantity = 1, AbstractCard::Enum_typeOfCard typeOfCard = AbstractCard::TypeOfCard_Whatever);
+    void displayPacket(PacketCardsWithIndex* packet, unsigned short quantity = 1, AbstractCard::Enum_typeOfCard typeOfCard = AbstractCard::TypeOfCard_Whatever);
     QList<AbstractCard *> displayAllElements(unsigned short quantity = 1);
     void closeDisplayPacket();
     QList<AbstractCard*> listCardsSelected();

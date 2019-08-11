@@ -3,6 +3,7 @@
 
 #include "src_Models/modellistenergies.h"
 #include "src_Packets/abstractpacket.h"
+#include "src_Packets/packetcardswithindex.h"
 
 ModelPopupSelectCardInPacket::ModelPopupSelectCardInPacket(QObject *parent) :
     QAbstractListModel(parent),
@@ -29,7 +30,7 @@ void ModelPopupSelectCardInPacket::setTypeOfCardFilter(AbstractCard::Enum_typeOf
     m_typeOfCardFilter = typeOfCard;
 }
 
-void ModelPopupSelectCardInPacket::addPacketFromAbstractPacket(AbstractPacket *packet)
+void ModelPopupSelectCardInPacket::addPacketFromAbstractPacket(PacketCardsWithIndex *packet)
 {
     if(packet != nullptr)
     {
@@ -44,6 +45,7 @@ void ModelPopupSelectCardInPacket::addPacketFromAbstractPacket(AbstractPacket *p
                 {
                     SelectionCards selection;
                     selection.card = packet->card(i);
+                    selection.index = packet->indexCard(i);
                     selection.selected = false;
                     selection.flipped = false;
 
@@ -66,7 +68,7 @@ void ModelPopupSelectCardInPacket::addPacketFromModelListEnergies(ModelListEnerg
     {
         cleanPacket();
 
-        for(int i=0;i<model->rowCount();++i)
+        for(int i=0;i<model->countCard();++i)
         {
             SelectionCards selection;
             selection.card = model->energy(i);
@@ -88,6 +90,7 @@ void ModelPopupSelectCardInPacket::addNumberOfCards(int count)
     {
         SelectionCards selection;
         selection.card = nullptr;
+        selection.index = rowCount();
         selection.selected = false;
         selection.flipped = false;
 
@@ -156,7 +159,7 @@ QList<int> ModelPopupSelectCardInPacket::listIndexSelected()
     {
         if(m_listCards.at(i).selected == true)
         {
-            listIndex.append(i);
+            listIndex.append(m_listCards.value(i).index);
         }
     }
 

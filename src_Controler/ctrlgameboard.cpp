@@ -1248,12 +1248,12 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                 Database db;
                 int quantity = objDisplay["quantity"].toInt();
                 QJsonArray arrayPacket = objDisplay["packet"].toArray();
-                PacketGeneric* packet = new PacketGeneric("display");
+                PacketCardsWithIndex* packet = new PacketCardsWithIndex("display");
                 for(int i=0;i<arrayPacket.count();++i)
                 {
                     QJsonObject objCard = arrayPacket[i].toObject();
-                    packet->insertNewCard(objCard["indexPacket"].toInt(),
-                                          db.cardById(objCard["idCard"].toInt()));
+                    packet->addNewCard(db.cardById(objCard["idCard"].toInt()),
+                                       objCard["indexPacket"].toInt());
                 }
 
                 connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionCardsFinished_CtrlPopup, Qt::UniqueConnection);
@@ -1300,10 +1300,10 @@ void CtrlGameBoard::executeDisplay(QJsonObject objDisplay)
                 Database db;
                 int quantity = objDisplay["quantity"].toInt();
                 QJsonArray arrayPacket = objDisplay["elements"].toArray();
-                PacketGeneric* packet = new PacketGeneric("displayAllElements");
+                PacketCardsWithIndex* packet = new PacketCardsWithIndex("displayAllElements");
                 for(int i=0;i<arrayPacket.count();++i)
                 {
-                    packet->addNewCard(db.cardById(arrayPacket[i].toInt()));
+                    packet->addNewCard(db.cardById(arrayPacket[i].toInt()), i);
                 }
 
                 connect(&m_ctrlPopups, &CtrlPopups::selectionFinished, this, &CtrlGameBoard::onSelectionAllElements_CtrlPopup, Qt::UniqueConnection);
