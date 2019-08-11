@@ -124,6 +124,17 @@ Item {
                 }
             }
 
+            Text {
+                id: textError
+                anchors.bottom: buttonOk.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 30
+                color: "#ff0000"
+                visible: ctrlGameBoard.error != ""
+                text: ctrlGameBoard.error
+            }
+
             ButtonStyleGold {
                 id: boutonOk
 

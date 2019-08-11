@@ -57,6 +57,25 @@ Item {
             player: player1
         }
 
+        //ERRORS
+        Rectangle {
+            id: containerErrors
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 30
+            visible: ctrlGameBoard.error != ""
+
+            Text {
+                id: textErrors
+                anchors.fill: parent
+                wrapMode: Text.WordWrap
+                color: "#ff0000"
+                font.pixelSize: 20
+                text: ctrlGameBoard.error
+            }
+        }
+
         //POP-UPS
         PopupCardDetailsBasic {
             id: popupCardDetailsBasic1
