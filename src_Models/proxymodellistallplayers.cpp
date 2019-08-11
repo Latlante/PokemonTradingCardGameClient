@@ -35,3 +35,8 @@ bool ProxyModelListAllPlayers::filterAcceptsRow(int source_row, const QModelInde
 
     return filterAccepts;
 }
+
+int ProxyModelListAllPlayers::mapIndexToSource(int proxyIndex)
+{
+    return QSortFilterProxyModel::mapToSource(index(proxyIndex, 0, QModelIndex())).row();
+}

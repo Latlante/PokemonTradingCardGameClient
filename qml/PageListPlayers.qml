@@ -83,7 +83,7 @@ Item {
                 anchors.rightMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
-                anchors.bottom: boutonOk.top
+                anchors.bottom: buttonOk.top
                 anchors.bottomMargin: 0
                 anchors.top: parent.top
                 anchors.topMargin: 0
@@ -136,7 +136,7 @@ Item {
             }
 
             ButtonStyleGold {
-                id: boutonOk
+                id: buttonOk
 
                 width: parent.width / 2
                 height: 40
@@ -144,15 +144,18 @@ Item {
                 anchors.left: parent.left
                 text: qsTr("Ok")
 
-                onClicked: ctrlGameBoard.createANewGame(textInputNameGame.text, listViewAllPlayers.currentIndex+1)
+                onClicked: {
+                    var realCurrentIndex = ctrlGameBoard.modelAllPlayersWithoutCurrentPlayer().mapIndexToSource(listViewAllPlayers.currentIndex)
+                    ctrlGameBoard.createANewGame(textInputNameGame.text, realCurrentIndex+1)
+                }
             }
 
 
             ButtonStyleGold {
-                id: boutonCancel
+                id: buttonCancel
 
                 height: 40
-                anchors.left: boutonOk.right
+                anchors.left: buttonOk.right
                 anchors.leftMargin: 0
                 anchors.right: parent.right
                 anchors.rightMargin: 0

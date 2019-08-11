@@ -13,6 +13,8 @@ public:
 
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
+    Q_INVOKABLE int mapIndexToSource(int proxyIndex);
+
 signals:
 
 private:
