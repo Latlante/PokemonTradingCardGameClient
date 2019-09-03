@@ -932,6 +932,11 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
 
                         if(playerNewTurn != nullptr)
                             playerNewTurn->setCanPlay(true);
+
+                        if(playerNewTurn == m_gameManager->playerYou())
+                            m_ctrlPopups.displayMessage("A votre tour de jouer");
+                        else
+                            m_ctrlPopups.displayMessage("Au tour de " + playerNewTurn->name() + " de jouer");
                     }
                     else
                         qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"endOfTurn\" and/or \"newTurn\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
@@ -1215,6 +1220,24 @@ void CtrlGameBoard::executeActions(QJsonObject objActions)
                     else
                         qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfTurn: object does not contain \"namePlayer\" and/or \"idPacket\" and/or \"indexCard\" and/or \"indexEnergy\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
 
+                }
+                    break;
+
+                case ConstantesShared::PHASE_NotifEndOfGame:
+                {
+                    qDebug() << __PRETTY_FUNCTION__ << "PHASE_NotifEndOfGame";
+                    if((objAction.contains("winner")) && (objAction.contains("loser")))
+                    {
+                        const QString nameWinner = objAction["winner"].toString();
+                        const QString nameLoser = objAction["loser"].toString();
+
+                        if(nameWinner == m_gameManager->playerYou()->name())
+                            m_ctrlPopups.displayMessage("Vous avez gagné");
+                        else
+                            m_ctrlPopups.displayMessage("Vous avez perdu");
+                    }
+                    else
+                        qCritical() << __PRETTY_FUNCTION__ << "for PHASE_NotifEndOfGame: object does not contain \"winner\" and/or \"loser\":" << QJsonDocument(objAction).toJson(QJsonDocument::Compact);
                 }
                     break;
 
